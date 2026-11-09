@@ -421,6 +421,16 @@
         }
       }
     },
+    "Catalog": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Catalogue"
+          }
+        }
+      }
+    },
     "Category": {
       "localizations": {
         "fr": {
@@ -741,6 +751,36 @@
         }
       }
     },
+    "Delete": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer"
+          }
+        }
+      }
+    },
+    "Delete from Catalog…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer du catalogue…"
+          }
+        }
+      }
+    },
+    "Delete “%@” from the Catalog?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer « %@ » du catalogue?"
+          }
+        }
+      }
+    },
     "Describe the complaint.": {
       "localizations": {
         "fr": {
@@ -767,6 +807,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Appareils"
+          }
+        }
+      }
+    },
+    "Devices and parts with this name change too. A name that already exists merges the two.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les appareils et les pièces qui portent ce nom changent aussi. Un nom qui existe déjà fusionne les deux."
           }
         }
       }
@@ -1141,6 +1191,16 @@
         }
       }
     },
+    "It stops showing as a suggestion. Devices keep their names.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il n’est plus suggéré. Les appareils gardent leur nom."
+          }
+        }
+      }
+    },
     "Kind": {
       "localizations": {
         "fr": {
@@ -1217,6 +1277,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Seuil de stock bas"
+          }
+        }
+      }
+    },
+    "Merge Into": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fusionner avec"
           }
         }
       }
@@ -1991,6 +2061,36 @@
         }
       }
     },
+    "Rename": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renommer"
+          }
+        }
+      }
+    },
+    "Rename “%@”": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renommer « %@ »"
+          }
+        }
+      }
+    },
+    "Rename…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Renommer…"
+          }
+        }
+      }
+    },
     "Repair": {
       "localizations": {
         "fr": {
@@ -2037,6 +2137,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Révision"
+          }
+        }
+      }
+    },
+    "Right-click a name to rename it, merge it into another, or delete it. Devices keep their names when you delete one.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cliquez avec le bouton droit sur un nom pour le renommer, le fusionner avec un autre ou le supprimer. Les appareils gardent leur nom quand vous en supprimez un."
           }
         }
       }
@@ -2437,6 +2547,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vos guides de réparation, liés aux modèles d’appareils, arrivent dans une version ultérieure."
+          }
+        }
+      }
+    },
+    "^[%lld device](inflect: true)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "^[%lld appareil](inflect: true)"
           }
         }
       }

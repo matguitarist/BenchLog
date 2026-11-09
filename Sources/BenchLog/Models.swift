@@ -265,6 +265,16 @@ final class AppModel {
         write("Removed part use \(useID.stored)") { try $0.removeUse(useID) }
     }
 
+    // MARK: Catalog
+
+    func renameCatalog(_ path: CatalogPath, to name: String) {
+        write("Renamed catalog “\(path.name)” to “\(name)”") { try $0.renameCatalog(path, to: name) }
+    }
+
+    func deleteFromCatalog(_ path: CatalogPath) {
+        write("Deleted “\(path.name)” from the catalog") { try $0.deleteFromCatalog(path) }
+    }
+
     // MARK: Navigation
 
     /// Where people are: a page and the record selected on it.

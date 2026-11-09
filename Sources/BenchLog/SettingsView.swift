@@ -21,11 +21,21 @@ struct SettingsView: View {
 
     @ViewBuilder
     private func page(_ tab: SettingsTab) -> some View {
+        if tab == .catalog {
+            CatalogSettings()
+        } else {
+            form(tab)
+        }
+    }
+
+    @ViewBuilder
+    private func form(_ tab: SettingsTab) -> some View {
         Form {
             switch tab {
             case .general: GeneralSettings()
             case .appearance: AppearanceSettings()
             case .updates: UpdateSettings()
+            case .catalog: EmptyView()
             }
         }
         .formStyle(.grouped)
@@ -36,13 +46,14 @@ struct SettingsView: View {
 
 /// The Settings tabs. Snapshot mode walks through every case.
 enum SettingsTab: String, CaseIterable, Identifiable {
-    case general, appearance, updates
+    case general, catalog, appearance, updates
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
         case .general: String(localized: "General")
+        case .catalog: String(localized: "Catalog")
         case .appearance: String(localized: "Appearance")
         case .updates: String(localized: "Updates")
         }
@@ -51,6 +62,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .general: "gearshape"
+        case .catalog: "list.bullet.indent"
         case .appearance: "paintpalette"
         case .updates: "arrow.triangle.2.circlepath"
         }

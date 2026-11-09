@@ -144,6 +144,13 @@ enum SelfTest {
                     check("To Order lists it", model.read(false) { try $0.partUseRows(.needed).contains { $0.use.name == "Self-test speaker" } })
                 }
 
+                // S-016 Catalog
+                model.renameCatalog(CatalogPath(category: .handheld, brand: "Nintendo", model: "Game Boy", revision: "Self-Test Edition"),
+                                    to: "Self-Test Edition 2")
+                check("renaming a revision renames it on devices",
+                      model.read(false) { try $0.deviceRows(matching: "").contains { $0.device.revision == "Self-Test Edition 2" } })
+                check("the catalog outline has every category's brands", model.read(0) { try $0.catalogOutline().count } >= 4)
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)

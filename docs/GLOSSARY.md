@@ -24,6 +24,8 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Photo | An image attachment | picture, image |
 | File | A non-image attachment (PDF, boardview, …) | document, attachment |
 | Part | A component kept in stock or ordered for a repair | component, item, SKU |
+| Catalog | The brands, models, and revisions the device fields suggest (Catalogue) | list, database |
+| Merge Into | Rename a catalog name to one that exists, so the two become one | combine, join |
 | Inventory | The parts kept in stock (Parts tab) | In stock, stock list |
 | Low Stock | A part at or below its low-stock threshold | out of stock, running low |
 | Fits | The catalog models a part works with (Compatible avec) | compatible, supports |

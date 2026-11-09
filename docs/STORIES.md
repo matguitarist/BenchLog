@@ -235,7 +235,8 @@ Depends: S-003
 Acceptance:
 - [unit] Merging two models moves their devices, guides, and part compatibility to the one that remains.
 - [snap] The catalog is an outline: category → brand → model → revision.
-Status: todo
+Status: done
+Built: Settings → Catalog, one category at a time; Rename…, Merge Into, and Delete from Catalog… in the context menu. Renaming to an existing name merges. Guides do not exist yet: S-017 must move guide links on a merge too. Snapshot: settings-catalog.
 
 ---
 
