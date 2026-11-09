@@ -1,3 +1,4 @@
+import AppKit
 import BenchLogKit
 import Foundation
 
@@ -71,6 +72,17 @@ enum SeedData {
         let eDeck = try device(emma, .handheld, "Valve", "Steam Deck", "OLED", serial: "FVAA12345678")
 
         try repair(mSwitch, "Left Joy-Con drifts up; console fan is loud.", daysAgo: 2, notes: ["Customer left the dock and charger."], promisedIn: 3)
+        if let first = try library.repairRows().first(where: { $0.device.id == mSwitch.id }) {
+            let photos: [(String, NSColor, String)] = [("Front.png", .systemTeal, "gamecontroller"), ("Back.png", .systemGray, "rectangle.portrait"),
+                                                       ("Joy-Con.png", .systemRed, "l.joystick")]
+            for (name, color, symbol) in photos {
+                try library.addAttachment(data: samplePhoto(color, symbol), originalName: name, to: .repair, id: first.id)
+            }
+            let captioned = try library.attachments(for: .repair, id: first.id)
+            if let back = captioned.dropFirst().first { try library.setCaption("Scratches on the back", of: back.id) }
+            try library.addAttachment(data: Data("%PDF-1.4\n%sample\n".utf8), originalName: "Switch OLED fan replacement.pdf", to: .repair, id: first.id)
+            try library.addAttachment(data: Data(repeating: 0, count: 48_000), originalName: "HAC-001-01 mainboard.brd", to: .repair, id: first.id)
+        }
         try repair(jPhone, "Cracked screen, touch dead on the top edge.", daysAgo: 3, [.diagnosing],
                    diagnosis: "Display assembly damaged; frame fine.", notes: ["Face ID works."])
         try repair(sMac, "Won't charge; no light on the cable.", daysAgo: 6, [.diagnosing, .awaitingApproval],
@@ -85,5 +97,24 @@ enum SeedData {
                    diagnosis: "Dirty 72-pin connector; cleaned and re-tensioned.")
         try repair(maPixel, "Battery swollen.", daysAgo: 30, [.diagnosing, .cancelled],
                    notes: ["Customer bought a new phone instead."])
+    }
+
+    /// A flat colored square with a symbol, standing in for a photo of the device.
+    private static func samplePhoto(_ color: NSColor, _ symbol: String) -> Data {
+        let size = NSSize(width: 480, height: 480)
+        let image = NSImage(size: size, flipped: false) { rect in
+            color.withAlphaComponent(0.55).setFill()
+            rect.fill()
+            if let glyph = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)?
+                .withSymbolConfiguration(.init(pointSize: 180, weight: .regular).applying(.init(paletteColors: [.white]))) {
+                let box = NSRect(x: (rect.width - glyph.size.width) / 2, y: (rect.height - glyph.size.height) / 2,
+                                 width: glyph.size.width, height: glyph.size.height)
+                glyph.draw(in: box)
+            }
+            return true
+        }
+        guard let tiff = image.tiffRepresentation, let bitmap = NSBitmapImageRep(data: tiff),
+              let png = bitmap.representation(using: .png, properties: [:]) else { return Data() }
+        return png
     }
 }

@@ -75,6 +75,9 @@ struct RepairDetail: View {
                         .foregroundStyle(.red)
                 }
             }
+            Section("Photos and Files") {
+                AttachmentsSection(owner: .repair, ownerID: row.id)
+            }
             Section("Diagnosis") {
                 TextField("Diagnosis", text: $diagnosis, prompt: Text("What you found"), axis: .vertical)
                     .labelsHidden()
@@ -98,6 +101,7 @@ struct RepairDetail: View {
             }
         }
         .formStyle(.grouped)
+        .acceptsAttachments(owner: .repair, id: row.id, model: model)
     }
 }
 

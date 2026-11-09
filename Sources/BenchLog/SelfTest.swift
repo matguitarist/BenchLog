@@ -92,6 +92,33 @@ enum SelfTest {
                     check("the Repairs badge counts open repairs", model.openRepairCount == 2)
                 }
 
+                // S-010 to S-012 Photos and files
+                if let device, let repair = model.read(nil, { try $0.repairs(of: device.id).last }) {
+                    let source = URL(fileURLWithPath: "/tmp/BenchLog-self-photo.png")
+                    try? Data([0x89, 0x50, 0x4E, 0x47]).write(to: source)
+                    let board = URL(fileURLWithPath: "/tmp/BenchLog-self-board.brd")
+                    try? Data([0]).write(to: board)
+                    model.addFiles([source, board], to: .repair, id: repair.id)
+                    let added = model.read([]) { try $0.attachments(for: .repair, id: repair.id) }
+                    check("dropped files are copied into the library", added.count == 2
+                          && added.allSatisfy { FileManager.default.fileExists(atPath: library.fileURL(for: $0).path) })
+                    check("the original files stay where they were", FileManager.default.fileExists(atPath: source.path))
+                    check("a photo on a repair in Intake is an intake photo", added.first { $0.isImage }?.kind == .intake)
+                    check("a .brd file is a boardview", added.contains { $0.isBoardview })
+                    if let photo = added.first(where: \.isImage) {
+                        let undo = UndoManager()
+                        undo.groupsByEvent = false
+                        model.undoManager = undo
+                        undo.beginUndoGrouping()
+                        model.trashAttachment(photo.id)
+                        undo.endUndoGrouping()
+                        check("Move to Trash hides the photo", model.read(0) { try $0.attachments(for: .repair, id: repair.id).count } == 1)
+                        undo.undo()
+                        check("Undo brings it back", model.read(0) { try $0.attachments(for: .repair, id: repair.id).count } == 2)
+                        model.undoManager = nil
+                    }
+                }
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)

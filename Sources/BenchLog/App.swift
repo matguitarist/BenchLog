@@ -29,6 +29,8 @@ struct BenchLogApp: App {
         .windowToolbarStyle(.unified)
         .commands {
             SidebarCommands()
+            // File > Import from iPhone: Take Photo, Scan Documents (Continuity Camera).
+            ImportFromDevicesCommands()
             ToolbarCommands()
             CommandGroup(replacing: .newItem) {
                 Button("New Repair…") { model.newRepair() }

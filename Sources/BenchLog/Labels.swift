@@ -72,6 +72,17 @@ extension DeviceCategory {
     }
 }
 
+extension AttachmentKind {
+    var title: String {
+        switch self {
+        case .intake: String(localized: "photo.intake", defaultValue: "Intake", comment: "A photo taken when the device came in")
+        case .progress: String(localized: "photo.progress", defaultValue: "Progress", comment: "A photo taken during the repair")
+        case .final: String(localized: "photo.final", defaultValue: "Final", comment: "A photo of the device as it goes back")
+        case .document: String(localized: "photo.document", defaultValue: "Document", comment: "A file that is not a photo")
+        }
+    }
+}
+
 extension DocumentsLanguage {
     /// Each language named in itself: the choice is about the printed documents.
     var title: String {
@@ -90,7 +101,7 @@ enum RepairFilter: String, CaseIterable, Identifiable {
 
     var title: String {
         switch self {
-        case .open: String(localized: "Open")
+        case .open: String(localized: "filter.open", defaultValue: "Open", comment: "Repairs filter: the repairs not closed (plural)")
         case .ready: String(localized: "filter.ready", defaultValue: "Ready", comment: "Repairs filter: the repairs that are ready (plural)")
         case .closed: String(localized: "Closed")
         case .all: String(localized: "All")

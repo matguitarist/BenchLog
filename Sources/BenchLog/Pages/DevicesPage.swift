@@ -135,11 +135,15 @@ struct DeviceDetail: View {
                                 .help("Open a repair for this device (⌘N)")
                         }
                     }
+                    Section("Photos and Files") {
+                        AttachmentsSection(owner: .device, ownerID: device.id)
+                    }
                     Section("Notes") {
                         Timeline(owner: .device, ownerID: device.id)
                     }
                 }
                 .formStyle(.grouped)
+                .acceptsAttachments(owner: .device, id: device.id, model: model)
             } else {
                 ContentUnavailableView("No Device Selected", systemImage: "laptopcomputer.and.iphone")
             }

@@ -3,6 +3,7 @@ import BenchLogKit
 import LogKitUI
 import Observation
 import SwiftUI
+import UniformTypeIdentifiers
 
 /// The app's state: the open library, the page and record shown, the open sheet,
 /// and every change people make (each one logged, and undoable where it says so).
@@ -164,6 +165,63 @@ final class AppModel {
         write("Moved note \(id.stored) to the trash") { try $0.trash(Note.self, id: id) }
         undoManager?.registerUndo(withTarget: self) { model in
             MainActor.assumeIsolated { model.write("Restored note \(id.stored)") { try $0.restore(Note.self, id: id) } }
+        }
+        undoManager?.setActionName(String(localized: "Move to Trash"))
+    }
+
+    // MARK: Photos and files
+
+    /// Copies files from the Mac into the library and attaches them.
+    func addFiles(_ urls: [URL], to owner: NoteOwner, id: UUID) {
+        guard !urls.isEmpty else { return }
+        write("Added \(urls.count) file(s) to \(owner.rawValue) \(id.stored)") { library in
+            for url in urls { try library.addAttachment(copying: url, to: owner, id: id) }
+        }
+    }
+
+    /// Pasted or imported items (Continuity Camera, a copied image or file): file URLs are
+    /// copied; images and PDFs arrive as data.
+    func addItems(_ providers: [NSItemProvider], to owner: NoteOwner, id: UUID) async {
+        var files: [URL] = []
+        var items: [(Data, String)] = []
+        for provider in providers {
+            if provider.hasItemConformingToTypeIdentifier(UTType.fileURL.identifier),
+               let data = await Self.load(provider, .fileURL),
+               let url = URL(dataRepresentation: data, relativeTo: nil), url.isFileURL {
+                files.append(url)
+            } else if let type = provider.registeredContentTypes.first(where: { $0.conforms(to: .image) || $0.conforms(to: .pdf) }),
+                      let data = await Self.load(provider, type) {
+                let stamp = Date.now.formatted(.iso8601.year().month().day().time(includingFractionalSeconds: false))
+                    .replacingOccurrences(of: ":", with: "-")
+                items.append((data, "\(provider.suggestedName ?? "Photo \(stamp)").\(type.preferredFilenameExtension ?? "jpg")"))
+            }
+        }
+        addFiles(files, to: owner, id: id)
+        guard !items.isEmpty else { return }
+        write("Added \(items.count) imported item(s) to \(owner.rawValue) \(id.stored)") { library in
+            for (data, name) in items { try library.addAttachment(data: data, originalName: name, to: owner, id: id) }
+        }
+    }
+
+    private static func load(_ provider: NSItemProvider, _ type: UTType) async -> Data? {
+        await withCheckedContinuation { continuation in
+            _ = provider.loadDataRepresentation(for: type) { data, _ in continuation.resume(returning: data) }
+        }
+    }
+
+    func setKind(_ kind: AttachmentKind, of id: UUID) {
+        write("Marked attachment \(id.stored) as \(kind.rawValue)") { try $0.setKind(kind, of: id) }
+    }
+
+    func setCaption(_ caption: String, of id: UUID) {
+        write("Captioned attachment \(id.stored)") { try $0.setCaption(caption, of: id) }
+    }
+
+    /// Moves a photo or file to the trash; Edit > Undo brings it back. The file stays on disk.
+    func trashAttachment(_ id: UUID) {
+        write("Moved attachment \(id.stored) to the trash") { try $0.trash(Attachment.self, id: id) }
+        undoManager?.registerUndo(withTarget: self) { model in
+            MainActor.assumeIsolated { model.write("Restored attachment \(id.stored)") { try $0.restore(Attachment.self, id: id) } }
         }
         undoManager?.setActionName(String(localized: "Move to Trash"))
     }

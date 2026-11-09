@@ -119,11 +119,15 @@ struct CustomerDetail: View {
                                 .help("Add a device to this customer (⌘⇧D)")
                         }
                     }
+                    Section("Photos and Files") {
+                        AttachmentsSection(owner: .customer, ownerID: customer.id)
+                    }
                     Section("Notes") {
                         Timeline(owner: .customer, ownerID: customer.id)
                     }
                 }
                 .formStyle(.grouped)
+                .acceptsAttachments(owner: .customer, id: customer.id, model: model)
             } else {
                 ContentUnavailableView("No Customer Selected", systemImage: "person.2")
             }

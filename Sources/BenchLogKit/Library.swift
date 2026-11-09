@@ -131,6 +131,27 @@ public final class Library: Sendable {
                 }
             }
         }
+        migrator.registerMigration("v3-attachments") { db in
+            // Photos and files on a customer, device, or repair. The file lives in Files/;
+            // `path` is relative to that folder, so the library can move as one unit.
+            try db.execute(sql: """
+                CREATE TABLE attachment (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    ownerType TEXT NOT NULL,
+                    ownerId TEXT NOT NULL,
+                    kind TEXT NOT NULL,
+                    path TEXT NOT NULL,
+                    originalName TEXT NOT NULL,
+                    contentType TEXT NOT NULL,
+                    size INTEGER NOT NULL,
+                    caption TEXT NOT NULL DEFAULT '',
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX attachment_owner ON attachment(ownerType, ownerId);
+                """)
+        }
         return migrator
     }
 

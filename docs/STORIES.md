@@ -166,7 +166,14 @@ Acceptance:
 - [unit] Files are copied into `Files/<yyyy>/<uuid>.<ext>`. The database stores only the relative path, the size, and the original name.
 - [snap] Photos show as a grid of thumbnails with captions. Double-click or Space opens Quick Look.
 - [manual] Continuity Camera from an iPhone inserts the photo into the open repair.
-Status: todo
+UX:
+- Flow: drop files from Finder, ⌘V a copied image or file, File > Import from iPhone (Take Photo, Scan Documents), or "Add Photo or File…" -> copied into the library -> thumbnail appears in "Photos and Files"
+- Surface: inline section on the repair, device, and customer pages
+- States: empty "Drop photos or files here, paste them, or use File > Import from iPhone."; click selects, Space or double-click opens Quick Look; Move to Trash with Undo
+- Words: "Photos and Files", "Add Photo or File…", "Add Caption…", "Quick Look", "Show in Finder"
+- Access: each photo reads "Photo, <kind>, <caption or name>"
+Built: from SwiftUI's ImportFromDevicesCommands and importsItemProviders. [manual] Continuity Camera is not tried yet with a real iPhone.
+Status: done
 
 ### S-011 Mark intake photos
 As the user, I mark photos taken at check-in as "Intake" so the device's condition on arrival is on record.
@@ -175,7 +182,10 @@ Depends: S-010
 Acceptance:
 - [snap] Intake photos show a badge and appear first.
 - [unit] An attachment has a `kind` (intake, progress, final, document).
-Status: todo
+UX:
+- Flow: right-click a photo > Kind > Intake, Progress, Final, or Document
+- Words: badge "Intake" (« Dépôt »), separate from the Intake status (« Reçue »)
+Status: done
 
 ### S-012 Attach any file
 As the user, I drop a PDF, a boardview (.brd, .bdv, .fz, .cad, .tvw), or any other file onto a repair or device, and it is stored with an icon and opens in its default app.
@@ -184,7 +194,8 @@ Depends: S-010
 Acceptance:
 - [unit] Unknown types are kept as-is. Boardview extensions are recognised and labelled "Boardview".
 - [snap] Non-images show as file rows with an icon, name, and size.
-Status: todo
+Built: double-click a file opens it in its default app; the Boardview tag uses the extensions in Attachment.boardviewExtensions.
+Status: done
 
 ### S-013 Add a part to inventory
 As the user, I add a part with its name, SKU, vendor, URL, cost, sell price, quantity in stock, low-stock threshold, and compatible models.

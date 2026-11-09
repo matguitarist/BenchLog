@@ -51,6 +51,16 @@
         }
       }
     },
+    "Add Caption…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une légende…"
+          }
+        }
+      }
+    },
     "Add Customer": {
       "localizations": {
         "fr": {
@@ -87,6 +97,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter une note"
+          }
+        }
+      }
+    },
+    "Add Photo or File…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une photo ou un fichier…"
           }
         }
       }
@@ -221,6 +241,16 @@
         }
       }
     },
+    "Boardview": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boardview"
+          }
+        }
+      }
+    },
     "Brand": {
       "localizations": {
         "fr": {
@@ -247,6 +277,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Annulée"
+          }
+        }
+      }
+    },
+    "Caption": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Légende"
           }
         }
       }
@@ -471,6 +511,16 @@
         }
       }
     },
+    "Copy photos or files from your Mac into this record": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier des photos ou des fichiers de votre Mac dans cette fiche"
+          }
+        }
+      }
+    },
     "Create Repair": {
       "localizations": {
         "fr": {
@@ -617,6 +667,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Point %lld"
+          }
+        }
+      }
+    },
+    "Drop photos or files here, paste them, or use File > Import from iPhone.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déposez des photos ou des fichiers ici, collez-les ou utilisez Fichier > Importer depuis l’iPhone."
+          }
+        }
+      }
+    },
+    "Edit Caption…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier la légende…"
           }
         }
       }
@@ -817,6 +887,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les factures et les bons de dépôt utilisent la langue des documents de chaque client, pas celle-ci."
+          }
+        }
+      }
+    },
+    "Kind": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type"
           }
         }
       }
@@ -1156,7 +1236,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ouvertes"
+            "value": "Ouvrir"
           }
         }
       }
@@ -1331,6 +1411,26 @@
         }
       }
     },
+    "Photo, %@, %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photo, %1$@, %2$@"
+          }
+        }
+      }
+    },
+    "Photos and Files": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Photos et fichiers"
+          }
+        }
+      }
+    },
     "Picked Up": {
       "localizations": {
         "fr": {
@@ -1367,6 +1467,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Promise pour le"
+          }
+        }
+      }
+    },
+    "Quick Look": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coup d’œil"
           }
         }
       }
@@ -1527,6 +1637,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afficher le code"
+          }
+        }
+      }
+    },
+    "Show in Finder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher dans le Finder"
           }
         }
       }
@@ -1741,6 +1861,22 @@
         }
       }
     },
+    "filter.open": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvertes"
+          }
+        }
+      }
+    },
     "filter.ready": {
       "localizations": {
         "en": {
@@ -1753,6 +1889,70 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prêtes"
+          }
+        }
+      }
+    },
+    "photo.document": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Document"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Document"
+          }
+        }
+      }
+    },
+    "photo.final": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Final"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remise"
+          }
+        }
+      }
+    },
+    "photo.intake": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Intake"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dépôt"
+          }
+        }
+      }
+    },
+    "photo.progress": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Progress"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Travail"
           }
         }
       }
