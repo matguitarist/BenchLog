@@ -277,6 +277,11 @@ public final class Library: Sendable {
                 INSERT OR IGNORE INTO meta (key, value) VALUES ('nextInvoiceNumber', '1');
                 """)
         }
+        migrator.registerMigration("v7-search") { db in
+            // Global search: an FTS5 index over customers, devices, repairs, notes, parts,
+            // and guides, kept current by triggers (Search.swift).
+            try SearchIndex.install(db)
+        }
         return migrator
     }
 
