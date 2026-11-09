@@ -26,6 +26,15 @@ extension Library {
     /// How long a row stays in the Trash before Empty Trash removes it.
     public static let trashDays = 30
 
+    /// Every foreign key Empty Trash deletes or clears before the row it points at goes.
+    /// A new table that points at a customer, device, repair, part, guide, or attachment
+    /// must be handled in `emptyTrash` and listed here; TrashTests fails until it is.
+    static let purgedReferences: Set<String> = [
+        "device.customerId", "repair.deviceId",
+        "partUse.repairId", "partUse.partId", "labourLine.repairId", "invoice.repairId",
+        "partFit.partId", "guideLink.guideId", "guide.fileId", "invoice.fileId",
+    ]
+
     /// Repairs not yet Picked Up across a customer's devices.
     public func openRepairCount(ofCustomer id: UUID) throws -> Int {
         try db.read { db in

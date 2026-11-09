@@ -1,4 +1,5 @@
 import Foundation
+import GRDB
 import Testing
 @testable import BenchLogKit
 
@@ -74,5 +75,18 @@ import Testing
         // The part went in 2 days ago: it waits its 30 days.
         #expect(try library.trashCount(now: later) == 0)
         #expect(try library.trashCount(now: later.addingTimeInterval(29 * 86_400)) == 1)
+    }
+
+    @Test func emptyTrashKnowsEveryReferenceToATrashableRow() throws {
+        let trashable: Set<String> = ["customer", "device", "repair", "part", "guide", "attachment"]
+        let references = try library.db.read { db in
+            try String.fetchAll(db, sql: "SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite%' AND name NOT LIKE 'search%'")
+                .flatMap { table in
+                    try Row.fetchAll(db, sql: "PRAGMA foreign_key_list(\(table))")
+                        .filter { trashable.contains($0["table"] as String) }
+                        .map { "\(table).\($0["from"] as String)" }
+                }
+        }
+        #expect(Set(references) == Library.purgedReferences)
     }
 }
