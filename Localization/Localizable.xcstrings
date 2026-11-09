@@ -41,6 +41,26 @@
         }
       }
     },
+    "%@ · credited by %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · créditée par %@"
+          }
+        }
+      }
+    },
+    "%@ · credits %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ · crédite %@"
+          }
+        }
+      }
+    },
     "%lld d": {
       "localizations": {
         "fr": {
@@ -1261,6 +1281,16 @@
         }
       }
     },
+    "Credit Note %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note de crédit %@"
+          }
+        }
+      }
+    },
     "Customer": {
       "localizations": {
         "fr": {
@@ -2251,12 +2281,52 @@
         }
       }
     },
+    "Issue Credit Note": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Émettre la note de crédit"
+          }
+        }
+      }
+    },
+    "Issue Credit Note…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Émettre une note de crédit…"
+          }
+        }
+      }
+    },
+    "Issue a Credit Note for %@?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Émettre une note de crédit pour %@ ?"
+          }
+        }
+      }
+    },
     "Issue an invoice with the next number; it cannot change afterwards": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Émettre une facture avec le prochain numéro ; elle ne pourra plus changer ensuite"
+          }
+        }
+      }
+    },
+    "It cancels the invoice. To correct it, issue a new invoice afterwards. A credit note cannot be changed.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Elle annule la facture. Pour la corriger, émettez ensuite une nouvelle facture. Une note de crédit ne peut pas être modifiée."
           }
         }
       }
@@ -2507,6 +2577,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Manitoba"
+          }
+        }
+      }
+    },
+    "Mark Not Refunded": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marquer comme non remboursée"
           }
         }
       }
@@ -3001,6 +3081,16 @@
         }
       }
     },
+    "Not Refunded": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non remboursée"
+          }
+        }
+      }
+    },
     "Not found": {
       "localizations": {
         "fr": {
@@ -3117,6 +3207,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sur l’établi depuis %lld jours"
+          }
+        }
+      }
+    },
+    "Only an invoice can be credited.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seule une facture peut être créditée."
           }
         }
       }
@@ -3821,6 +3921,16 @@
         }
       }
     },
+    "Reason (optional)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Motif (facultatif)"
+          }
+        }
+      }
+    },
     "Received": {
       "localizations": {
         "fr": {
@@ -3837,6 +3947,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Indiquer comment le client a payé"
+          }
+        }
+      }
+    },
+    "Record how you paid the customer back": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indiquer comment vous avez remboursé le client"
+          }
+        }
+      }
+    },
+    "Refunded · %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remboursée · %@"
           }
         }
       }
@@ -4681,6 +4811,16 @@
         }
       }
     },
+    "The repair has no labour or priced parts to bill.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La réparation n’a aucune main-d’œuvre ni pièce avec un prix à facturer."
+          }
+        }
+      }
+    },
     "The shop": {
       "localizations": {
         "fr": {
@@ -4757,6 +4897,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce fichier n’est pas une sauvegarde BenchLog."
+          }
+        }
+      }
+    },
+    "This invoice is already credited by %@.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette facture est déjà créditée par %@."
           }
         }
       }

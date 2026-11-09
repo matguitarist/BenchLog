@@ -212,6 +212,20 @@ enum SelfTest {
                         let reprint = model.read(nil) { try $0.invoice(invoice.id) }?.fileId.flatMap { id in model.read(nil) { try $0.attachment(id) } }
                         let paidText = reprint.flatMap { PDFDocument(url: library.fileURL(for: $0)) }?.string ?? ""
                         check("a paid invoice reprints with PAYÉ", paidText.contains("PAYÉ"))
+
+                        // S-040, S-041 Credit the invoice, then refund it.
+                        await model.issueCreditNote(for: invoice.id, reason: "Self-test")
+                        let credit = model.read(nil) { try $0.creditNote(of: invoice.id) }
+                        check("a credit note gets the first credit number", credit?.numberText == "NC-0001")
+                        @MainActor func text(_ document: Invoice?) -> String {
+                            document?.fileId.flatMap { id in model.read(nil) { try $0.attachment(id) } }
+                                .flatMap { PDFDocument(url: library.fileURL(for: $0)) }?.string ?? ""
+                        }
+                        check("the credit note PDF names the invoice it credits", text(credit).contains("Note de crédit") && text(credit).contains("F-0001"))
+                        if let credit {
+                            await model.setPaid(credit.id, method: .debit)
+                            check("a refunded credit note reprints with REMBOURSÉ", text(model.read(nil) { try $0.invoice(credit.id) }).contains("REMBOURSÉ"))
+                        }
                     }
                 }
 

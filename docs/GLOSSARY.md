@@ -59,6 +59,8 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Tax | One sales tax charged on a bill: GST, HST, QST, PST, RST, or a US sales tax, each with a rate and a registration number | levy, VAT |
 | Local rate | US only: the county and city rate added to the state's sales tax | city tax |
 | Tax labour | Whether labour is taxed; off in states that tax only parts | taxable services |
+| Credit Note | A numbered document (NC-0001) that cancels an invoice by reversing its lines and taxes; « Note de crédit » | refund invoice, void, credit memo |
+| Refund | Paying a credit note back to the customer, with the method; « Remboursement » | reimbursement, payback |
 
 ## Statuses (in order)
 
@@ -108,3 +110,4 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Sales tax (US) | Taxe de vente |
 | Taxable amount (parts) | Montant taxable (pièces) |
 | Paid | Payé |
+| Credit Note / Refunded | Note de crédit / Remboursé |

@@ -167,6 +167,12 @@ enum SeedData {
         }
         if let id = rows.first(where: { $0.device.id == mNES.id })?.id {
             try library.save(LabourLine(repairId: id, description: "Nettoyage et ajustement du connecteur 72 broches", kind: .flat, unitCents: 4500))
+            // First billed without the promised discount: credited, refunded, and billed again.
+            let wrong = try library.issue(.invoice, for: id, now: now.addingTimeInterval(-22 * day))
+            try library.setPaid(wrong.id, method: .cash, now: now.addingTimeInterval(-22 * day))
+            let credit = try library.issueCreditNote(for: wrong.id, reason: "Rabais de 5 $ promis à la réception, oublié sur la facture F-0002.",
+                                                     now: now.addingTimeInterval(-20 * day))
+            try library.setPaid(credit.id, method: .cash, now: now.addingTimeInterval(-20 * day))
             try library.setDiscount(500, of: id)
             let invoice = try library.issue(.invoice, for: id, now: now.addingTimeInterval(-20 * day))
             try library.setPaid(invoice.id, method: .cash, now: now.addingTimeInterval(-20 * day))

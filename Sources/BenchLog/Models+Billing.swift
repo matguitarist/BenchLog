@@ -64,6 +64,12 @@ extension AppModel {
         if let invoice = read(nil, { try $0.invoice(invoiceID) }) { await printDocument(invoice, open: false) }
     }
 
+    /// Issues a credit note that cancels an invoice, prints it on the repair, and opens it.
+    func issueCreditNote(for invoiceID: UUID, reason: String) async {
+        guard let credit = write("Credited invoice \(invoiceID.stored)", { try $0.issueCreditNote(for: invoiceID, reason: reason) }) else { return }
+        await printDocument(credit, open: true)
+    }
+
     func decide(_ estimateID: UUID, approved: Bool) {
         write("Estimate \(estimateID.stored) \(approved ? "approved" : "refused")") { try $0.decide(estimateID, approved: approved) }
     }
@@ -106,6 +112,9 @@ extension AppModel {
         if invoice.kind == .estimate {
             let ticket = invoice.document.map { TicketNumber($0.ticketNumber).text } ?? ""
             name = (french ? "Estimation " : "Estimate ") + ticket + ".pdf"
+        } else if invoice.kind == .creditNote {
+            name = (french ? "Note de crédit " : "Credit note ") + (invoice.numberText ?? "")
+                + (invoice.paidAt != nil ? (french ? " (remboursée)" : " (refunded)") : "") + ".pdf"
         } else {
             name = (french ? "Facture " : "Invoice ") + (invoice.numberText ?? "") + (invoice.paidAt != nil ? (french ? " (payée)" : " (paid)") : "") + ".pdf"
         }

@@ -189,7 +189,8 @@ enum Snapshot {
                 await save(model.html(for: us), "doc-invoice-us")
             }
         }
-        if let paid = documents.first(where: { $0.paidAt != nil }) { await save(model.html(for: paid), "doc-invoice-paid") }
+        if let paid = documents.first(where: { $0.kind == .invoice && $0.paidAt != nil }) { await save(model.html(for: paid), "doc-invoice-paid") }
+        if let credit = documents.first(where: { $0.kind == .creditNote }) { await save(model.html(for: credit), "doc-credit-note") }
     }
 
     /// A small vault for the import sheet: model folders, a revision, a general note.

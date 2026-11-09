@@ -232,7 +232,7 @@ public struct Bill: Hashable, Sendable {
 // MARK: - Documents
 
 public enum DocumentKind: String, Codable, Sendable {
-    case invoice, estimate
+    case invoice, estimate, creditNote
 }
 
 public enum PaymentMethod: String, Codable, CaseIterable, Sendable, Identifiable {
@@ -261,6 +261,9 @@ public struct DocumentContent: Codable, Hashable, Sendable {
     public var diagnosis: String
     public var lines: [BillLine]
     public var totals: Totals
+    /// Credit notes only: the invoice credited ("F-0003") and why.
+    public var credits: String?
+    public var reason: String?
 }
 
 extension BusinessProfile: Hashable {}
@@ -292,19 +295,32 @@ public struct Invoice: BenchRecord {
     public var updatedAt: Date
     public var deletedAt: Date?
 
-    public var numberText: String? { number.map { "F-" + String(format: "%04d", $0) } }
+    /// Credit notes only: 1 prints as NC-0001.
+    public var creditNumber: Int? = nil
+    /// Credit notes only: the invoice it cancels.
+    public var creditsInvoiceId: UUID? = nil
+
+    /// "F-0001" for an invoice, "NC-0001" for a credit note.
+    public var numberText: String? {
+        if kind == .creditNote { return creditNumber.map { "NC-" + String(format: "%04d", $0) } }
+        return number.map { "F-" + String(format: "%04d", $0) }
+    }
 
     public var document: DocumentContent? {
         try? JSONDecoder().decode(DocumentContent.self, from: Data(content.utf8))
     }
 }
 
-public enum BillingError: LocalizedError {
+public enum BillingError: LocalizedError, Equatable {
     case nothingToBill
+    case notAnInvoice
+    case alreadyCredited(String)
 
     public var errorDescription: String? {
         switch self {
-        case .nothingToBill: "The repair has no labour or priced parts to bill."
+        case .nothingToBill: String(localized: "The repair has no labour or priced parts to bill.")
+        case .notAnInvoice: String(localized: "Only an invoice can be credited.")
+        case .alreadyCredited(let number): String(localized: "This invoice is already credited by \(number).")
         }
     }
 }
@@ -415,6 +431,46 @@ extension Library {
         }
     }
 
+    /// Issues a credit note that cancels an invoice: the next credit number, the invoice's
+    /// lines and each tax reversed. The invoice keeps its number; to correct it, issue a new
+    /// invoice after the credit note.
+    @discardableResult
+    public func issueCreditNote(for invoiceID: UUID, reason: String = "", now: Date = .now) throws -> Invoice {
+        guard let invoice = try invoice(invoiceID), invoice.kind == .invoice, var content = invoice.document else {
+            throw BillingError.notAnInvoice
+        }
+        if let credit = try creditNote(of: invoiceID) { throw BillingError.alreadyCredited(credit.numberText ?? "") }
+        content.lines = content.lines.map { line in
+            var line = line
+            line.unitCents = -line.unitCents
+            line.amountCents = -line.amountCents
+            return line
+        }
+        let t = content.totals
+        content.totals = Totals(labourCents: -t.labourCents, partsCents: -t.partsCents, discountCents: -t.discountCents,
+                                subtotalCents: -t.subtotalCents, taxableCents: -t.taxableCents,
+                                taxes: t.taxes.map { TaxLine(kind: $0.kind, rate: $0.rate, cents: -$0.cents) },
+                                totalCents: -t.totalCents)
+        content.credits = invoice.numberText
+        content.reason = reason.trimmingCharacters(in: .whitespacesAndNewlines)
+        let json = String(decoding: try JSONEncoder().encode(content), as: UTF8.self)
+        return try db.write { db in
+            let next = try Int.fetchOne(db, sql: "SELECT CAST(value AS INTEGER) FROM meta WHERE key = 'nextCreditNumber'") ?? 1
+            try db.execute(sql: "INSERT OR REPLACE INTO meta (key, value) VALUES ('nextCreditNumber', ?)", arguments: ["\(next + 1)"])
+            let credit = Invoice(id: UUID(), repairId: invoice.repairId, kind: .creditNote, number: nil, issuedAt: now, validUntil: nil,
+                                 language: invoice.language, content: json, totalCents: -invoice.totalCents,
+                                 paidAt: nil, paymentMethod: nil, decision: nil, decidedAt: nil, fileId: nil,
+                                 createdAt: now, updatedAt: now, deletedAt: nil, creditNumber: next, creditsInvoiceId: invoice.id)
+            try credit.insert(db)
+            return credit
+        }
+    }
+
+    /// The credit note that cancels an invoice, if any.
+    public func creditNote(of invoiceID: UUID) throws -> Invoice? {
+        try db.read { try Invoice.filter(Column("creditsInvoiceId") == invoiceID.stored && Column("deletedAt") == nil).fetchOne($0) }
+    }
+
     public func invoice(_ id: UUID) throws -> Invoice? {
         try db.read { try Invoice.fetchOne($0, key: id.stored) }
     }
@@ -456,12 +512,13 @@ extension Library {
         return try setStatus(next, of: repair.id, now: now.addingTimeInterval(1))
     }
 
-    /// Ready repairs with no paid invoice: the money still to collect.
+    /// Ready repairs with no paid invoice (a credited one does not count): the money still to collect.
     public func toCollectRepairIDs() throws -> Set<UUID> {
         try db.read { db in
             let ids = try String.fetchAll(db, sql: """
                 SELECT id FROM repair WHERE status = 'ready' AND deletedAt IS NULL AND id NOT IN (
-                    SELECT repairId FROM invoice WHERE kind = 'invoice' AND paidAt IS NOT NULL AND deletedAt IS NULL)
+                    SELECT repairId FROM invoice WHERE kind = 'invoice' AND paidAt IS NOT NULL AND deletedAt IS NULL
+                    AND id NOT IN (SELECT creditsInvoiceId FROM invoice WHERE creditsInvoiceId IS NOT NULL AND deletedAt IS NULL))
                 AND deviceId NOT IN (
                     SELECT d.id FROM device d JOIN customer c ON c.id = d.customerId WHERE c.isShop = 1)
                 """)

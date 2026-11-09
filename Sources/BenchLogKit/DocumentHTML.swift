@@ -29,8 +29,9 @@ public struct DocumentHTML {
         var intakeSlip, invoice, estimate, ticket, invoiceNumber, date, customer, device, serial, complaint,
             condition, intakePhotos, diagnosis, description, quantity, unitPrice, amount, labour, parts, subtotal,
             discount, taxable, total, warranty, terms, signature, validUntil, paid, phone,
-            email, hourly, flat, received, approval, approvalLine: String
+            email, hourly, flat, received, approval, approvalLine, creditNote, creditNumber, credits, reason, refunded: String
         var paidOn: (String, String) -> String
+        var refundedOn: (String, String) -> String
         /// The approval rule the customer signs at check-in, with the amount for `upTo`.
         var approvalRule: (ApprovalRule, String) -> String?
         var payment: (PaymentMethod) -> String
@@ -49,7 +50,10 @@ public struct DocumentHTML {
                   validUntil: "Valide jusqu’au", paid: "PAYÉ", phone: "Tél.", email: "Courriel", hourly: "h",
                   flat: "forfait", received: "Reçu le", approval: "Approbation du client",
                   approvalLine: "J’accepte cette estimation et autorise la réparation.",
+                  creditNote: "Note de crédit", creditNumber: "N° de note de crédit", credits: "Crédite la facture",
+                  reason: "Motif", refunded: "REMBOURSÉ",
                   paidOn: { date, method in "Payé le \(date) par \(method)" },
+                  refundedOn: { date, method in "Remboursé le \(date) par \(method)" },
                   approvalRule: { rule, amount in
                       switch rule {
                       case .go: nil
@@ -76,7 +80,10 @@ public struct DocumentHTML {
                   validUntil: "Valid until", paid: "PAID", phone: "Tel.", email: "Email", hourly: "h",
                   flat: "flat rate", received: "Received", approval: "Customer Approval",
                   approvalLine: "I accept this estimate and authorize the repair.",
+                  creditNote: "Credit Note", creditNumber: "Credit Note No.", credits: "Credits invoice",
+                  reason: "Reason", refunded: "REFUNDED",
                   paidOn: { date, method in "Paid on \(date) by \(method)" },
+                  refundedOn: { date, method in "Refunded on \(date) by \(method)" },
                   approvalRule: { rule, amount in
                       switch rule {
                       case .go: nil
@@ -178,22 +185,28 @@ public struct DocumentHTML {
         guard country == content.business.country else { return self.in(content.business.country).document(invoice) }
         let w = words
         let isEstimate = invoice.kind == .estimate
+        let isCredit = invoice.kind == .creditNote
+        let heading = isEstimate ? w.estimate : isCredit ? w.creditNote : w.invoice
         var facts: [(String, String)] = []
-        if let number = invoice.numberText { facts.append((w.invoiceNumber, number)) }
+        if let number = invoice.numberText { facts.append((isCredit ? w.creditNumber : w.invoiceNumber, number)) }
         facts.append((w.date, date(invoice.issuedAt)))
+        if isCredit, let credits = content.credits { facts.append((w.credits, credits)) }
         facts.append((w.ticket, TicketNumber(content.ticketNumber).text))
         if let validUntil = invoice.validUntil { facts.append((w.validUntil, date(validUntil))) }
-        var body = header(business: content.business, title: isEstimate ? w.estimate : w.invoice, facts: facts)
+        var body = header(business: content.business, title: heading, facts: facts)
         if let paidAt = invoice.paidAt, let method = invoice.paymentMethod, !isEstimate {
-            body += "<div class=\"stamp\"><strong>\(e(w.paid))</strong><span>\(e(w.paidOn(date(paidAt), w.payment(method))))</span></div>"
+            let (stamp, line) = isCredit ? (w.refunded, w.refundedOn(date(paidAt), w.payment(method)))
+                                         : (w.paid, w.paidOn(date(paidAt), w.payment(method)))
+            body += "<div class=\"stamp\"><strong>\(e(stamp))</strong><span>\(e(line))</span></div>"
         }
         body += parties(customer: content.customer, deviceTitle: content.deviceTitle, serial: content.serial)
-        if !content.diagnosis.isEmpty { body += section(w.diagnosis, multiline(content.diagnosis)) }
+        if isCredit, let reason = content.reason, !reason.isEmpty { body += section(w.reason, multiline(reason)) }
+        if !isCredit, !content.diagnosis.isEmpty { body += section(w.diagnosis, multiline(content.diagnosis)) }
         body += lines(content.lines)
         body += totals(content.totals)
-        body += footer(business: content.business, warranty: !isEstimate)
+        body += footer(business: content.business, warranty: !isEstimate && !isCredit)
         if isEstimate { body += signature(w.approval, note: w.approvalLine) }
-        let title = isEstimate ? "\(w.estimate) \(TicketNumber(content.ticketNumber).text)" : "\(w.invoice) \(invoice.numberText ?? "")"
+        let title = isEstimate ? "\(w.estimate) \(TicketNumber(content.ticketNumber).text)" : "\(heading) \(invoice.numberText ?? "")"
         return page(body, title: title)
     }
 
@@ -256,9 +269,10 @@ public struct DocumentHTML {
     private func totals(_ totals: Totals) -> String {
         let w = words
         var rows: [(String, String, String)] = []
-        if totals.discountCents > 0 {
+        if totals.discountCents != 0 {
+            // On a credit note the discount is reversed too: it shows as a positive amount.
             rows.append((w.labour + " + " + w.parts.lowercased(), money(totals.labourCents + totals.partsCents), ""))
-            rows.append((w.discount, "−\u{2009}" + money(totals.discountCents), ""))
+            rows.append((w.discount, totals.discountCents > 0 ? "−\u{2009}" + money(totals.discountCents) : money(-totals.discountCents), ""))
         }
         rows.append((w.subtotal, money(totals.subtotalCents), "subtotal"))
         if totals.taxableCents != totals.subtotalCents, !totals.taxes.isEmpty {

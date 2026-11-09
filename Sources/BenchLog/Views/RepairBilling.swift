@@ -180,7 +180,7 @@ struct RepairDocuments: View {
             }
             .disabled(working)
             ForEach(documents) { document in
-                DocumentRow(document: document)
+                DocumentRow(document: document, creditedBy: documents.first { $0.creditsInvoiceId == document.id })
             }
         }
         .task(id: model.dataVersion) {
@@ -200,15 +200,19 @@ struct RepairDocuments: View {
 struct DocumentRow: View {
     @Environment(AppModel.self) private var model
     let document: Invoice
+    /// For an invoice: the credit note that cancels it.
+    var creditedBy: Invoice?
+    @State private var crediting = false
+    @State private var reason = ""
 
     var body: some View {
         HStack(spacing: Space.sm) {
-            Image(systemName: document.kind == .invoice ? "doc.text" : "doc.questionmark")
+            Image(systemName: symbol)
                 .foregroundStyle(.secondary)
                 .frame(width: 16)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title).fontWeight(.medium)
-                Text(document.issuedAt.formatted(date: .abbreviated, time: .omitted)).font(.caption).foregroundStyle(.secondary)
+                Text(caption).font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
             Text(Money.text(document.totalCents)).monospacedDigit()
@@ -219,10 +223,40 @@ struct DocumentRow: View {
                 .disabled(document.fileId == nil)
                 .help("Open the PDF in Preview to print or send it")
         }
+        .alert("Issue a Credit Note for \(document.numberText ?? "")?", isPresented: $crediting) {
+            TextField("Reason (optional)", text: $reason)
+            Button("Issue Credit Note") { Task { await model.issueCreditNote(for: document.id, reason: reason) } }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("It cancels the invoice. To correct it, issue a new invoice afterwards. A credit note cannot be changed.")
+        }
+    }
+
+    private var symbol: String {
+        switch document.kind {
+        case .invoice: "doc.text"
+        case .estimate: "doc.questionmark"
+        case .creditNote: "arrow.uturn.backward.circle"
+        }
     }
 
     private var title: String {
-        document.kind == .invoice ? String(localized: "Invoice \(document.numberText ?? "")") : String(localized: "Estimate")
+        switch document.kind {
+        case .invoice: String(localized: "Invoice \(document.numberText ?? "")")
+        case .estimate: String(localized: "Estimate")
+        case .creditNote: String(localized: "Credit Note \(document.numberText ?? "")")
+        }
+    }
+
+    private var caption: String {
+        let date = document.issuedAt.formatted(date: .abbreviated, time: .omitted)
+        if document.kind == .creditNote, let credits = document.document?.credits {
+            return String(localized: "\(date) · credits \(credits)")
+        }
+        if let creditedBy, let number = creditedBy.numberText {
+            return String(localized: "\(date) · credited by \(number)")
+        }
+        return date
     }
 
     @ViewBuilder
@@ -237,6 +271,13 @@ struct DocumentRow: View {
                     Divider()
                     Button("Mark Unpaid") { Task { await model.setPaid(document.id, method: nil) } }
                 }
+                if creditedBy == nil {
+                    Divider()
+                    Button("Issue Credit Note…") {
+                        reason = ""
+                        crediting = true
+                    }
+                }
             } label: {
                 if let method = document.paymentMethod {
                     Label("Paid · \(method.title)", systemImage: "checkmark.circle.fill")
@@ -250,6 +291,28 @@ struct DocumentRow: View {
             .foregroundStyle(document.paidAt != nil ? .green : .orange)
             .tint(document.paidAt != nil ? .green : .orange)
             .help("Record how the customer paid")
+        case .creditNote:
+            Menu {
+                ForEach(PaymentMethod.allCases) { method in
+                    Button(method.title) { Task { await model.setPaid(document.id, method: method) } }
+                }
+                if document.paidAt != nil {
+                    Divider()
+                    Button("Mark Not Refunded") { Task { await model.setPaid(document.id, method: nil) } }
+                }
+            } label: {
+                if let method = document.paymentMethod {
+                    Label("Refunded · \(method.title)", systemImage: "checkmark.circle.fill")
+                } else {
+                    Label("Not Refunded", systemImage: "circle")
+                }
+            }
+            .menuStyle(.button)
+            .buttonStyle(.borderless)
+            .fixedSize()
+            .foregroundStyle(document.paidAt != nil ? .green : .secondary)
+            .tint(document.paidAt != nil ? .green : .secondary)
+            .help("Record how you paid the customer back")
         case .estimate:
             if let decision = document.decision {
                 Label(decision == .approved ? "Approved" : "Refused",

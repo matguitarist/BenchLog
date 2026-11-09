@@ -303,6 +303,15 @@ public final class Library: Sendable {
             // The shop stays out of search.
             try SearchIndex.reinstall(db, version: 2)
         }
+        migrator.registerMigration("v10-credit-notes") { db in
+            // A credit note cancels an invoice: its own number (NC-0001) and the invoice it credits.
+            try db.execute(sql: """
+                ALTER TABLE invoice ADD COLUMN creditNumber INTEGER;
+                ALTER TABLE invoice ADD COLUMN creditsInvoiceId TEXT REFERENCES invoice(id);
+                CREATE UNIQUE INDEX invoice_creditNumber ON invoice(creditNumber);
+                CREATE UNIQUE INDEX invoice_creditsInvoiceId ON invoice(creditsInvoiceId);
+                """)
+        }
         return migrator
     }
 

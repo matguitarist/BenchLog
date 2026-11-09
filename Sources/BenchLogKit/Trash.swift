@@ -55,7 +55,7 @@ extension Library {
             if scope.isShop { throw TrashError.isShop }
             let invoiced = try String.fetchAll(db, sql: """
                 SELECT printf('F-%04d', number) FROM invoice
-                WHERE kind = 'invoice' AND repairId IN (\(Self.list(scope.repairs))) ORDER BY number
+                WHERE kind IN ('invoice', 'creditNote') AND repairId IN (\(Self.list(scope.repairs))) ORDER BY number
                 """)
             if !invoiced.isEmpty { throw TrashError.hasInvoices(invoiced) }
             try Self.stamp(scope, set: now, where: "deletedAt IS NULL", db)

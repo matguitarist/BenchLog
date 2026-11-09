@@ -517,7 +517,8 @@ Acceptance:
 - [unit] A credit note has its own sequence (NC-0001), refers to its invoice, and reverses its lines and each tax. An invoice is credited at most once.
 - [unit] A credited invoice no longer counts as paid for To Collect; a new invoice gets the next invoice number.
 - [snap] « Note de crédit » / "Credit Note" prints "Credits invoice F-0003" with negative amounts.
-Status: todo
+Built: `issueCreditNote(for:reason:)` and `creditNote(of:)` in `Billing.swift`; `DocumentKind.creditNote`, migration v10-credit-notes (`creditNumber`, `creditsInvoiceId`, both unique). The credit note copies the invoice's frozen content with every amount and tax negated, so it reverses exactly what was charged. The invoice row's payment menu has Issue Credit Note… (an alert with an optional reason); the rows read "credited by NC-0001" and "credits F-0002". Snapshot: doc-credit-note.
+Status: done
 
 ### S-041 Record a refund
 As the user, I record that I paid a credit note back, with the method and date.
@@ -526,7 +527,8 @@ Depends: S-040
 Acceptance:
 - [unit] A refund records method and date on the credit note; the reprinted PDF reads REMBOURSÉ / REFUNDED.
 - [snap] The credit note row shows Refunded with its method.
-Status: todo
+Built with S-040: a refund is the credit note's payment (`setPaid` on it); the row has a Refund menu ("Refunded · Cash", "Not Refunded"), and the PDF reprints with REMBOURSÉ / REFUNDED. Snapshot: doc-credit-note (seeded as refunded).
+Status: done
 
 ### S-042 Sales and tax report
 As the user, I see what I invoiced and the tax I collected for a month, a quarter, or a year, so I can file my returns.
