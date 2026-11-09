@@ -2271,6 +2271,16 @@
         }
       }
     },
+    "Invoice Sale": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Facturer la vente"
+          }
+        }
+      }
+    },
     "Invoices and intake slips use each customer’s documents language, not this one.": {
       "localizations": {
         "fr": {
@@ -2307,6 +2317,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Émettre une note de crédit pour %@ ?"
+          }
+        }
+      }
+    },
+    "Issue an invoice to the buyer at the sale price, with your taxes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Émettre une facture à l’acheteur au prix de vente, avec vos taxes"
           }
         }
       }
@@ -4931,6 +4951,16 @@
         }
       }
     },
+    "This sale is already invoiced on %@. Credit that invoice first.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette vente est déjà facturée sur %@. Créditez d’abord cette facture."
+          }
+        }
+      }
+    },
     "Time spent": {
       "localizations": {
         "fr": {
@@ -4987,6 +5017,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "À commander"
+          }
+        }
+      }
+    },
+    "To invoice a sale, mark the device Sold with a price and a buyer.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour facturer une vente, marquez l’appareil comme vendu, avec un prix et un acheteur."
           }
         }
       }

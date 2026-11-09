@@ -204,6 +204,8 @@ enum SeedData {
         gbc = try library.save(gbc)
         try repair(gbc, "New screen and shell.", daysAgo: 30, [.inProgress, .ready, .pickedUp])
         try library.setDisposition(.sold, priceCents: 12_000, buyer: emma.id, of: gbc.id, now: now.addingTimeInterval(-10 * day))
+        let sale = try library.issueSaleInvoice(for: gbc.id, now: now.addingTimeInterval(-10 * day))
+        try library.setPaid(sale.id, method: .credit, now: now.addingTimeInterval(-10 * day))
 
         // Guides: a PDF for one revision, Markdown notes for a model, a brand, a category, and one general.
         let folder = FileManager.default.temporaryDirectory.appending(path: "BenchLog-seed-guides-\(UUID().uuidString)")

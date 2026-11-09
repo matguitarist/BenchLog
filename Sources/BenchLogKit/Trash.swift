@@ -33,6 +33,7 @@ extension Library {
         "device.customerId", "repair.deviceId",
         "partUse.repairId", "partUse.partId", "labourLine.repairId", "invoice.repairId",
         "partFit.partId", "guideLink.guideId", "guide.fileId", "invoice.fileId",
+        "invoice.deviceId",   // a device with a sale invoice is never emptied: invoices are tax records
     ]
 
     /// Repairs not yet Picked Up across a customer's devices.
@@ -54,8 +55,9 @@ extension Library {
             let scope = try Self.scope(of: item, db)
             if scope.isShop { throw TrashError.isShop }
             let invoiced = try String.fetchAll(db, sql: """
-                SELECT printf('F-%04d', number) FROM invoice
-                WHERE kind IN ('invoice', 'creditNote') AND repairId IN (\(Self.list(scope.repairs))) ORDER BY number
+                SELECT iif(kind = 'invoice', printf('F-%04d', number), printf('NC-%04d', creditNumber)) FROM invoice
+                WHERE kind IN ('invoice', 'creditNote')
+                AND (repairId IN (\(Self.list(scope.repairs))) OR deviceId IN (\(Self.list(scope.devices)))) ORDER BY number
                 """)
             if !invoiced.isEmpty { throw TrashError.hasInvoices(invoiced) }
             try Self.stamp(scope, set: now, where: "deletedAt IS NULL", db)
@@ -100,6 +102,7 @@ extension Library {
             // Devices and customers, once nothing points at them.
             let devices = try String.fetchAll(db, sql: """
                 SELECT id FROM device WHERE deletedAt < ? AND NOT EXISTS (SELECT 1 FROM repair WHERE deviceId = device.id)
+                AND NOT EXISTS (SELECT 1 FROM invoice WHERE deviceId = device.id)
                 """, arguments: [cutoff])
             paths += try Self.deleteOwned(by: "device", devices, db)
             try db.execute(sql: "DELETE FROM device WHERE id IN (\(Self.list(devices)))")

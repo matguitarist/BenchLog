@@ -59,6 +59,7 @@ enum Snapshot {
             let approvalRepair = model.read(nil) { try $0.repairRows().first { $0.repair.approvalRule == .ask }?.id }
             let internalRepair = model.read(nil) { try $0.repairRows().first { $0.customer.isShop && !$0.repair.status.isClosed }?.id }
             let shopDevice = model.read(nil) { try $0.shopDevices().first { $0.device.disposition == .forSale }?.id }
+            let soldDevice = model.read(nil) { try $0.shopDevices().first { $0.device.disposition == .sold }?.id }
             let states: [(String, () -> Void)] = [
                 ("guide-markdown", { model.sidebar = .guides; model.selectedGuide = markdownGuide }),
                 ("guide-pdf", { model.sidebar = .guides; model.selectedGuide = pdfGuide }),
@@ -72,6 +73,7 @@ enum Snapshot {
                 ("repair-approval", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = approvalRepair }),
                 ("repair-internal", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = internalRepair }),
                 ("devices-shop", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = shopDevice }),
+                ("devices-shop-sold", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = soldDevice }),
                 ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
             ]
             for (name, setUp) in states where only == nil || only?.contains(name) == true || only?.contains("states") == true {
@@ -191,6 +193,8 @@ enum Snapshot {
         }
         if let paid = documents.first(where: { $0.kind == .invoice && $0.paidAt != nil }) { await save(model.html(for: paid), "doc-invoice-paid") }
         if let credit = documents.first(where: { $0.kind == .creditNote }) { await save(model.html(for: credit), "doc-credit-note") }
+        let sold = ((try? library.shopDevices()) ?? []).first { $0.device.disposition == .sold }
+        if let sold, let sale = (try? library.saleInvoices(of: sold.id))?.first { await save(model.html(for: sale), "doc-sale-invoice") }
     }
 
     /// A small vault for the import sheet: model folders, a revision, a general note.

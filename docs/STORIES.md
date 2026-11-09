@@ -547,7 +547,8 @@ Depends: S-036, S-038
 Acceptance:
 - [unit] The invoice takes the next invoice number, one line for the device at its sale price, and the taxes; it counts in the sales report.
 - [snap] The Shop section of a sold device has Invoice Sale, then the invoice with Open and Mark Paid.
-Status: todo
+Built: `issueSaleInvoice(for:)` and `saleInvoices(of:)`; migration v11-sales rebuilds `invoice` so `repairId` is optional and adds `deviceId` (a CHECK keeps one of them). One `item` line at the sale price, the region's taxes, the shared invoice sequence, no ticket and no repair warranty; the PDF goes on the device. Once per sale unless credited. Snapshots: devices-shop-sold, doc-sale-invoice.
+Status: done
 
 ## Later
 - **v2 Sync**: the Node server becomes a REST and SQLite sync service (pull and push by `updatedAt`, last-writer-wins per row, file upload). The Mac becomes a client.

@@ -29,7 +29,7 @@ public struct DocumentHTML {
         var intakeSlip, invoice, estimate, ticket, invoiceNumber, date, customer, device, serial, complaint,
             condition, intakePhotos, diagnosis, description, quantity, unitPrice, amount, labour, parts, subtotal,
             discount, taxable, total, warranty, terms, signature, validUntil, paid, phone,
-            email, hourly, flat, received, approval, approvalLine, creditNote, creditNumber, credits, reason, refunded: String
+            email, hourly, flat, received, approval, approvalLine, creditNote, creditNumber, credits, reason, refunded, items: String
         var paidOn: (String, String) -> String
         var refundedOn: (String, String) -> String
         /// The approval rule the customer signs at check-in, with the amount for `upTo`.
@@ -51,7 +51,7 @@ public struct DocumentHTML {
                   flat: "forfait", received: "Reçu le", approval: "Approbation du client",
                   approvalLine: "J’accepte cette estimation et autorise la réparation.",
                   creditNote: "Note de crédit", creditNumber: "N° de note de crédit", credits: "Crédite la facture",
-                  reason: "Motif", refunded: "REMBOURSÉ",
+                  reason: "Motif", refunded: "REMBOURSÉ", items: "Articles",
                   paidOn: { date, method in "Payé le \(date) par \(method)" },
                   refundedOn: { date, method in "Remboursé le \(date) par \(method)" },
                   approvalRule: { rule, amount in
@@ -81,7 +81,7 @@ public struct DocumentHTML {
                   flat: "flat rate", received: "Received", approval: "Customer Approval",
                   approvalLine: "I accept this estimate and authorize the repair.",
                   creditNote: "Credit Note", creditNumber: "Credit Note No.", credits: "Credits invoice",
-                  reason: "Reason", refunded: "REFUNDED",
+                  reason: "Reason", refunded: "REFUNDED", items: "Items",
                   paidOn: { date, method in "Paid on \(date) by \(method)" },
                   refundedOn: { date, method in "Refunded on \(date) by \(method)" },
                   approvalRule: { rule, amount in
@@ -191,7 +191,8 @@ public struct DocumentHTML {
         if let number = invoice.numberText { facts.append((isCredit ? w.creditNumber : w.invoiceNumber, number)) }
         facts.append((w.date, date(invoice.issuedAt)))
         if isCredit, let credits = content.credits { facts.append((w.credits, credits)) }
-        facts.append((w.ticket, TicketNumber(content.ticketNumber).text))
+        // A sale invoice has no repair, so no ticket.
+        if content.ticketNumber > 0 { facts.append((w.ticket, TicketNumber(content.ticketNumber).text)) }
         if let validUntil = invoice.validUntil { facts.append((w.validUntil, date(validUntil))) }
         var body = header(business: content.business, title: heading, facts: facts)
         if let paidAt = invoice.paidAt, let method = invoice.paymentMethod, !isEstimate {
@@ -204,7 +205,8 @@ public struct DocumentHTML {
         if !isCredit, !content.diagnosis.isEmpty { body += section(w.diagnosis, multiline(content.diagnosis)) }
         body += lines(content.lines)
         body += totals(content.totals)
-        body += footer(business: content.business, warranty: !isEstimate && !isCredit)
+        // The warranty is a repair's; a sale invoice has none.
+        body += footer(business: content.business, warranty: !isEstimate && !isCredit && invoice.repairId != nil)
         if isEstimate { body += signature(w.approval, note: w.approvalLine) }
         let title = isEstimate ? "\(w.estimate) \(TicketNumber(content.ticketNumber).text)" : "\(heading) \(invoice.numberText ?? "")"
         return page(body, title: title)
@@ -248,7 +250,7 @@ public struct DocumentHTML {
         let w = words
         var html = "<table class=\"lines\"><thead><tr><th>\(e(w.description))</th><th class=\"num\">\(e(w.quantity))</th>"
         html += "<th class=\"num\">\(e(w.unitPrice))</th><th class=\"num\">\(e(w.amount))</th></tr></thead><tbody>"
-        for (kind, title) in [(BillLine.Kind.labour, w.labour), (.part, w.parts)] {
+        for (kind, title) in [(BillLine.Kind.labour, w.labour), (.part, w.parts), (.item, w.items)] {
             let group = lines.filter { $0.kind == kind }
             guard !group.isEmpty else { continue }
             html += "<tr class=\"group\"><td colspan=\"4\">\(e(title))</td></tr>"

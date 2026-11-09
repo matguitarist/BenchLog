@@ -91,6 +91,7 @@ struct ShopSection: View {
     @State private var price: Decimal?
     @State private var buyer: UUID?
     @State private var row: ShopDeviceRow?
+    @State private var sales: [Invoice] = []
 
     var body: some View {
         Section("Shop") {
@@ -123,6 +124,13 @@ struct ShopSection: View {
                     }
                 }
                 .help("Selling to a customer moves the device to them; later repairs are theirs")
+                ForEach(sales) { document in
+                    DocumentRow(document: document, creditedBy: sales.first { $0.creditsInvoiceId == document.id })
+                }
+                if buyer != nil, !isInvoiced {
+                    Button("Invoice Sale") { Task { await model.issueSaleInvoice(for: device.id) } }
+                        .help("Issue an invoice to the buyer at the sale price, with your taxes")
+                }
             }
             if let row {
                 LabeledContent("Cost") {
@@ -147,7 +155,14 @@ struct ShopSection: View {
         .onChange(of: buyer) { saveDisposition() }
         .task(id: model.dataVersion) {
             row = model.read([]) { try $0.shopDevices() }.first { $0.id == device.id }
+            sales = model.read([]) { try $0.saleInvoices(of: device.id) }
         }
+    }
+
+    /// An invoice for this sale that no credit note cancels.
+    private var isInvoiced: Bool {
+        let credited = Set(sales.compactMap(\.creditsInvoiceId))
+        return sales.contains { $0.kind == .invoice && !credited.contains($0.id) }
     }
 
     private func saveDisposition() {

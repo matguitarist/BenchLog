@@ -70,6 +70,12 @@ extension AppModel {
         await printDocument(credit, open: true)
     }
 
+    /// Invoices a shop device's sale to its buyer, prints it on the device, and opens it.
+    func issueSaleInvoice(for deviceID: UUID) async {
+        guard let invoice = write("Invoiced the sale of device \(deviceID.stored)", { try $0.issueSaleInvoice(for: deviceID) }) else { return }
+        await printDocument(invoice, open: true)
+    }
+
     func decide(_ estimateID: UUID, approved: Bool) {
         write("Estimate \(estimateID.stored) \(approved ? "approved" : "refused")") { try $0.decide(estimateID, approved: approved) }
     }
@@ -122,7 +128,9 @@ extension AppModel {
             let data = try await DocumentPrinter.pdf(html: html(for: invoice))
             let file = write("Printed \(name)") { library -> Attachment in
                 if let old = invoice.fileId { try library.trash(Attachment.self, id: old) }
-                let file = try library.addAttachment(data: data, originalName: name, to: .repair, id: invoice.repairId, kind: .document)
+                // A repair's documents go on the repair; a sale's on the device sold.
+                let owner: (NoteOwner, UUID) = invoice.repairId.map { (.repair, $0) } ?? (.device, invoice.deviceId ?? invoice.id)
+                let file = try library.addAttachment(data: data, originalName: name, to: owner.0, id: owner.1, kind: .document)
                 try library.setFile(file.id, of: invoice.id)
                 return file
             }

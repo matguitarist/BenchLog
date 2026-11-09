@@ -116,7 +116,8 @@ public struct LabourLine: BenchRecord {
 
 /// One printed line.
 public struct BillLine: Codable, Hashable, Sendable {
-    public enum Kind: String, Codable, Sendable { case labour, part }
+    /// `item`: a device the shop sells.
+    public enum Kind: String, Codable, Sendable { case labour, part, item }
     public var kind: Kind
     public var description: String
     /// Hours × 100 for hourly labour, quantity × 100 for parts; nil for a flat price.
@@ -211,7 +212,7 @@ public enum Billing {
     /// amount is the parts, less their share of the discount.
     public static func totals(_ lines: [BillLine], discountCents: Int, taxes: [TaxRate], taxesLabour: Bool = true) -> Totals {
         let labour = lines.filter { $0.kind == .labour }.reduce(0) { $0 + $1.amountCents }
-        let parts = lines.filter { $0.kind == .part }.reduce(0) { $0 + $1.amountCents }
+        let parts = lines.filter { $0.kind != .labour }.reduce(0) { $0 + $1.amountCents }
         let discount = min(max(discountCents, 0), labour + parts)
         let subtotal = labour + parts - discount
         let taxable = taxesLabour || labour + parts == 0 ? subtotal : parts - roundHalfUp(discount * parts, labour + parts)
@@ -274,7 +275,8 @@ public struct Invoice: BenchRecord {
     public static let databaseTableName = "invoice"
 
     public var id: UUID
-    public var repairId: UUID
+    /// The repair billed; nil for the sale of a shop device.
+    public var repairId: UUID?
     public var kind: DocumentKind
     /// Invoices only: 1 prints as F-0001.
     public var number: Int?
@@ -299,6 +301,8 @@ public struct Invoice: BenchRecord {
     public var creditNumber: Int? = nil
     /// Credit notes only: the invoice it cancels.
     public var creditsInvoiceId: UUID? = nil
+    /// Sale invoices only: the shop device sold.
+    public var deviceId: UUID? = nil
 
     /// "F-0001" for an invoice, "NC-0001" for a credit note.
     public var numberText: String? {
@@ -315,12 +319,16 @@ public enum BillingError: LocalizedError, Equatable {
     case nothingToBill
     case notAnInvoice
     case alreadyCredited(String)
+    case saleNotReady
+    case alreadyInvoiced(String)
 
     public var errorDescription: String? {
         switch self {
         case .nothingToBill: String(localized: "The repair has no labour or priced parts to bill.")
         case .notAnInvoice: String(localized: "Only an invoice can be credited.")
         case .alreadyCredited(let number): String(localized: "This invoice is already credited by \(number).")
+        case .saleNotReady: String(localized: "To invoice a sale, mark the device Sold with a price and a buyer.")
+        case .alreadyInvoiced(let number): String(localized: "This sale is already invoiced on \(number). Credit that invoice first.")
         }
     }
 }
@@ -415,12 +423,7 @@ extension Library {
             complaint: row.repair.complaint, diagnosis: row.repair.diagnosis, lines: bill.lines, totals: bill.totals)
         let json = String(decoding: try JSONEncoder().encode(content), as: UTF8.self)
         return try db.write { db in
-            var number: Int?
-            if kind == .invoice {
-                let next = try Int.fetchOne(db, sql: "SELECT CAST(value AS INTEGER) FROM meta WHERE key = 'nextInvoiceNumber'") ?? 1
-                try db.execute(sql: "INSERT OR REPLACE INTO meta (key, value) VALUES ('nextInvoiceNumber', ?)", arguments: ["\(next + 1)"])
-                number = next
-            }
+            let number = kind == .invoice ? try Self.nextNumber("nextInvoiceNumber", db) : nil
             let invoice = Invoice(id: UUID(), repairId: repairID, kind: kind, number: number, issuedAt: now,
                                   validUntil: kind == .estimate ? Calendar.current.date(byAdding: .day, value: profile.estimateValidDays, to: now) : nil,
                                   language: row.customer.documentsLanguage, content: json, totalCents: bill.totals.totalCents,
@@ -455,14 +458,57 @@ extension Library {
         content.reason = reason.trimmingCharacters(in: .whitespacesAndNewlines)
         let json = String(decoding: try JSONEncoder().encode(content), as: UTF8.self)
         return try db.write { db in
-            let next = try Int.fetchOne(db, sql: "SELECT CAST(value AS INTEGER) FROM meta WHERE key = 'nextCreditNumber'") ?? 1
-            try db.execute(sql: "INSERT OR REPLACE INTO meta (key, value) VALUES ('nextCreditNumber', ?)", arguments: ["\(next + 1)"])
+            let next = try Self.nextNumber("nextCreditNumber", db)
             let credit = Invoice(id: UUID(), repairId: invoice.repairId, kind: .creditNote, number: nil, issuedAt: now, validUntil: nil,
                                  language: invoice.language, content: json, totalCents: -invoice.totalCents,
                                  paidAt: nil, paymentMethod: nil, decision: nil, decidedAt: nil, fileId: nil,
-                                 createdAt: now, updatedAt: now, deletedAt: nil, creditNumber: next, creditsInvoiceId: invoice.id)
+                                 createdAt: now, updatedAt: now, deletedAt: nil, creditNumber: next, creditsInvoiceId: invoice.id,
+                                 deviceId: invoice.deviceId)
             try credit.insert(db)
             return credit
+        }
+    }
+
+    /// Takes the next number of a sequence kept in meta (invoices and credit notes).
+    static func nextNumber(_ key: String, _ db: Database) throws -> Int {
+        let next = try Int.fetchOne(db, sql: "SELECT CAST(value AS INTEGER) FROM meta WHERE key = ?", arguments: [key]) ?? 1
+        try db.execute(sql: "INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)", arguments: [key, "\(next + 1)"])
+        return next
+    }
+
+    /// Invoices the sale of a shop device to its buyer: the next invoice number, one line at
+    /// the sale price, and the region's taxes. A sale is invoiced once, unless credited.
+    @discardableResult
+    public func issueSaleInvoice(for deviceID: UUID, now: Date = .now) throws -> Invoice {
+        guard let device = try device(deviceID), device.disposition == .sold, let price = device.salePriceCents,
+              let buyer = try customer(device.customerId), !buyer.isShop else { throw BillingError.saleNotReady }
+        let credited = Set(try saleInvoices(of: deviceID).compactMap(\.creditsInvoiceId))
+        if let live = try saleInvoices(of: deviceID).first(where: { $0.kind == .invoice && !credited.contains($0.id) }) {
+            throw BillingError.alreadyInvoiced(live.numberText ?? "")
+        }
+        let profile = try businessProfile()
+        let lines = [BillLine(kind: .item, description: device.title, hundredths: 100, unitCents: price, amountCents: price)]
+        let content = DocumentContent(
+            business: profile,
+            customer: .init(name: buyer.name, phone: buyer.phone, email: buyer.email, address: buyer.address),
+            deviceTitle: device.title, serial: device.serial, ticketNumber: 0, complaint: "", diagnosis: "",
+            lines: lines, totals: Billing.totals(lines, discountCents: 0, taxes: profile.chargedTaxes, taxesLabour: profile.taxesLabour))
+        let json = String(decoding: try JSONEncoder().encode(content), as: UTF8.self)
+        return try db.write { db in
+            let invoice = Invoice(id: UUID(), repairId: nil, kind: .invoice, number: try Self.nextNumber("nextInvoiceNumber", db),
+                                  issuedAt: now, validUntil: nil, language: buyer.documentsLanguage, content: json,
+                                  totalCents: content.totals.totalCents, paidAt: nil, paymentMethod: nil, decision: nil, decidedAt: nil,
+                                  fileId: nil, createdAt: now, updatedAt: now, deletedAt: nil, deviceId: deviceID)
+            try invoice.insert(db)
+            return invoice
+        }
+    }
+
+    /// A shop device's sale invoices and their credit notes, newest first.
+    public func saleInvoices(of deviceID: UUID) throws -> [Invoice] {
+        try db.read { db in
+            try Invoice.filter(Column("deviceId") == deviceID.stored && Column("deletedAt") == nil)
+                .order(Column("issuedAt").desc, Column("rowid").desc).fetchAll(db)
         }
     }
 
@@ -504,10 +550,12 @@ extension Library {
         try db.write { db in
             try db.execute(sql: "UPDATE invoice SET decision = ?, decidedAt = ?, updatedAt = ? WHERE id = ?",
                            arguments: [decision.rawValue, now, now, estimateID.stored])
-            try Note(owner: .repair, ownerId: estimate.repairId, kind: .estimate, text: decision.rawValue, now: now).insert(db)
+            if let repairID = estimate.repairId {
+                try Note(owner: .repair, ownerId: repairID, kind: .estimate, text: decision.rawValue, now: now).insert(db)
+            }
         }
-        guard approved, let repair = try repair(estimate.repairId),
-              [.intake, .diagnosing, .awaitingApproval].contains(repair.status) else { return try repair(estimate.repairId) }
+        guard approved, let repairID = estimate.repairId, let repair = try repair(repairID),
+              [.intake, .diagnosing, .awaitingApproval].contains(repair.status) else { return try estimate.repairId.flatMap { try self.repair($0) } }
         let next: RepairStatus = try isWaitingOnParts(repair.id) ? .waitingOnParts : .inProgress
         return try setStatus(next, of: repair.id, now: now.addingTimeInterval(1))
     }

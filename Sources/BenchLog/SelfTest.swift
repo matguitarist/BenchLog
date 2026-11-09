@@ -303,6 +303,12 @@ enum SelfTest {
                     let sold = model.read([]) { try $0.shopDevices() }.first { $0.id == shopDevice.id }
                     check("a sold shop device shows its profit", sold?.profitCents == 6_000)
                     check("a sold shop device belongs to the buyer", model.read(nil) { try $0.device(shopDevice.id) }?.customerId == buyer?.id)
+                    // S-043 Invoice the sale: the PDF goes on the device.
+                    await model.issueSaleInvoice(for: shopDevice.id)
+                    let sale = model.read(nil) { try $0.saleInvoices(of: shopDevice.id).first }
+                    check("a sale invoice takes an invoice number", sale?.numberText?.hasPrefix("F-") == true && sale?.repairId == nil)
+                    check("the sale invoice PDF is on the device",
+                          model.read([]) { try $0.attachments(for: .device, id: shopDevice.id) }.contains { $0.id == sale?.fileId })
                 } else {
                     check("a repair on a shop device is internal", false)
                 }

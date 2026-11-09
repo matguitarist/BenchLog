@@ -53,3 +53,10 @@ Symptom: Settings read « quotidiennes; celles… » and « Abandonner ce client
 Cause: translations written by hand without the French spacing rules; nothing checked them.
 Fix: a sweep of Localizable.xcstrings: a narrow no-break space (U+202F) before ; ! ?, a no-break space (U+00A0) before : and inside « ».
 Rule: every French string gets U+202F before ; ! ? and U+00A0 before : and inside « »; add them when the string is written, never a plain space or none.
+
+## 2026-11-09 A sale invoice printed the repair warranty
+
+Symptom: the invoice for a sold Game Boy Color read "90-day warranty on the parts and labour of this repair".
+Cause: the footer printed the warranty on every invoice; until sales, every invoice was for a repair.
+Fix: the warranty prints only on invoices with a repair.
+Rule: when a document kind gains a new use (a sale, not a repair), reread every line it prints for wording that assumes the old use.
