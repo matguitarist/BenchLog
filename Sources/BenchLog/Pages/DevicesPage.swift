@@ -65,7 +65,9 @@ struct DevicesPage: View {
                 }
                 .padding(.vertical, 2)
                 .tag(row.id)
+                .contextMenu { Button("Move to Trash", role: .destructive) { model.moveToTrash(.device(row.id)) } }
             }
+            .onDeleteCommand { model.trashFocused() }
         }
     }
 
@@ -87,7 +89,9 @@ struct DevicesPage: View {
             } else {
                 List(shown, selection: $model.selectedDevice) { row in
                     ShopDeviceListRow(row: row).tag(row.id)
+                        .contextMenu { Button("Move to Trash", role: .destructive) { model.moveToTrash(.device(row.id)) } }
                 }
+                .onDeleteCommand { model.trashFocused() }
                 Divider()
                 HStack {
                     Button("Add Shop Device…") { addShopDevice() }

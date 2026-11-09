@@ -46,3 +46,10 @@ Symptom: every new library failed at migration v7-search with "no such column: c
 Cause: the search sources leave the shop out with `c.isShop = 0`, but v7 installs its triggers and fills the index from the current sources, before v9 adds the column. Editing a shared source changed what an old migration does.
 Fix: `SearchIndex.sources(version:)`; v7 installs version 1, v9 adds the columns and then calls `reinstall(db, version: 2)`.
 Rule: a migration installs the search sources of its own version; a change to a source is a new version and a new migration that calls `reinstall`. Never make an old migration depend on code that later changes.
+
+## 2026-11-09 French UI strings with English punctuation spacing
+
+Symptom: Settings read « quotidiennes; celles… » and « Abandonner ce client? », with no space before ; and ?.
+Cause: translations written by hand without the French spacing rules; nothing checked them.
+Fix: a sweep of Localizable.xcstrings: a narrow no-break space (U+202F) before ; ! ?, a no-break space (U+00A0) before : and inside « ».
+Rule: every French string gets U+202F before ; ! ? and U+00A0 before : and inside « »; add them when the string is written, never a plain space or none.

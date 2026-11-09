@@ -467,7 +467,8 @@ Depends: S-001
 Acceptance:
 - [unit] Deletion is soft, and "Empty trash" in Settings removes rows older than 30 days along with their files.
 - [self] ⌘Z after a delete restores the row and its children.
-Status: todo
+Built: `Trash.swift`. Moving to the Trash stamps the item, its devices and repairs, and the notes and files on each with one time; Undo puts back exactly the rows with that time. A repair with an issued invoice cannot go to the Trash (invoices are tax records), nor can the shop. Edit > Move to Trash (⌘⌫; in a text field ⌘⌫ still deletes to the start of the line), Delete in a list, and the rows' context menus. A customer with open repairs asks "Move “Name” to the Trash?". Settings → Backup → Trash shows what is over 30 days old and Empty Trash… deletes it for good with its files. Snapshot: settings-backup.
+Status: done
 
 ---
 

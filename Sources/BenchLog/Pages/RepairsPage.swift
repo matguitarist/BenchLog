@@ -66,6 +66,8 @@ struct RepairsPage: View {
                                         Divider()
                                         Button("Open Customer") { model.open(.customer(row.customer.id)) }
                                         Button("Open Device") { model.open(.device(row.device.id)) }
+                                        Divider()
+                                        Button("Move to Trash", role: .destructive) { model.moveToTrash(.repair(row.id)) }
                                     }
                             }
                         } header: {
@@ -74,6 +76,7 @@ struct RepairsPage: View {
                     }
                 }
             }
+            .onDeleteCommand { model.trashFocused() }
         }
     }
 

@@ -209,3 +209,38 @@ struct BackupSettings: View {
         return String(localized: "Restore “\(restoring.deletingPathExtension().lastPathComponent)”?")
     }
 }
+
+/// Settings → Backup → Trash: deletes for good what has been in the Trash for 30 days.
+struct TrashSettings: View {
+    @Environment(AppModel.self) private var model
+    @State private var ready = 0
+    @State private var confirming = false
+
+    var body: some View {
+        Section {
+            LabeledContent("In the Trash over \(Library.trashDays) days") {
+                Text(ready == 0 ? String(localized: "None") : ready.formatted())
+                    .monospacedDigit()
+                    .foregroundStyle(.secondary)
+            }
+        } header: {
+            Text("Trash")
+        } footer: {
+            HStack {
+                Text("Edit > Undo brings back what you just moved to the Trash.")
+                    .foregroundStyle(.secondary)
+                Spacer()
+                Button("Empty Trash…") { confirming = true }
+                    .disabled(ready == 0)
+                    .help("Delete for good, with their photos and files, the items in the Trash for over \(Library.trashDays) days")
+            }
+        }
+        .task(id: model.dataVersion) { ready = model.read(0) { try $0.trashCount() } }
+        .confirmationDialog("Delete Old Items for Good?", isPresented: $confirming) {
+            Button("Delete", role: .destructive) { model.emptyTrash() }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("They have been in the Trash for over \(Library.trashDays) days. This cannot be undone.")
+        }
+    }
+}

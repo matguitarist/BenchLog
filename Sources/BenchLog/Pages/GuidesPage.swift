@@ -83,13 +83,13 @@ struct GuidesPage: View {
                                     Button("Edit…") { model.sheet = .editGuide(row.id) }
                                     Button("Open in Window") { openWindow(row.id) }
                                     Divider()
-                                    Button("Move to Trash", role: .destructive) { model.trashGuide(row.id) }
+                                    Button("Move to Trash", role: .destructive) { model.moveToTrash(.guide(row.id)) }
                                 }
                         }
                     }
                 }
             }
-            .onDeleteCommand { if let id = model.selectedGuide { model.trashGuide(id) } }
+            .onDeleteCommand { model.trashFocused() }
         }
     }
 

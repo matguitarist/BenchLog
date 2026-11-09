@@ -82,7 +82,9 @@ struct PartsPage: View {
                 }
                 .padding(.vertical, 2)
                 .tag(part.id)
+                .contextMenu { Button("Move to Trash", role: .destructive) { model.moveToTrash(.part(part.id)) } }
             }
+            .onDeleteCommand { model.trashFocused() }
         }
     }
 

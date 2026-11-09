@@ -46,6 +46,17 @@ struct ContentView: View {
         } message: { pending in
             Text(pending.message)
         }
+        .confirmationDialog(model.pendingTrash.map { String(localized: "Move “\($0.name)” to the Trash?") } ?? "",
+                            isPresented: Binding(get: { model.pendingTrash != nil }, set: { if !$0 { model.pendingTrash = nil } }),
+                            presenting: model.pendingTrash) { pending in
+            Button("Move to Trash", role: .destructive) {
+                model.moveToTrash(pending.item, confirmed: true)
+                model.pendingTrash = nil
+            }
+            Button("Cancel", role: .cancel) { model.pendingTrash = nil }
+        } message: { pending in
+            Text("Open repairs: \(pending.openRepairs). They go to the Trash with the customer; Edit > Undo brings everything back.")
+        }
         .alert("Unable to Save", isPresented: Binding(get: { model.problem != nil }, set: { if !$0 { model.problem = nil } })) {
             Button("OK") { model.problem = nil }
         } message: {

@@ -106,7 +106,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Une pièce absente de votre inventaire; elle commence comme Requise"
+            "value": "Une pièce absente de votre inventaire ; elle commence comme Requise"
           }
         }
       }
@@ -386,7 +386,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ajouter « %@ »"
+            "value": "Ajouter « %@ »"
           }
         }
       }
@@ -396,7 +396,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ajouter « %@ » à commander"
+            "value": "Ajouter « %@ » à commander"
           }
         }
       }
@@ -416,7 +416,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ajoute « %@ » au catalogue"
+            "value": "Ajoute « %@ » au catalogue"
           }
         }
       }
@@ -1196,7 +1196,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ne couvre aucun modèle; il s’affiche seulement dans Guides"
+            "value": "Ne couvre aucun modèle ; il s’affiche seulement dans Guides"
           }
         }
       }
@@ -1281,6 +1281,26 @@
         }
       }
     },
+    "Delete Old Items for Good?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer définitivement les anciens éléments ?"
+          }
+        }
+      }
+    },
+    "Delete for good, with their photos and files, the items in the Trash for over %lld days": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer définitivement, avec leurs photos et fichiers, les éléments dans la corbeille depuis plus de %lld jours"
+          }
+        }
+      }
+    },
     "Delete from Catalog…": {
       "localizations": {
         "fr": {
@@ -1296,7 +1316,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Supprimer « %@ » du catalogue?"
+            "value": "Supprimer « %@ » du catalogue ?"
           }
         }
       }
@@ -1396,7 +1416,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abandonner ce client?"
+            "value": "Abandonner ce client ?"
           }
         }
       }
@@ -1406,7 +1426,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Abandonner cette réparation?"
+            "value": "Abandonner cette réparation ?"
           }
         }
       }
@@ -1487,6 +1507,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Déposez des photos ou des fichiers ici, collez-les ou utilisez Fichier > Importer depuis l’iPhone."
+          }
+        }
+      }
+    },
+    "Edit > Undo brings back what you just moved to the Trash.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Édition > Annuler ramène ce que vous venez de placer dans la corbeille."
           }
         }
       }
@@ -1577,6 +1607,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vide"
+          }
+        }
+      }
+    },
+    "Empty Trash…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vider la corbeille…"
           }
         }
       }
@@ -1866,7 +1906,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aller à « %@ »"
+            "value": "Aller à « %@ »"
           }
         }
       }
@@ -2046,7 +2086,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Importer les guides de « %@ »"
+            "value": "Importer les guides de « %@ »"
           }
         }
       }
@@ -2087,6 +2127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "En stock"
+          }
+        }
+      }
+    },
+    "In the Trash over %lld days": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans la corbeille depuis plus de %lld jours"
           }
         }
       }
@@ -2166,7 +2216,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Émettre une facture avec le prochain numéro; elle ne pourra plus changer ensuite"
+            "value": "Émettre une facture avec le prochain numéro ; elle ne pourra plus changer ensuite"
           }
         }
       }
@@ -2186,7 +2236,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Garde les %lld dernières sauvegardes quotidiennes; celles que vous faites vous-même restent."
+            "value": "Garde les %lld dernières sauvegardes quotidiennes ; celles que vous faites vous-même restent."
           }
         }
       }
@@ -2296,7 +2346,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cherche une nouvelle version sur GitHub une fois par jour. Dernière vérification : %@."
+            "value": "Cherche une nouvelle version sur GitHub une fois par jour. Dernière vérification : %@."
           }
         }
       }
@@ -2437,6 +2487,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Placer dans la corbeille"
+          }
+        }
+      }
+    },
+    "Move “%@” to the Trash?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placer « %@ » dans la corbeille ?"
           }
         }
       }
@@ -2756,7 +2816,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aucun guide nommé « %@ ». Importez la note vers laquelle il pointe, puis réessayez."
+            "value": "Aucun guide nommé « %@ ». Importez la note vers laquelle il pointe, puis réessayez."
           }
         }
       }
@@ -2806,7 +2866,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pas encore de prix : %@. Non compté."
+            "value": "Pas encore de prix : %@. Non compté."
           }
         }
       }
@@ -3041,6 +3101,16 @@
         }
       }
     },
+    "Open repairs: %lld. They go to the Trash with the customer; Edit > Undo brings everything back.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réparations en cours : %lld. Elles vont dans la corbeille avec le client ; Édition > Annuler ramène le tout."
+          }
+        }
+      }
+    },
     "Open the PDF in Preview to print or send it": {
       "localizations": {
         "fr": {
@@ -3076,7 +3146,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ouvrir « %@ » dans Guides"
+            "value": "Ouvrir « %@ » dans Guides"
           }
         }
       }
@@ -3166,7 +3236,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "État de la pièce : %@"
+            "value": "État de la pièce : %@"
           }
         }
       }
@@ -3416,7 +3486,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Imprimé « %@ »"
+            "value": "Imprimé « %@ »"
           }
         }
       }
@@ -3666,7 +3736,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Renommer « %@ »"
+            "value": "Renommer « %@ »"
           }
         }
       }
@@ -3716,7 +3786,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Remplacer la bibliothèque par une sauvegarde; elle est d’abord sauvegardée"
+            "value": "Remplacer la bibliothèque par une sauvegarde ; elle est d’abord sauvegardée"
           }
         }
       }
@@ -3816,7 +3886,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Enregistrer les renseignements de l’entreprise (⌘S); les nouveaux documents les utilisent"
+            "value": "Enregistrer les renseignements de l’entreprise (⌘S) ; les nouveaux documents les utilisent"
           }
         }
       }
@@ -4156,7 +4226,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Statut : %@"
+            "value": "Statut : %@"
           }
         }
       }
@@ -4256,7 +4326,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le client accepte : la réparation avance et une note le consigne"
+            "value": "Le client accepte : la réparation avance et une note le consigne"
           }
         }
       }
@@ -4286,7 +4356,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Le client refuse; une note le consigne"
+            "value": "Le client refuse ; une note le consigne"
           }
         }
       }
@@ -4381,12 +4451,32 @@
         }
       }
     },
+    "The shop cannot be moved to the Trash.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’atelier ne peut pas être placé dans la corbeille."
+          }
+        }
+      }
+    },
     "The work comes to %@ before taxes, over the %@ the customer allowed.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Les travaux atteignent %1$@ avant taxes, plus que les %2$@ autorisés par le client."
+          }
+        }
+      }
+    },
+    "They have been in the Trash for over %lld days. This cannot be undone.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ils sont dans la corbeille depuis plus de %lld jours. Cette action est irréversible."
           }
         }
       }
@@ -4501,6 +4591,16 @@
         }
       }
     },
+    "Trash": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Corbeille"
+          }
+        }
+      }
+    },
     "Unable to Open the Library": {
       "localizations": {
         "fr": {
@@ -4547,6 +4647,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Impossible de mettre le document en page."
+          }
+        }
+      }
+    },
+    "Unable to move to the Trash: invoice %@ must be kept for your records.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de placer dans la corbeille : la facture %@ doit être conservée dans vos dossiers."
           }
         }
       }
@@ -4696,7 +4806,7 @@
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Ce que le client a dit sur l’approbation des travaux; imprimé sur le bon de dépôt"
+            "value": "Ce que le client a dit sur l’approbation des travaux ; imprimé sur le bon de dépôt"
           }
         }
       }

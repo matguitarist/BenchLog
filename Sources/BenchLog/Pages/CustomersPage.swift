@@ -57,7 +57,9 @@ struct CustomersPage: View {
                 }
                 .padding(.vertical, 2)
                 .tag(customer.id)
+                .contextMenu { Button("Move to Trash", role: .destructive) { model.moveToTrash(.customer(customer.id)) } }
             }
+            .onDeleteCommand { model.trashFocused() }
         }
     }
 

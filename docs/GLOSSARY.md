@@ -78,7 +78,8 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Add Device | Add a device to a customer | register, new unit |
 | Add Note | Add a note to the timeline (⌘⇧K) | comment, log |
 | Show Passcode / Hide Passcode | Reveal or mask the passcode | unlock, view |
-| Move to Trash | Soft delete, can be undone | delete, remove, archive |
+| Move to Trash | Soft delete with what goes with it (a customer's devices and repairs); Edit > Undo brings it back (⌘⌫); « Placer dans la corbeille » | delete, remove, archive |
+| Empty Trash | Delete for good what has been in the Trash over 30 days, with its files (Settings → Backup); « Vider la corbeille » | purge, clean up |
 | Add Labour | Add a labour line at the hourly rate | add service, add time |
 | Add Photo or File | Copy photos or files into the record shown (⇧⌘P) | attach, upload, import |
 | Print Intake Slip | Make the intake slip PDF and open it (⌘P) | print receipt |

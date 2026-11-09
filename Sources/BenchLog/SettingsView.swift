@@ -37,7 +37,9 @@ struct SettingsView: View {
             case .updates: UpdateSettings()
             case .catalog: EmptyView()
             case .business: BusinessSettings()
-            case .backup: BackupSettings()
+            case .backup:
+                BackupSettings()
+                TrashSettings()
             }
         }
         .formStyle(.grouped)

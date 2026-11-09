@@ -293,6 +293,37 @@ enum SelfTest {
                     check("a repair on a shop device is internal", false)
                 }
 
+                // S-033 A customer with an open repair asks first, goes to the Trash with it, and Undo brings both back.
+                if let leaving = model.write("Self-test trash customer", { library -> Customer in
+                    let customer = try library.save(Customer(name: "Trash Me"))
+                    let device = try library.save(Device(customerId: customer.id, category: .phone, brand: "Self-Test", model: "Phone"))
+                    _ = try library.createRepair(deviceID: device.id, complaint: "Will be trashed")
+                    return customer
+                }) {
+                    let undo = UndoManager()
+                    undo.groupsByEvent = false
+                    model.undoManager = undo
+                    model.sidebar = .customers
+                    model.selectedCustomer = leaving.id
+                    model.trashFocused()
+                    check("trashing a customer with open repairs asks first", model.pendingTrash?.openRepairs == 1)
+                    check("nothing moves before the answer", model.read(0) { try $0.customers(matching: "Trash Me").count } == 1)
+                    undo.beginUndoGrouping()
+                    model.moveToTrash(.customer(leaving.id), confirmed: true)
+                    undo.endUndoGrouping()
+                    model.pendingTrash = nil
+                    check("Move to Trash hides the customer and their repair",
+                          model.read(1) { try $0.customers(matching: "Trash Me").count } == 0
+                          && !model.read([]) { try $0.repairRows() }.contains { $0.customer.id == leaving.id })
+                    check("Move to Trash clears the selection", model.selectedCustomer == nil)
+                    undo.undo()
+                    check("Undo brings back the customer and their repair",
+                          model.read(0) { try $0.customers(matching: "Trash Me").count } == 1
+                          && model.read([]) { try $0.repairRows() }.contains { $0.customer.id == leaving.id })
+                    check("Undo selects the customer again", model.selectedCustomer == leaving.id)
+                    model.undoManager = nil
+                }
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)

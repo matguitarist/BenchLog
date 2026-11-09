@@ -40,6 +40,7 @@ final class AppModel {
     var searching = false
     /// A status change waiting for "Start Anyway" or "Ask for Approval".
     var pendingStart: PendingStart?
+    var pendingTrash: PendingTrash?
     var searchText = ""
     /// Set by ⌘⇧K; the note field of the page shown takes focus and clears it.
     var focusNoteField = false

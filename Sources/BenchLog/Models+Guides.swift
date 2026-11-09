@@ -35,18 +35,6 @@ extension AppModel {
         write("Saved guide \(guide.id.stored) (\(guide.title))") { try $0.save(guide, links: links) }
     }
 
-    func trashGuide(_ id: UUID) {
-        write("Moved guide \(id.stored) to the trash") { try $0.trash(Guide.self, id: id) }
-        if selectedGuide == id { selectedGuide = nil }
-        undoManager?.registerUndo(withTarget: self) { model in
-            MainActor.assumeIsolated {
-                model.write("Restored guide \(id.stored)") { try $0.restore(Guide.self, id: id) }
-                model.selectedGuide = id
-            }
-        }
-        undoManager?.setActionName(String(localized: "Move to Trash"))
-    }
-
     @discardableResult
     func importGuides(_ candidates: [GuideCandidate]) -> GuideImportResult? {
         write("Imported \(candidates.count) guides") { try $0.importGuides(candidates) }

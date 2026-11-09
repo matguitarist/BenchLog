@@ -53,6 +53,12 @@ struct BenchLogApp: App {
                     .keyboardShortcut("p", modifiers: [.command, .shift])
                     .disabled(model.focusedRecord == nil || model.sheet != nil)
             }
+            CommandGroup(after: .pasteboard) {
+                Divider()
+                Button("Move to Trash") { model.trashFocused() }
+                    .keyboardShortcut(.delete, modifiers: .command)
+                    .disabled(model.focusedTrashItem == nil || model.sheet != nil)
+            }
             CommandGroup(after: .appInfo) {
                 Button("Check for Updates…") { Updater.shared.checkForUpdates() }
                     .disabled(!Updater.shared.isAvailable)
