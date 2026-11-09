@@ -200,8 +200,6 @@ enum SelfTest {
                         let paidText = reprint.flatMap { PDFDocument(url: library.fileURL(for: $0)) }?.string ?? ""
                         check("a paid invoice reprints with PAYÉ", paidText.contains("PAYÉ"))
                     }
-                    let cuts = DocumentPrinter.breaks(height: 1000, usable: 720, blocks: [(top: 700, bottom: 740)])
-                    check("pages break between lines, not through one", cuts == [700, 1000], "\(cuts)")
                 }
 
                 // S-001 Data survives a restart

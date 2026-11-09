@@ -10,13 +10,14 @@
   - `Attachment.swift`, `Part.swift`, `Catalog.swift` (outline, rename and merge, which also move devices, part fits, and guide links), `Guide.swift` (guides, their links, and matching a device: revision → model → brand → category).
   - `MarkdownHTML.swift`: Obsidian-flavoured Markdown to HTML (wiki links, image embeds, callouts, tags) and the page around it. Plain Foundation, for the iOS app too.
   - `Billing.swift`: `BusinessProfile` (in `meta`), labour lines, `Billing.totals` (subtotal, TPS and TVQ each rounded half up), and invoices and estimates. Issuing freezes a `DocumentContent` (business, customer, lines, rates, totals) as JSON, so later edits never change a printed document. Invoice numbers have their own sequence.
+  - `PageLayout.swift`: cuts one tall PDF page into Letter pages between blocks (Core Graphics only, for the iOS app too).
   - `DocumentHTML.swift`: the intake slip, estimate, and invoice as printable HTML, in the customer's language, with French typography (`typo`). No WebKit: the app prints it.
   - `GuideImport.swift`: `GuideScanner` reads a folder or vault and guesses each guide's title, tags, images, and link from its path; `importGuides` adds or updates by source path.
 - **BenchLog** (the app, main-actor by default):
   - `Models.swift`: `AppModel` holds the open `Library`, the page and selection, the sheet, history, and undo. Every change goes through its `write`, so it is logged, and pages reload when `dataVersion` changes.
   - `Models+Guides.swift`: adding, importing, and reading guides. Turning a PDF page saves the page without `write`, so the app does not reload.
   - `Models+Billing.swift`: labour, discount, Business settings, and issuing documents. Each document is printed to PDF, saved on the repair as a document attachment, and opened in Preview.
-  - `DocumentPrinter.swift`: HTML to a Letter PDF with an offscreen WKWebView: one tall `pdf(configuration:)` page, cut into pages between blocks (never through a line) by `paginate`.
+  - `DocumentPrinter.swift`: HTML to a Letter PDF with an offscreen WKWebView: one tall `pdf(configuration:)` page plus the blocks it measured, handed to the Kit's `PageLayout`.
   - `Models+Actions.swift`: the actions by feature (customers and devices, repairs, notes, photos and files, parts, catalog). State stays in `Models.swift`; a new feature adds its actions here, or its own `Models+<Feature>.swift` once this file passes 300 lines.
   - `Pages/`: one file per sidebar page (list beside detail, in an `HSplitView`).
   - `Sheets/`: the sheets, and the customer and device fields they share.
