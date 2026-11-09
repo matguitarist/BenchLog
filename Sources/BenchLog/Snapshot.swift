@@ -1,4 +1,6 @@
 import AppKit
+import BenchLogKit
+import PDFKit
 import IOKit.pwr_mgt
 import SwiftUI
 
@@ -53,6 +55,7 @@ enum Snapshot {
             let markdownGuide = guides.first { $0.guide.title == "Blinking Red Light" }?.id
             let pdfGuide = guides.first { $0.guide.format == .pdf }?.id
             let switchRepair = model.read(nil) { try $0.repairRows().first { $0.device.model == "Switch" }?.id }
+            let billedRepair = model.read(nil) { try $0.repairRows().first { $0.repair.status == .ready }?.id }
             let states: [(String, () -> Void)] = [
                 ("guide-markdown", { model.sidebar = .guides; model.selectedGuide = markdownGuide }),
                 ("guide-pdf", { model.sidebar = .guides; model.selectedGuide = pdfGuide }),
@@ -62,6 +65,7 @@ enum Snapshot {
                 ("parts-toorder", { model.sidebar = .parts; model.partsTab = .toOrder }),
                 ("parts-incoming", { model.sidebar = .parts; model.partsTab = .incoming }),
                 ("repair-parts", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = waiting }),
+                ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
             ]
             for (name, setUp) in states where only == nil || only?.contains(name) == true || only?.contains("states") == true {
                 setUp()
@@ -70,12 +74,17 @@ enum Snapshot {
                     try? await Task.sleep(for: .seconds(0.8))
                     if name == "repair-parts" { scrollDetail(toShow: 0.45) }
                     if name == "repair-guides" { scrollDetail(toShow: 0.42) }
+                    if name == "repair-billing" { scrollDetail(toShow: 0.44) }
                     if name.hasPrefix("guide-") { try? await Task.sleep(for: .seconds(1)) }
                     try? await Task.sleep(for: .seconds(0.3))
                     capture(to: "\(dir)/\(name)-\(mode).png")
                 }
             }
             model.partsTab = .inventory
+            // The printed documents, page 1 of each as a PNG.
+            if only == nil || only?.contains("docs") == true {
+                await snapshotDocuments(model: model, dir: dir)
+            }
             // The sheets, each over the page it opens from.
             let customer = model.selectedCustomer
             let sheets: [(String, SidebarItem, SheetKind)] = [
@@ -125,6 +134,40 @@ enum Snapshot {
     /// permission for the app that started this one (your terminal, or Claude).
     /// Without it, falls back to drawing the view hierarchy, which leaves
     /// sidebars and glass blank.
+    /// doc-intake-slip, doc-estimate, doc-invoice, doc-invoice-paid, doc-invoice-english.
+    private static func snapshotDocuments(model: AppModel, dir: String) async {
+        guard let library = model.library, let rows = try? library.repairRows() else { return }
+        func save(_ html: String, _ name: String) async {
+            guard let data = try? await DocumentPrinter.pdf(html: html), let document = PDFDocument(data: data), document.pageCount > 0 else {
+                print("SNAPSHOT failed \(name)")
+                return
+            }
+            // Page 1 is <name>.png; later pages are <name>-p2.png and so on.
+            for index in 0..<document.pageCount {
+                guard let page = document.page(at: index) else { continue }
+                let image = page.thumbnail(of: NSSize(width: 1224, height: 1584), for: .mediaBox)
+                guard let tiff = image.tiffRepresentation, let png = NSBitmapImageRep(data: tiff)?.representation(using: .png, properties: [:]) else { continue }
+                let file = index == 0 ? "\(dir)/\(name).png" : "\(dir)/\(name)-p\(index + 1).png"
+                try? png.write(to: URL(fileURLWithPath: file))
+                print("SNAPSHOT \(file)")
+            }
+        }
+        let profile = (try? library.businessProfile()) ?? BusinessProfile()
+        if let row = rows.first(where: { $0.repair.status == .intake }) {
+            await save(DocumentHTML(language: .french).intakeSlip(business: profile, customer: row.customer, device: row.device, repair: row.repair),
+                       "doc-intake-slip")
+        }
+        let documents = rows.flatMap { (try? library.invoices(for: $0.id)) ?? [] }
+        if let estimate = documents.first(where: { $0.kind == .estimate }) { await save(model.html(for: estimate), "doc-estimate") }
+        if let invoice = documents.first(where: { $0.kind == .invoice && $0.paidAt == nil }) {
+            await save(model.html(for: invoice), "doc-invoice")
+            var english = invoice
+            english.language = .english
+            await save(model.html(for: english), "doc-invoice-english")
+        }
+        if let paid = documents.first(where: { $0.paidAt != nil }) { await save(model.html(for: paid), "doc-invoice-paid") }
+    }
+
     /// A small vault for the import sheet: model folders, a revision, a general note.
     private static func sampleVault() -> URL {
         let root = URL(fileURLWithPath: "/tmp/BenchLog-snapshot-vault")

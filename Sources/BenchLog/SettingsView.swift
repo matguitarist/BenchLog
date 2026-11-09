@@ -36,6 +36,7 @@ struct SettingsView: View {
             case .appearance: AppearanceSettings()
             case .updates: UpdateSettings()
             case .catalog: EmptyView()
+            case .business: BusinessSettings()
             }
         }
         .formStyle(.grouped)
@@ -46,13 +47,14 @@ struct SettingsView: View {
 
 /// The Settings tabs. Snapshot mode walks through every case.
 enum SettingsTab: String, CaseIterable, Identifiable {
-    case general, catalog, appearance, updates
+    case general, business, catalog, appearance, updates
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
         case .general: String(localized: "General")
+        case .business: String(localized: "Business")
         case .catalog: String(localized: "Catalog")
         case .appearance: String(localized: "Appearance")
         case .updates: String(localized: "Updates")
@@ -62,6 +64,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
     var symbol: String {
         switch self {
         case .general: "gearshape"
+        case .business: "building.2"
         case .catalog: "list.bullet.indent"
         case .appearance: "paintpalette"
         case .updates: "arrow.triangle.2.circlepath"

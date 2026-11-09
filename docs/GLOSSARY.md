@@ -38,6 +38,14 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Import Guides | Add a folder of guides at once, after checking what each covers | sync, bulk add |
 | Open in Window | Show a guide in its own window, beside a repair | pop out, detach |
 | Library | BenchLog's folder of data and files on disk | vault, database, store |
+| Labour | Work billed on a repair, by the hour or at a flat price (Main-d’œuvre) | service, time, work line |
+| Discount | An amount taken off before taxes (Rabais) | rebate, coupon |
+| Estimate | A priced document the customer approves or refuses before work (Estimation) | quote, quotation |
+| Invoice | A numbered, frozen bill (Facture, F-0001); its number never changes | bill, receipt |
+| Intake Slip | The paper the customer signs at check-in (Bon de dépôt) | receipt, ticket, work order |
+| Paid / Unpaid | Whether an invoice is settled, and how: Cash, Debit, Credit, e-Transfer (Payée / Impayée) | settled, open |
+| To Collect | A Ready repair with no paid invoice yet (À encaisser) | owing, due, outstanding |
+| Business | Settings → Business: the details printed on every document (Entreprise) | company, shop, profile |
 
 ## Statuses (in order)
 
@@ -62,6 +70,11 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Add Note | Add a note to the timeline (⌘⇧K) | comment, log |
 | Show Passcode / Hide Passcode | Reveal or mask the passcode | unlock, view |
 | Move to Trash | Soft delete, can be undone | delete, remove, archive |
+| Add Labour | Add a labour line at the hourly rate | add service, add time |
+| Print Intake Slip | Make the intake slip PDF and open it (⌘P) | print receipt |
+| Print Estimate | Issue an estimate PDF and open it | send quote |
+| Invoice | Issue the next numbered invoice (⇧⌘I); « Facturer » | bill, create invoice |
+| Approve / Refuse | Record the customer's answer to an estimate | accept, decline |
 
 ## Document terms (fr-CA, printed)
 

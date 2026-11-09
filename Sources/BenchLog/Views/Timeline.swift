@@ -63,6 +63,20 @@ struct Timeline: View {
             .font(.callout)
             .foregroundStyle(.secondary)
             .accessibilityElement(children: .combine)
+        } else if note.kind == .estimate {
+            let approved = note.text == EstimateDecision.approved.rawValue
+            HStack(spacing: Space.sm) {
+                Image(systemName: approved ? "hand.thumbsup" : "hand.thumbsdown")
+                    .foregroundStyle(approved ? .green : .red)
+                    .frame(width: 16)
+                Text(approved ? "Estimate approved" : "Estimate refused")
+                Spacer()
+                Text(note.createdAt.formatted(date: .abbreviated, time: .shortened))
+                    .monospacedDigit()
+            }
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .accessibilityElement(children: .combine)
         } else if editing == note.id {
             TextField("Note", text: $editText, axis: .vertical)
                 .lineLimit(1...8)

@@ -61,6 +61,17 @@ struct BenchLogApp: App {
                     StatusButtons(model: model, repairID: model.focusedRepairID, current: model.focusedRepairStatus)
                 }
                 .disabled(model.focusedRepairID == nil)
+                Button("Print Intake Slip") {
+                    if let id = model.focusedRepairID { Task { await model.printIntakeSlip(for: id) } }
+                }
+                .keyboardShortcut("p")
+                .disabled(model.focusedRepairID == nil)
+                Button("Invoice") {
+                    if let id = model.focusedRepairID { Task { await model.issue(.invoice, for: id) } }
+                }
+                .keyboardShortcut("i", modifiers: [.command, .shift])
+                .disabled(model.focusedRepairID == nil)
+                Divider()
                 Button("Add Note") { model.focusNoteField = true }
                     .keyboardShortcut("k", modifiers: [.command, .shift])
                     .disabled(model.sidebar.map { ![.repairs, .customers, .devices].contains($0) } ?? true)

@@ -231,6 +231,52 @@ public final class Library: Sendable {
                 CREATE INDEX guideLink_model ON guideLink(category, brand, model);
                 """)
         }
+        migrator.registerMigration("v6-billing") { db in
+            // Labour lines and the discount price a repair. Invoices and estimates freeze
+            // what they printed (lines, rates, totals, business and customer) as JSON, so
+            // later changes never alter a document already issued. Rates are in millionths
+            // (5 % = 50000), money in cents.
+            try db.execute(sql: """
+                ALTER TABLE repair ADD COLUMN discountCents INTEGER NOT NULL DEFAULT 0;
+
+                CREATE TABLE labourLine (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    repairId TEXT NOT NULL REFERENCES repair(id),
+                    description TEXT NOT NULL,
+                    kind TEXT NOT NULL,
+                    hundredthHours INTEGER NOT NULL DEFAULT 100,
+                    unitCents INTEGER NOT NULL DEFAULT 0,
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX labourLine_repair ON labourLine(repairId);
+
+                CREATE TABLE invoice (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    repairId TEXT NOT NULL REFERENCES repair(id),
+                    kind TEXT NOT NULL,
+                    number INTEGER,
+                    issuedAt DATETIME NOT NULL,
+                    validUntil DATETIME,
+                    language TEXT NOT NULL,
+                    content TEXT NOT NULL,
+                    totalCents INTEGER NOT NULL,
+                    paidAt DATETIME,
+                    paymentMethod TEXT,
+                    decision TEXT,
+                    decidedAt DATETIME,
+                    fileId TEXT REFERENCES attachment(id),
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX invoice_repair ON invoice(repairId);
+                CREATE UNIQUE INDEX invoice_number ON invoice(number) WHERE number IS NOT NULL;
+
+                INSERT OR IGNORE INTO meta (key, value) VALUES ('nextInvoiceNumber', '1');
+                """)
+        }
         return migrator
     }
 

@@ -248,3 +248,14 @@ struct StatusButtons: View {
         }
     }
 }
+
+extension PaymentMethod {
+    var title: String {
+        switch self {
+        case .cash: String(localized: "Cash")
+        case .debit: String(localized: "Debit")
+        case .credit: String(localized: "Credit")
+        case .eTransfer: String(localized: "e-Transfer")
+        }
+    }
+}

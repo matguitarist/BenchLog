@@ -145,6 +145,8 @@ public struct Repair: BenchRecord {
     public var promisedAt: Date?
     public var completedAt: Date?
     public var pickedUpAt: Date?
+    /// Taken off the subtotal before taxes, in cents.
+    public var discountCents: Int = 0
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
@@ -173,6 +175,8 @@ public enum NoteKind: String, Codable, Sendable {
     case text
     /// Written by BenchLog when a repair's status changes; `text` is the new status's raw value.
     case status
+    /// Written by BenchLog when an estimate is approved or refused; `text` is "approved" or "refused".
+    case estimate
 }
 
 public struct Note: BenchRecord {

@@ -161,6 +161,16 @@
         }
       }
     },
+    "Add Labour": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter de la main-d’œuvre"
+          }
+        }
+      }
+    },
     "Add Model": {
       "localizations": {
         "fr": {
@@ -311,6 +321,16 @@
         }
       }
     },
+    "Add work at your hourly rate, or a flat price": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter du travail à votre taux horaire ou à prix forfaitaire"
+          }
+        }
+      }
+    },
     "Add “%@”": {
       "localizations": {
         "fr": {
@@ -411,6 +431,26 @@
         }
       }
     },
+    "Approve": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approuver"
+          }
+        }
+      }
+    },
+    "Approved": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approuvée"
+          }
+        }
+      }
+    },
     "At or below the low-stock threshold (%lld)": {
       "localizations": {
         "fr": {
@@ -471,6 +511,16 @@
         }
       }
     },
+    "Billing": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Facturation"
+          }
+        }
+      }
+    },
     "Boardview": {
       "localizations": {
         "fr": {
@@ -487,6 +537,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Marque"
+          }
+        }
+      }
+    },
+    "Business": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entreprise"
+          }
+        }
+      }
+    },
+    "Business name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom de l’entreprise"
           }
         }
       }
@@ -517,6 +587,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Légende"
+          }
+        }
+      }
+    },
+    "Cash": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Argent comptant"
           }
         }
       }
@@ -751,6 +831,16 @@
         }
       }
     },
+    "Choose…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir…"
+          }
+        }
+      }
+    },
     "Clear": {
       "localizations": {
         "fr": {
@@ -911,6 +1001,16 @@
         }
       }
     },
+    "Credit": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Crédit"
+          }
+        }
+      }
+    },
     "Customer": {
       "localizations": {
         "fr": {
@@ -937,6 +1037,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dates"
+          }
+        }
+      }
+    },
+    "Debit": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Débit"
           }
         }
       }
@@ -1067,6 +1177,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abandonner cette réparation?"
+          }
+        }
+      }
+    },
+    "Discount": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rabais"
+          }
+        }
+      }
+    },
+    "Documents": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Documents"
+          }
+        }
+      }
+    },
+    "Documents already issued keep the details and rates they printed with.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les documents déjà émis gardent les renseignements et les taux avec lesquels ils ont été imprimés."
           }
         }
       }
@@ -1231,6 +1371,46 @@
         }
       }
     },
+    "Estimate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimation"
+          }
+        }
+      }
+    },
+    "Estimate approved": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimation approuvée"
+          }
+        }
+      }
+    },
+    "Estimate refused": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimation refusée"
+          }
+        }
+      }
+    },
+    "Estimates are valid for": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Durée de validité des estimations"
+          }
+        }
+      }
+    },
     "Find": {
       "localizations": {
         "fr": {
@@ -1311,12 +1491,52 @@
         }
       }
     },
+    "Flat": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Forfait"
+          }
+        }
+      }
+    },
     "Forward": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Suivant"
+          }
+        }
+      }
+    },
+    "GST (%@)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TPS (%@)"
+          }
+        }
+      }
+    },
+    "GST number": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Numéro de TPS"
+          }
+        }
+      }
+    },
+    "GST rate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taux de TPS"
           }
         }
       }
@@ -1471,6 +1691,46 @@
         }
       }
     },
+    "Hourly": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À l’heure"
+          }
+        }
+      }
+    },
+    "Hourly rate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taux horaire"
+          }
+        }
+      }
+    },
+    "Hours": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heures"
+          }
+        }
+      }
+    },
+    "Hours, like 1.5": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Heures, par exemple 1,5"
+          }
+        }
+      }
+    },
     "Import": {
       "localizations": {
         "fr": {
@@ -1551,12 +1811,42 @@
         }
       }
     },
+    "Invoice": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Facturer"
+          }
+        }
+      }
+    },
+    "Invoice %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Facture %@"
+          }
+        }
+      }
+    },
     "Invoices and intake slips use each customer’s documents language, not this one.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Les factures et les bons de dépôt utilisent la langue des documents de chaque client, pas celle-ci."
+          }
+        }
+      }
+    },
+    "Issue an invoice with the next number; it cannot change afterwards": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Émettre une facture avec le prochain numéro; elle ne pourra plus changer ensuite"
           }
         }
       }
@@ -1577,6 +1867,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Type"
+          }
+        }
+      }
+    },
+    "Labour": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Main-d’œuvre"
           }
         }
       }
@@ -1607,6 +1907,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Journal"
+          }
+        }
+      }
+    },
+    "Logo": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logo"
           }
         }
       }
@@ -1661,6 +1971,16 @@
         }
       }
     },
+    "Make an estimate from the labour and parts, and open it to print": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire une estimation à partir de la main-d’œuvre et des pièces, puis l’ouvrir pour l’imprimer"
+          }
+        }
+      }
+    },
     "Make the page bigger (⌘+)": {
       "localizations": {
         "fr": {
@@ -1677,6 +1997,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Réduire la page (⌘−)"
+          }
+        }
+      }
+    },
+    "Make the slip the customer signs at check-in, and open it to print": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire le bon que le client signe au dépôt, puis l’ouvrir pour l’imprimer"
+          }
+        }
+      }
+    },
+    "Mark Unpaid": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marquer comme impayée"
           }
         }
       }
@@ -1807,6 +2147,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nouvelle réparation…"
+          }
+        }
+      }
+    },
+    "New labour lines start at this rate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les nouvelles lignes de main-d’œuvre commencent à ce taux"
           }
         }
       }
@@ -2031,6 +2381,16 @@
         }
       }
     },
+    "No price yet: %@. It is left off.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas encore de prix : %@. Non compté."
+          }
+        }
+      }
+    },
     "No repairs yet": {
       "localizations": {
         "fr": {
@@ -2251,6 +2611,16 @@
         }
       }
     },
+    "Open the PDF in Preview to print or send it": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir le PDF dans Aperçu pour l’imprimer ou l’envoyer"
+          }
+        }
+      }
+    },
     "Open this guide in its own window, beside the repair": {
       "localizations": {
         "fr": {
@@ -2307,6 +2677,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Vue d’ensemble"
+          }
+        }
+      }
+    },
+    "Paid · %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payée · %@"
           }
         }
       }
@@ -2511,6 +2891,56 @@
         }
       }
     },
+    "Pricing": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tarifs"
+          }
+        }
+      }
+    },
+    "Print Estimate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imprimer l’estimation"
+          }
+        }
+      }
+    },
+    "Print Intake Slip": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imprimer le bon de dépôt"
+          }
+        }
+      }
+    },
+    "Printed Text": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Texte imprimé"
+          }
+        }
+      }
+    },
+    "Prints as « %@ »": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imprimé « %@ »"
+          }
+        }
+      }
+    },
     "Promised": {
       "localizations": {
         "fr": {
@@ -2527,6 +2957,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Promise pour le"
+          }
+        }
+      }
+    },
+    "QST (%@)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TVQ (%@)"
+          }
+        }
+      }
+    },
+    "QST number": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Numéro de TVQ"
+          }
+        }
+      }
+    },
+    "QST rate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taux de TVQ"
           }
         }
       }
@@ -2551,6 +3011,16 @@
         }
       }
     },
+    "Rate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taux"
+          }
+        }
+      }
+    },
     "Reading the folder…": {
       "localizations": {
         "fr": {
@@ -2571,12 +3041,52 @@
         }
       }
     },
+    "Ready, and no invoice is paid yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prête, et aucune facture n’est encore payée"
+          }
+        }
+      }
+    },
     "Received": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Reçue le"
+          }
+        }
+      }
+    },
+    "Record how the customer paid": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Indiquer comment le client a payé"
+          }
+        }
+      }
+    },
+    "Refuse": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refuser"
+          }
+        }
+      }
+    },
+    "Refused": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Refusée"
           }
         }
       }
@@ -2601,12 +3111,32 @@
         }
       }
     },
+    "Remove Labour": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer la main-d’œuvre"
+          }
+        }
+      }
+    },
     "Remove from Repair": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Retirer de la réparation"
+          }
+        }
+      }
+    },
+    "Remove this labour line": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer cette ligne de main-d’œuvre"
           }
         }
       }
@@ -2717,6 +3247,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enregistrer"
+          }
+        }
+      }
+    },
+    "Save the business details (⌘S); new documents use them": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer les renseignements de l’entreprise (⌘S); les nouveaux documents les utilisent"
           }
         }
       }
@@ -2951,6 +3491,16 @@
         }
       }
     },
+    "Subtotal": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sous-total"
+          }
+        }
+      }
+    },
     "System (%@)": {
       "localizations": {
         "fr": {
@@ -2991,12 +3541,82 @@
         }
       }
     },
+    "Taxes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taxes"
+          }
+        }
+      }
+    },
+    "Terms, in English": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conditions, en anglais"
+          }
+        }
+      }
+    },
+    "Terms, in French": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Conditions, en français"
+          }
+        }
+      }
+    },
+    "The customer accepts: the repair moves on and a note records it": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le client accepte : la réparation avance et une note le consigne"
+          }
+        }
+      }
+    },
+    "The customer declines; a note records it": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le client refuse; une note le consigne"
+          }
+        }
+      }
+    },
+    "The flat price": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le prix forfaitaire"
+          }
+        }
+      }
+    },
     "The guide's file is not in the library. Add the guide again.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Le fichier du guide n’est pas dans la bibliothèque. Ajoutez le guide de nouveau."
+          }
+        }
+      }
+    },
+    "The hourly rate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le taux horaire"
           }
         }
       }
@@ -3071,12 +3691,32 @@
         }
       }
     },
+    "To Collect": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À encaisser"
+          }
+        }
+      }
+    },
     "To Order": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "À commander"
+          }
+        }
+      }
+    },
+    "Total": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total"
           }
         }
       }
@@ -3107,6 +3747,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Impossible d’enregistrer"
+          }
+        }
+      }
+    },
+    "Unable to lay out the document.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de mettre le document en page."
+          }
+        }
+      }
+    },
+    "Unable to print the document to PDF.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’imprimer le document en PDF."
+          }
+        }
+      }
+    },
+    "Unpaid": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impayée"
           }
         }
       }
@@ -3161,6 +3831,36 @@
         }
       }
     },
+    "Warranty, in English": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garantie, en anglais"
+          }
+        }
+      }
+    },
+    "Warranty, in French": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garantie, en français"
+          }
+        }
+      }
+    },
+    "Website": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Site web"
+          }
+        }
+      }
+    },
     "What BenchLog does with your library shows here.": {
       "localizations": {
         "fr": {
@@ -3187,6 +3887,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce que le client dit qui ne va pas"
+          }
+        }
+      }
+    },
+    "What you did": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que vous avez fait"
           }
         }
       }
@@ -3251,6 +3961,16 @@
         }
       }
     },
+    "^[%lld day](inflect: true)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "^[%lld jour](inflect: true)"
+          }
+        }
+      }
+    },
     "^[%lld device](inflect: true)": {
       "localizations": {
         "fr": {
@@ -3298,6 +4018,16 @@
       },
       "comment": "Guides for devices in no other category"
     },
+    "e-Transfer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Virement Interac"
+          }
+        }
+      }
+    },
     "filter.open": {
       "localizations": {
         "en": {
@@ -3326,6 +4056,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Prêtes"
+          }
+        }
+      }
+    },
+    "h": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "h"
           }
         }
       }

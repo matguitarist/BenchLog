@@ -138,6 +138,34 @@ enum SeedData {
             try library.setStatus(.installed, ofUse: use.id)
         }
 
+        // Billing: the business, labour on several repairs, an estimate, an unpaid and a paid invoice.
+        var profile = BusinessProfile()
+        profile.name = "Atelier Électro Bench"
+        profile.address = "1234, rue Saint-Denis\nMontréal (Québec)  H2X 3K9"
+        profile.phone = "514 555-0100"
+        profile.email = "atelier@example.com"
+        profile.tpsNumber = "123456789 RT0001"
+        profile.tvqNumber = "1234567890 TQ0001"
+        try library.save(profile)
+        if let id = repairOf(sMac) {
+            try library.save(LabourLine(repairId: id, description: "Nettoyage de la carte USB-C", hundredthHours: 150, unitCents: 6500))
+            try library.issue(.estimate, for: id, now: now.addingTimeInterval(-2 * day))
+        }
+        if let id = repairOf(eDeck) {
+            try library.save(LabourLine(repairId: id, description: "Remplacement du joystick droit", hundredthHours: 75, unitCents: 6500))
+            try library.issue(.invoice, for: id, now: now.addingTimeInterval(-3600))
+        }
+        if let id = rows.first(where: { $0.device.id == mNES.id })?.id {
+            try library.save(LabourLine(repairId: id, description: "Nettoyage et ajustement du connecteur 72 broches", kind: .flat, unitCents: 4500))
+            try library.setDiscount(500, of: id)
+            let invoice = try library.issue(.invoice, for: id, now: now.addingTimeInterval(-20 * day))
+            try library.setPaid(invoice.id, method: .cash, now: now.addingTimeInterval(-20 * day))
+        }
+        if let id = repairOf(jPhone) {
+            try library.save(LabourLine(repairId: id, description: "Diagnostic", kind: .flat, unitCents: 3000))
+            try library.save(LabourLine(repairId: id, description: "Pose de l’écran", hundredthHours: 100, unitCents: 6500))
+        }
+
         // Guides: a PDF for one revision, Markdown notes for a model, a brand, a category, and one general.
         let folder = FileManager.default.temporaryDirectory.appending(path: "BenchLog-seed-guides-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)

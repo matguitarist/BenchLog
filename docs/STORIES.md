@@ -301,7 +301,8 @@ Acceptance:
 - [unit] All money is stored as integer cents. Subtotal = labour + parts − discount. TPS = 5 % of the subtotal and TVQ = 9.975 % of the subtotal, each rounded half-up to the cent.
 - [unit] Tax rates come from Settings, and each invoice saves the rates it used, so a later rate change does not alter past invoices.
 - [snap] The totals block shows Sous-total, TPS, TVQ, and Total in fr-CA format (« 1 234,56 $ »).
-Status: todo
+Built: Billing section on the repair (labour lines on two rows: description, then hourly or flat × rate = amount; parts at sell price; discount; totals). Unpriced parts are named and left off. Rates come from Settings → Business and are frozen in each document. Snapshot: repair-billing (not repair-detail-billing).
+Status: done
 
 ### S-022 Business details for documents
 As the user, I enter my business name, address, phone, email, logo, TPS and TVQ registration numbers, the warranty text, and the terms in Settings → Business.
@@ -310,7 +311,8 @@ Depends: S-001
 Acceptance:
 - [snap] Every field has a French label next to what it prints as.
 - [unit] Invoice numbers have their own sequence (F-0001), separate from ticket numbers.
-Status: todo
+Built: Settings → Business, each field with « Prints as … » in French; tax rates, hourly rate, estimate validity, warranty and terms in both languages, logo. Invoice numbers F-0001 are a separate sequence in `meta`. Snapshot: settings-business.
+Status: done
 
 ### S-023 Print an intake slip (bon de dépôt)
 As the user, I print or save a PDF intake slip at check-in, with the customer, the device, the serial, the complaint, the condition, the intake photos (optional), the terms, and a signature line.
@@ -320,7 +322,8 @@ Acceptance:
 - [snap] The slip is in Québec French by default (« Bon de dépôt », « Description du problème », « Signature du client »), or in English when the customer's documents language is English.
 - [unit] The passcode never appears on the slip.
 - [manual] A French speaker checks that the wording and typography are correct (« », spaces before : ; ! ?, fr-CA dates « 9 novembre 2026 »).
-Status: todo
+Built: Print Intake Slip (⌘P) in the Documents section; intake photos are included. The passcode is never printed. Saved as a document on the repair and opened in Preview. [manual] French wording and typography still need a check by a French speaker. Snapshot: doc-intake-slip.
+Status: done
 
 ### S-024 Generate an invoice (facture)
 As the user, I click "Facturer" on a Ready repair and get an invoice PDF with my business details, the TPS/TVQ numbers, the customer, the device, the labour and parts lines, the taxes, the total, and the warranty text.
@@ -330,7 +333,8 @@ Acceptance:
 - [unit] Once issued, an invoice is frozen (its lines, prices, rates, and number). Changes need a new invoice or a credit note (Later).
 - [snap] The invoice matches Québec practice: « Facture », « N° de TPS », « N° de TVQ », « Sous-total », « Total ».
 - [self] The PDF is saved as an attachment (kind: document) on the repair and opens in Preview.
-Status: todo
+Built: Facturer (⇧⌘I) issues the next number and freezes the content; the PDF is saved on the repair and opens in Preview. Pages break between lines, never through one. Snapshots: doc-invoice, doc-invoice-english.
+Status: done
 
 ### S-025 Quote before work (estimation)
 As the user, I print an estimate when the repair is Awaiting approval, and mark it approved or refused.
@@ -339,7 +343,8 @@ Depends: S-021, S-022
 Acceptance:
 - [snap] « Estimation » uses the same layout as the invoice, with "valid until" and no invoice number.
 - [unit] Marking it approved moves the repair to Waiting on parts or In progress, and writes a note.
-Status: todo
+Built: Print Estimate, with « Valide jusqu’au » and an approval signature; Approve or Refuse on the document row moves the repair and writes a note to the timeline. Snapshot: doc-estimate.
+Status: done
 
 ### S-026 Record payment and pickup
 As the user, I mark an invoice paid (cash, debit, credit, e-transfer) and the repair picked up.
@@ -348,7 +353,8 @@ Depends: S-024
 Acceptance:
 - [unit] A paid invoice shows « PAYÉ » with the date and method on its reprint.
 - [snap] Repairs that are Ready and unpaid show a "To collect" badge.
-Status: todo
+Built: the Paid menu on each invoice (cash, debit, credit, e-transfer, or Mark Unpaid) reprints it with « PAYÉ ». "To Collect" shows on Ready repairs with no paid invoice. Picking up uses the existing status menu (Picked Up). Snapshots: doc-invoice-paid, repairs.
+Status: done
 
 ---
 

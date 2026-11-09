@@ -89,6 +89,12 @@ struct RepairDetail: View {
             Section("Parts") {
                 RepairParts(repair: row.repair, device: row.device)
             }
+            Section("Billing") {
+                RepairBilling(repair: row.repair)
+            }
+            Section("Documents") {
+                RepairDocuments(repair: row.repair)
+            }
             Section("Dates") {
                 LabeledContent("Received", value: row.repair.receivedAt.formatted(date: .abbreviated, time: .shortened))
                 PromisedDate(repair: row.repair)

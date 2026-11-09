@@ -32,3 +32,10 @@ Symptom: the PDF reader and the Markdown reader showed an empty area; the PDFVie
 Cause: SwiftUI sizes an `NSViewRepresentable` by its view's fitting size. A container whose subviews are pinned with constraints fits to zero, and `sizeThatFits` did not override it.
 Fix: the PDF container lays out its subviews by hand in `layout()`; the web view has no constraints and a `sizeThatFits` that takes what is offered.
 Rule: in an NSViewRepresentable, never pin subviews with Auto Layout to the root view; lay them out in `layout()` and return the proposal from `sizeThatFits`.
+
+## 2026-11-09 Printing a document to PDF never finished
+
+Symptom: the self-test hung at the first invoice; no PDF was written.
+Cause: `NSPrintOperation.runModal` on an offscreen WKWebView's window never returns, and `run()` needs a visible window.
+Fix: `DocumentPrinter` captures the page with `WKWebView.pdf(configuration:)` as one tall page and cuts it into Letter pages with Core Graphics, breaking between blocks it measured in the page.
+Rule: never use NSPrintOperation for a view that is not on screen; make the PDF with `pdf(configuration:)` and paginate it yourself.

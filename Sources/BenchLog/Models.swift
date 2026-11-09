@@ -22,6 +22,8 @@ final class AppModel {
     var partSearch = ""
     var selectedPart: UUID?
     var guideSearch = ""
+    /// Ready repairs with no paid invoice.
+    var toCollect: Set<UUID> = []
     var selectedGuide: UUID?
 
     var sidebar: SidebarItem? = .repairs
@@ -105,6 +107,7 @@ final class AppModel {
         dataVersion += 1
         openRepairCount = read(0) { try $0.openRepairCount() }
         lowStockCount = read(0) { try $0.lowStockCount() }
+        toCollect = read([]) { try $0.toCollectRepairIDs() }
     }
 
     // MARK: Navigation

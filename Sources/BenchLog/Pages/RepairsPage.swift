@@ -59,7 +59,7 @@ struct RepairsPage: View {
                     if !group.isEmpty {
                         Section {
                             ForEach(group) { row in
-                                RepairListRow(row: row)
+                                RepairListRow(row: row, toCollect: model.toCollect.contains(row.id))
                                     .tag(row.id)
                                     .contextMenu {
                                         Menu("Status") { StatusButtons(model: model, repairID: row.id, current: row.repair.status, shortcuts: false) }
@@ -92,6 +92,8 @@ struct RepairsPage: View {
 /// One repair in the list: ticket, customer, device, complaint, days on the bench, and status.
 struct RepairListRow: View {
     let row: RepairRow
+    /// Ready, and no invoice is paid yet.
+    var toCollect = false
 
     var body: some View {
         let days = row.repair.benchDays()
@@ -118,6 +120,12 @@ struct RepairListRow: View {
             Spacer(minLength: Space.sm)
             VStack(alignment: .trailing, spacing: Space.xs) {
                 StatusPill(status: row.repair.status)
+                if toCollect {
+                    Label("To Collect", systemImage: "dollarsign.circle")
+                        .font(.caption.weight(.medium))
+                        .foregroundStyle(.orange)
+                        .help("Ready, and no invoice is paid yet")
+                }
                 if !row.repair.status.isClosed {
                     Text("\(days) d")
                         .font(.caption)
@@ -130,5 +138,6 @@ struct RepairListRow: View {
         .padding(.vertical, 2)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text("Repair \(row.repair.ticket.text), \(row.customer.name), \(row.device.title), \(row.repair.status.title), \(days) days"))
+        .accessibilityValue(toCollect ? Text("To Collect") : Text(verbatim: ""))
     }
 }

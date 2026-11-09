@@ -1,5 +1,6 @@
 import AppKit
 import BenchLogKit
+import PDFKit
 
 /// Self-test for agents: drives the app model on a library in /tmp,
 /// prints PASS or FAIL per check, and quits with exit code 0 or 1.
@@ -178,6 +179,29 @@ enum SelfTest {
                 if let device {
                     let matches = model.read([]) { try $0.guides(for: device) }
                     check("the repair's device finds the imported guide", matches.first?.guide.title == "Dead Speaker")
+                }
+
+                // S-021 to S-026 Billing and documents
+                if let device, let repair = model.read(nil, { try $0.repairs(of: device.id).last }) {
+                    model.addLabour(to: repair.id)
+                    let labour = model.read([]) { try $0.labourLines(on: repair.id) }
+                    check("a labour line starts at the hourly rate", labour.first?.unitCents == BusinessProfile().hourlyRateCents)
+                    await model.issue(.invoice, for: repair.id)
+                    let invoice = model.read(nil) { try $0.invoices(for: repair.id).first }
+                    check("an invoice gets the first number", invoice?.numberText == "F-0001")
+                    let pdf = invoice?.fileId.flatMap { id in model.read(nil) { try $0.attachment(id) } }
+                    check("the invoice PDF is saved on the repair as a document", pdf?.kind == .document && pdf?.contentType == "com.adobe.pdf")
+                    let text = pdf.flatMap { PDFDocument(url: library.fileURL(for: $0)) }?.string ?? ""
+                    check("the invoice PDF has the French words", text.contains("Facture") && text.contains("Sous-total") && text.contains("TVQ"))
+                    check("the invoice PDF does not print the passcode", !text.contains("1234"))
+                    if let invoice {
+                        await model.setPaid(invoice.id, method: .debit)
+                        let reprint = model.read(nil) { try $0.invoice(invoice.id) }?.fileId.flatMap { id in model.read(nil) { try $0.attachment(id) } }
+                        let paidText = reprint.flatMap { PDFDocument(url: library.fileURL(for: $0)) }?.string ?? ""
+                        check("a paid invoice reprints with PAYÉ", paidText.contains("PAYÉ"))
+                    }
+                    let cuts = DocumentPrinter.breaks(height: 1000, usable: 720, blocks: [(top: 700, bottom: 740)])
+                    check("pages break between lines, not through one", cuts == [700, 1000], "\(cuts)")
                 }
 
                 // S-001 Data survives a restart
