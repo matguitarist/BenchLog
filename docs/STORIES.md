@@ -380,7 +380,7 @@ Status: todo
 As the user, I see a BenchLog icon in the Dock (a bench, multimeter, or screwdriver, made with the app-icon skill).
 Acceptance:
 - [manual] The icon reads well at 16 px and in light, dark, and tinted looks.
-Status: todo
+Status: done
 
 ### S-033 Delete and undo
 As the user, I delete a customer, device, repair, part, or guide, and ⌘Z brings it back. Deleting a customer that has open repairs asks first.
