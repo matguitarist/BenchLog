@@ -402,7 +402,12 @@ Depends: S-001
 Acceptance:
 - [unit] A backup round-trips: export, wipe, import, and every row and file is identical.
 - [snap] Settings → Backup shows the last backup time and the folder; the default keeps 14 daily backups.
-Status: todo
+UX:
+- Flow: Settings → Backup → Back Up Now writes "BenchLog <date> <time>.benchlog"; Restore from Backup… -> pick a file -> "Restore the Backup from <date>?" -> Restore (destructive) or Cancel.
+- Surface: a Settings tab (rare actions and preferences).
+- Safety: restore backs the library up first ("BenchLog Before Restore …"), checks the backup before replacing anything, and refuses a backup from a newer BenchLog.
+Built: a `.benchlog` file is a stored ZIP (manifest.json, benchlog.sqlite made with SQLite's backup, Files/…) that any unzip tool opens; written to a partial file and renamed when done. Daily backups ("BenchLog Daily <date>") run when the last one is a day old, checked hourly; the 15th oldest daily goes to the Trash; backups you make yourself stay. The folder defaults to ~/Documents/BenchLog Backups. Test and snapshot runs back up next to their /tmp library and never on their own. Snapshot: settings-backup.
+Status: done
 
 ### S-031 Empty states and first-run sample data
 As the user, every page explains what goes there when it is empty. A Debug-only "Load sample data" fills the app for demos and snapshots.
@@ -417,6 +422,37 @@ As the user, I see a BenchLog icon in the Dock (a bench, multimeter, or screwdri
 Acceptance:
 - [manual] The icon reads well at 16 px and in light, dark, and tinted looks.
 Status: done
+
+### S-034 Approval before work
+As the user, I record at check-in whether the customer wants an estimate before I repair: Go ahead, Ask first (an estimate is required), or Go ahead up to an amount. BenchLog holds me to it.
+Screens: new-repair-sheet, repair-approval, doc-intake-slip
+Depends: S-025
+Acceptance:
+- [unit] A repair stores its approval rule (`go`, `ask`, or `upTo` with an amount in cents). An approved estimate satisfies it. With `upTo`, a bill whose total exceeds the amount needs an approved estimate again.
+- [snap] The repair shows "Estimate required" or "Approved up to 150,00 $" next to its status, and the New Repair sheet has the rule.
+- [self] Moving an unapproved repair to In Progress, Waiting on Parts, or Ready asks first: "Ask for Approval" moves it to Awaiting Approval, "Start Anyway" goes ahead.
+- [snap] The intake slip prints the rule in French: « Estimation requise avant toute réparation » or « Réparation autorisée jusqu’à 150,00 $, taxes en sus ».
+Status: todo
+
+### S-035 Internal jobs on shop devices
+As the user, I repair a device the shop owns (to resell or to keep) without a customer: its repairs are internal.
+Screens: new-repair-sheet, repair-internal, devices-shop
+Depends: S-021
+Acceptance:
+- [unit] The shop is one owner record (`customer.isShop`), named after the business, made the first time it is needed. Its devices record what I paid for them (`purchaseCents`).
+- [snap] New Repair offers "Shop (internal)" as the owner. An internal repair shows an "Internal" badge, has no intake slip, estimate, or invoice, and its Billing shows cost: parts at cost and hours spent, no taxes.
+- [unit] Internal repairs never count as To Collect, and their last status reads "Done" instead of "Picked Up".
+Status: todo
+
+### S-036 Sell or keep a shop device
+As the user, I mark a shop device Kept, For Sale, or Sold (with the price, the date, and an optional buyer), and I see what it cost and what it made.
+Screens: devices-shop
+Depends: S-035
+Acceptance:
+- [unit] Cost = purchase + parts at cost on its internal repairs. Profit = sale price − cost. Selling to a customer moves the device to that customer, and later repairs are theirs.
+- [snap] The Devices page has a Shop filter showing each device's state, cost, and sale price or profit.
+- Later: a sales invoice with taxes for a sold device.
+Status: todo
 
 ### S-033 Delete and undo
 As the user, I delete a customer, device, repair, part, or guide, and ⌘Z brings it back. Deleting a customer that has open repairs asks first.

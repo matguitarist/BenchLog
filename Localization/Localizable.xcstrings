@@ -491,6 +491,46 @@
         }
       }
     },
+    "Back Up Now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sauvegarder maintenant"
+          }
+        }
+      }
+    },
+    "Back up every day": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sauvegarder chaque jour"
+          }
+        }
+      }
+    },
+    "Backup": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sauvegarde"
+          }
+        }
+      }
+    },
+    "Backups": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sauvegardes"
+          }
+        }
+      }
+    },
     "BenchLog": {
       "localizations": {
         "fr": {
@@ -1521,6 +1561,16 @@
         }
       }
     },
+    "Folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dossier"
+          }
+        }
+      }
+    },
     "Forward": {
       "localizations": {
         "fr": {
@@ -1881,6 +1931,16 @@
         }
       }
     },
+    "Keeps the last %lld daily backups; backups you make yourself stay.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garde les %lld dernières sauvegardes quotidiennes; celles que vous faites vous-même restent."
+          }
+        }
+      }
+    },
     "Kind": {
       "localizations": {
         "fr": {
@@ -1907,6 +1967,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Langue"
+          }
+        }
+      }
+    },
+    "Last backup": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dernière sauvegarde"
           }
         }
       }
@@ -2117,6 +2187,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nom, téléphone ou courriel"
+          }
+        }
+      }
+    },
+    "Never": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jamais"
           }
         }
       }
@@ -3231,12 +3311,62 @@
         }
       }
     },
+    "Replace the library with a backup; it is backed up first": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remplacer la bibliothèque par une sauvegarde; elle est d’abord sauvegardée"
+          }
+        }
+      }
+    },
     "Restart Now": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Redémarrer maintenant"
+          }
+        }
+      }
+    },
+    "Restore": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurer"
+          }
+        }
+      }
+    },
+    "Restore from Backup…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurer une sauvegarde…"
+          }
+        }
+      }
+    },
+    "Restore the Backup from %@?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurer la sauvegarde du %@ ?"
+          }
+        }
+      }
+    },
+    "Restore “%@”?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Restaurer « %@ » ?"
           }
         }
       }
@@ -3287,6 +3417,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enregistrer les renseignements de l’entreprise (⌘S); les nouveaux documents les utilisent"
+          }
+        }
+      }
+    },
+    "Save the database and every photo and file as one .benchlog file": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer la base de données et toutes les photos et tous les fichiers dans un seul fichier .benchlog"
           }
         }
       }
@@ -3447,6 +3587,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afficher dans Pièces"
+          }
+        }
+      }
+    },
+    "Show the backups folder in the Finder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le dossier des sauvegardes dans le Finder"
           }
         }
       }
@@ -3681,12 +3831,52 @@
         }
       }
     },
+    "The library is replaced by the backup. BenchLog backs up the library first, as “BenchLog Before Restore”.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La bibliothèque est remplacée par la sauvegarde. BenchLog la sauvegarde d’abord, sous « BenchLog Before Restore »."
+          }
+        }
+      }
+    },
+    "The library is too large for one backup file (over 4 GB).": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La bibliothèque est trop volumineuse pour un seul fichier de sauvegarde (plus de 4 Go)."
+          }
+        }
+      }
+    },
     "The new language applies after a restart.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "La nouvelle langue s’applique après un redémarrage."
+          }
+        }
+      }
+    },
+    "This backup was made by a newer BenchLog. Update BenchLog, then restore it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette sauvegarde vient d’une version plus récente de BenchLog. Mettez BenchLog à jour, puis restaurez-la."
+          }
+        }
+      }
+    },
+    "This file is not a BenchLog backup.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce fichier n’est pas une sauvegarde BenchLog."
           }
         }
       }
@@ -3801,6 +3991,16 @@
         }
       }
     },
+    "Unable to back up the library: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de sauvegarder la bibliothèque : %@"
+          }
+        }
+      }
+    },
     "Unable to lay out the document.": {
       "localizations": {
         "fr": {
@@ -3817,6 +4017,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Impossible d’imprimer le document en PDF."
+          }
+        }
+      }
+    },
+    "Unable to restore the backup: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de restaurer la sauvegarde : %@"
           }
         }
       }

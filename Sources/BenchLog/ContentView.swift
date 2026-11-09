@@ -49,6 +49,7 @@ struct ContentView: View {
             SelfTest.runIfRequested(model: model)
             Snapshot.runIfRequested(model: model, openSettings: openSettings)
         }
+        .task { await Backups.shared.runDaily(model) }
     }
 
     private var sidebar: some View {

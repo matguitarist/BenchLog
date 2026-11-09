@@ -38,6 +38,8 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Import Guides | Add a folder of guides at once, after checking what each covers | sync, bulk add |
 | Open in Window | Show a guide in its own window, beside a repair | pop out, detach |
 | Library | BenchLog's folder of data and files on disk | vault, database, store |
+| Backup | One `.benchlog` file with the whole library (Sauvegarde) | export, archive, snapshot |
+| Restore | Replace the library with a backup (Restaurer) | import, load, revert |
 | Labour | Work billed on a repair, by the hour or at a flat price (Main-d’œuvre) | service, time, work line |
 | Discount | An amount taken off before taxes (Rabais) | rebate, coupon |
 | Estimate | A priced document the customer approves or refuses before work (Estimation) | quote, quotation |

@@ -9,7 +9,7 @@ import UniformTypeIdentifiers
 /// and every change people make (each one logged, and undoable where it says so).
 @Observable
 final class AppModel {
-    let library: Library?
+    private(set) var library: Library?
     /// Why the library did not open, in words for the Repairs page.
     let libraryError: String?
     let log: LogStore
@@ -105,6 +105,19 @@ final class AppModel {
             problem = error.localizedDescription
             return nil
         }
+    }
+
+    /// Swaps the open library (restore), and forgets what was selected in the old one.
+    func replaceLibrary(_ library: Library?) {
+        self.library = library
+        selectedRepair = nil
+        selectedCustomer = nil
+        selectedDevice = nil
+        selectedPart = nil
+        selectedGuide = nil
+        backStack.removeAll()
+        forwardStack.removeAll()
+        reload()
     }
 
     /// Tells every page to reload, and recounts the open repairs.

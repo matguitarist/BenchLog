@@ -256,6 +256,21 @@ enum SelfTest {
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)
+
+                // S-030 Back up, change something, restore: the change is gone and the library is open again.
+                model.write("Self-test before backup") { try $0.save(Customer(name: "Before Backup")) }
+                if let backup = await Backups.shared.backUp(model, name: "Self-Test") {
+                    check("a backup file is written", FileManager.default.fileExists(atPath: backup.path))
+                    model.write("Self-test after backup") { try $0.save(Customer(name: "After Backup")) }
+                    await model.restore(from: backup)
+                    check("restore reopens the library", model.library != nil)
+                    check("restore brings back the backup's rows", model.read(0) { try $0.customers(matching: "Before Backup").count } == 1)
+                    check("restore drops rows added after the backup", model.read(1) { try $0.customers(matching: "After Backup").count } == 0)
+                    check("restore keeps a backup of what it replaced",
+                          Backups.shared.existing.contains { $0.lastPathComponent.hasPrefix("BenchLog Before Restore") })
+                } else {
+                    check("a backup file is written", false)
+                }
             }
 
             for tab in SettingsTab.allCases {
