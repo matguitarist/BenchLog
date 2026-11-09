@@ -41,6 +41,8 @@ final class AppModel {
     /// A status change waiting for "Start Anyway" or "Ask for Approval".
     var pendingStart: PendingStart?
     var pendingTrash: PendingTrash?
+    /// Reports: the month, quarter, or year shown.
+    var reportPeriod = ReportPeriod(.month, containing: .now)
     var searchText = ""
     /// Set by ⌘⇧K; the note field of the page shown takes focus and clears it.
     var focusNoteField = false
@@ -275,7 +277,7 @@ enum PartsTab: String, CaseIterable, Identifiable {
 
 /// The sidebar pages. Snapshot mode walks through every case.
 enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
-    case repairs, customers, devices, parts, guides, log
+    case repairs, customers, devices, parts, guides, reports, log
 
     var id: String { rawValue }
 
@@ -286,6 +288,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
         case .devices: String(localized: "Devices")
         case .parts: String(localized: "Parts")
         case .guides: String(localized: "Guides")
+        case .reports: String(localized: "Reports")
         case .log: String(localized: "Log")
         }
     }
@@ -297,6 +300,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
         case .devices: "laptopcomputer.and.iphone"
         case .parts: "shippingbox"
         case .guides: "book.pages"
+        case .reports: "chart.bar.doc.horizontal"
         case .log: "list.bullet.rectangle"
         }
     }

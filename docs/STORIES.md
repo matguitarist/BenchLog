@@ -538,7 +538,8 @@ Acceptance:
 - [unit] For a period: invoices and credit notes by issue date; sales before taxes, each tax collected, and totals, with credit notes subtracted; amounts paid and still owed.
 - [snap] A Reports page in the sidebar: period picker, totals per tax, and the list of documents.
 - [self] Export CSV writes one row per document with each tax in its own column.
-Status: todo
+Built: `Report.swift` (`ReportPeriod` for calendar months, quarters, and years; `SalesReport` with sales before taxes, each tax, total, collected, owed, and `csv()`). `Pages/ReportsPage.swift`: a Reports sidebar page with Month / Quarter / Year, previous and next, the figures, a table of documents (double-click opens the repair or device), and Export CSV…. Credit notes count in the period they were issued. Snapshots: reports, reports-quarter.
+Status: done
 
 ### S-043 Sales invoice for a shop device
 As the user, when I sell a shop device I issue an invoice to the buyer with my region's taxes.

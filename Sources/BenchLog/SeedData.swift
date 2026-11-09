@@ -161,16 +161,12 @@ enum SeedData {
             try library.save(LabourLine(repairId: id, description: "Nettoyage de la carte USB-C", hundredthHours: 150, unitCents: 6500))
             try library.issue(.estimate, for: id, now: now.addingTimeInterval(-2 * day))
         }
-        if let id = repairOf(eDeck) {
-            try library.save(LabourLine(repairId: id, description: "Remplacement du joystick droit", hundredthHours: 75, unitCents: 6500))
-            try library.issue(.invoice, for: id, now: now.addingTimeInterval(-3600))
-        }
         if let id = rows.first(where: { $0.device.id == mNES.id })?.id {
             try library.save(LabourLine(repairId: id, description: "Nettoyage et ajustement du connecteur 72 broches", kind: .flat, unitCents: 4500))
             // First billed without the promised discount: credited, refunded, and billed again.
             let wrong = try library.issue(.invoice, for: id, now: now.addingTimeInterval(-22 * day))
             try library.setPaid(wrong.id, method: .cash, now: now.addingTimeInterval(-22 * day))
-            let credit = try library.issueCreditNote(for: wrong.id, reason: "Rabais de 5 $ promis à la réception, oublié sur la facture F-0002.",
+            let credit = try library.issueCreditNote(for: wrong.id, reason: "Rabais de 5 $ promis à la réception, oublié sur la facture F-0001.",
                                                      now: now.addingTimeInterval(-20 * day))
             try library.setPaid(credit.id, method: .cash, now: now.addingTimeInterval(-20 * day))
             try library.setDiscount(500, of: id)
@@ -206,6 +202,11 @@ enum SeedData {
         try library.setDisposition(.sold, priceCents: 12_000, buyer: emma.id, of: gbc.id, now: now.addingTimeInterval(-10 * day))
         let sale = try library.issueSaleInvoice(for: gbc.id, now: now.addingTimeInterval(-10 * day))
         try library.setPaid(sale.id, method: .credit, now: now.addingTimeInterval(-10 * day))
+        // Issued last, so invoice numbers follow their dates.
+        if let id = repairOf(eDeck) {
+            try library.save(LabourLine(repairId: id, description: "Remplacement du joystick droit", hundredthHours: 75, unitCents: 6500))
+            try library.issue(.invoice, for: id, now: now.addingTimeInterval(-3600))
+        }
 
         // Guides: a PDF for one revision, Markdown notes for a model, a brand, a category, and one general.
         let folder = FileManager.default.temporaryDirectory.appending(path: "BenchLog-seed-guides-\(UUID().uuidString)")

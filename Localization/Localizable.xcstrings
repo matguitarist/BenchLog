@@ -1111,6 +1111,16 @@
         }
       }
     },
+    "Collected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Encaissé"
+          }
+        }
+      }
+    },
     "Colour": {
       "localizations": {
         "fr": {
@@ -1291,6 +1301,16 @@
         }
       }
     },
+    "Credited": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Créditée"
+          }
+        }
+      }
+    },
     "Customer": {
       "localizations": {
         "fr": {
@@ -1317,6 +1337,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Clients, téléphones, numéros de série, dossiers, notes, pièces, guides"
+          }
+        }
+      }
+    },
+    "Date": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date"
           }
         }
       }
@@ -1757,6 +1787,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Durée de validité des estimations"
+          }
+        }
+      }
+    },
+    "Export CSV…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Exporter en CSV…"
           }
         }
       }
@@ -2281,6 +2321,16 @@
         }
       }
     },
+    "Invoices and credit notes issued in the period show here, with the tax collected.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les factures et notes de crédit émises pendant la période apparaissent ici, avec les taxes perçues."
+          }
+        }
+      }
+    },
     "Invoices and intake slips use each customer’s documents language, not this one.": {
       "localizations": {
         "fr": {
@@ -2651,6 +2701,16 @@
         }
       }
     },
+    "Month": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mois"
+          }
+        }
+      }
+    },
     "Move to Trash": {
       "localizations": {
         "fr": {
@@ -2887,6 +2947,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucun guide dans ce dossier"
+          }
+        }
+      }
+    },
+    "No Invoices in %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune facture en %@"
           }
         }
       }
@@ -3191,6 +3261,16 @@
         }
       }
     },
+    "Number": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Numéro"
+          }
+        }
+      }
+    },
     "Nunavut": {
       "localizations": {
         "fr": {
@@ -3277,6 +3357,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ouvrir l’appareil"
+          }
+        }
+      }
+    },
+    "Open PDF": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir le PDF"
           }
         }
       }
@@ -3451,6 +3541,16 @@
         }
       }
     },
+    "Owed": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À recevoir"
+          }
+        }
+      }
+    },
     "Owner": {
       "localizations": {
         "fr": {
@@ -3607,6 +3707,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Schéma %@"
+          }
+        }
+      }
+    },
+    "Period": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Période"
           }
         }
       }
@@ -3841,6 +3951,16 @@
         }
       }
     },
+    "Q%lld %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "T%lld %@"
+          }
+        }
+      }
+    },
     "QST (%@)": {
       "localizations": {
         "fr": {
@@ -3877,6 +3997,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quantité"
+          }
+        }
+      }
+    },
+    "Quarter": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trimestre"
           }
         }
       }
@@ -3977,6 +4107,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Indiquer comment vous avez remboursé le client"
+          }
+        }
+      }
+    },
+    "Refunded": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remboursée"
           }
         }
       }
@@ -4141,6 +4281,26 @@
         }
       }
     },
+    "Report on a month, a quarter, or a year": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire le rapport d’un mois, d’un trimestre ou d’une année"
+          }
+        }
+      }
+    },
+    "Reports": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rapports"
+          }
+        }
+      }
+    },
     "Restart Now": {
       "localizations": {
         "fr": {
@@ -4221,6 +4381,16 @@
         }
       }
     },
+    "Sales before taxes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ventes avant taxes"
+          }
+        }
+      }
+    },
     "Sales tax": {
       "localizations": {
         "fr": {
@@ -4267,6 +4437,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Enregistrer la base de données et toutes les photos et tous les fichiers dans un seul fichier .benchlog"
+          }
+        }
+      }
+    },
+    "Save the period's invoices and credit notes as a spreadsheet, one tax per column": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer les factures et notes de crédit de la période en tableur, une taxe par colonne"
           }
         }
       }
@@ -4461,6 +4641,16 @@
         }
       }
     },
+    "Show the Year": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher l’année"
+          }
+        }
+      }
+    },
     "Show the backups folder in the Finder": {
       "localizations": {
         "fr": {
@@ -4497,6 +4687,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afficher le code (⌥⌘P)"
+          }
+        }
+      }
+    },
+    "Show the period after": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher la période suivante"
+          }
+        }
+      }
+    },
+    "Show the period before": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher la période précédente"
           }
         }
       }
@@ -5347,6 +5557,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Des mots pour retrouver le guide, séparés par des virgules ou des espaces"
+          }
+        }
+      }
+    },
+    "Year": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Année"
           }
         }
       }

@@ -73,6 +73,7 @@ enum Snapshot {
                 ("repair-approval", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = approvalRepair }),
                 ("repair-internal", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = internalRepair }),
                 ("devices-shop", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = shopDevice }),
+                ("reports-quarter", { model.sidebar = .reports; model.reportPeriod = ReportPeriod(.quarter, containing: .now) }),
                 ("devices-shop-sold", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = soldDevice }),
                 ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
             ]

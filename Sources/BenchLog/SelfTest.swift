@@ -344,6 +344,15 @@ enum SelfTest {
                     model.undoManager = nil
                 }
 
+                // S-042 This year's report has the invoices, the credit note, and the sale; its CSV a row for each.
+                let report = model.read(nil) { try $0.salesReport(ReportPeriod(.year, containing: .now)) }
+                check("the report lists invoices and credit notes", report.map { $0.rows.contains { $0.invoice.kind == .creditNote } } == true)
+                let csv = report?.csv().split(separator: "\n") ?? []
+                check("the CSV has a header and one row per document, each tax in a column",
+                      csv.count == (report?.rows.count ?? -1) + 1 && csv.first?.contains(",GST,QST,") == true)
+                model.sidebar = .reports
+                check("the sidebar opens Reports", model.sidebar == .reports)
+
                 // S-039 Moving the business to the United States shows US dollars and English for new customers.
                 let home = model.read(BusinessProfile()) { try $0.businessProfile() }
                 var moved = home

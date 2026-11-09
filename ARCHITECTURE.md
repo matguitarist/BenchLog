@@ -13,6 +13,7 @@
   - `Search.swift`: global search. An FTS5 table, `search`, filled and kept current by SQL triggers (one `Source` per table, plus the rows that show its text), so no write path can forget it. `Library.search` groups hits by kind. The sources are versioned (`sources(version:)`): each migration installs the version of its own time, so v7 never names a column v9 adds. A change to a `Source` is a new version and a new migration that calls `reinstall`.
   - `Approval.swift`: the approval rule and where a repair stands against it (`approvalState(of:)`).
   - `Taxes.swift`: countries, provinces and states with their standard taxes, tax names in each language, and what a profile charges (`chargedTaxes`). `Billing.totals` takes these taxes; documents take the country (currency, en_US or en_CA) from the business details they froze.
+  - `Report.swift`: report periods and the sales and tax report over invoices and credit notes, with its CSV.
   - `Trash.swift`: Move to Trash and Put Back, cascading to children with one shared `deletedAt`, and Empty Trash, which deletes rows and files older than 30 days in dependency order.
   - `Shop.swift`: the shop as an owner (`customer.isShop`), internal jobs and their cost, and shop devices: what they cost, what became of them, and the profit once sold.
   - `Backup.swift` and `ZipArchive.swift`: a backup is a stored ZIP of a SQLite backup copy, the Files folder, and a manifest; restore checks and migrates it in a scratch folder, then swaps it in. The library must be closed (`close()`).
@@ -28,6 +29,7 @@
   - `Views/SearchPanel.swift`: Search BenchLog (⌘F) over the main window, and `FindCommands`, which gives ⌘F to a PDF guide's find bar when one is in front.
   - `Views/ShopViews.swift`: the Devices page's Shop scope, its rows, and the Shop section on a shop device. `Views/RepairApproval.swift`: the approval picker, badge, and the Start Without Approval dialog's words.
   - `Views/TaxSection.swift`: Settings → Business → Taxes (country, region, a row per tax, US local rate and Tax labour). `Money.currencyCode` follows the business's country.
+  - `Pages/ReportsPage.swift`: the Reports page and `CSVFile` for Export CSV….
   - `Models+Trash.swift`: Edit > Move to Trash, its Undo, and the confirmation for a customer with open repairs (`pendingTrash`).
   - `Backups.swift`: Back Up Now, the daily backup, restore (`AppModel.restore`, which swaps the library with `replaceLibrary`), and Settings → Backup.
   - `Spotlight.swift`: customers and repairs in Core Spotlight (never for a /tmp library); `ContentView` opens a chosen result with `onContinueUserActivity`.

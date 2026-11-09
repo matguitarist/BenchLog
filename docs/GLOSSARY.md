@@ -62,6 +62,8 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Credit Note | A numbered document (NC-0001) that cancels an invoice by reversing its lines and taxes; « Note de crédit » | refund invoice, void, credit memo |
 | Refund | Paying a credit note back to the customer, with the method; « Remboursement » | reimbursement, payback |
 | Invoice Sale | Invoice a sold shop device to its buyer, with taxes; « Facturer la vente » | bill of sale, receipt |
+| Reports | The sidebar page with what was invoiced and the tax collected in a month, quarter, or year (Rapports) | dashboard, analytics, accounting |
+| Collected / Owed | Invoices paid less credit notes refunded / invoices neither paid nor credited (Encaissé / À recevoir) | revenue, receivables |
 
 ## Statuses (in order)
 

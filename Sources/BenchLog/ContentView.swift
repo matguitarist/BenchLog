@@ -98,6 +98,7 @@ struct ContentView: View {
         case .devices: DevicesPage()
         case .parts: PartsPage()
         case .guides: GuidesPage()
+        case .reports: ReportsPage()
         case .log:
             LogViewer(model: model.logViewer, options: LogViewerOptions(
                 emptyTitle: String(localized: "No Log Messages"),
