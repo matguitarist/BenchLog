@@ -1,4 +1,5 @@
 import BenchLogKit
+import CoreSpotlight
 import LogKitUI
 import SwiftUI
 
@@ -34,6 +35,13 @@ struct ContentView: View {
             Button("OK") { model.problem = nil }
         } message: {
             Text(model.problem ?? "")
+        }
+        // A customer or repair picked in Spotlight.
+        .onContinueUserActivity(CSSearchableItemActionType) { activity in
+            guard let identifier = activity.userInfo?[CSSearchableItemActivityIdentifier] as? String,
+                  let destination = Spotlight.destination(for: identifier) else { return }
+            model.searching = false
+            model.open(destination)
         }
         .onChange(of: undoManager, initial: true) { _, manager in model.undoManager = manager }
         .task {

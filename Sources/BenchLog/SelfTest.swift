@@ -236,6 +236,23 @@ enum SelfTest {
                 let file = NSApp.mainMenu?.items.first { $0.submenu?.items.contains { $0.title == String(localized: "Add Photo or File…") } == true }
                 check("File has Add Photo or File… (⇧⌘P)", file?.submenu?.items.first { $0.title == String(localized: "Add Photo or File…") }?.keyEquivalent == "p")
 
+                // S-029 Spotlight: customers and repairs, no passcodes, and each result leads back.
+                let entries = Spotlight.entries(model)
+                if let row = model.read(nil, { try $0.repairRows().first }) {
+                    let entry = entries.first { $0.id == "repair:\(row.id.stored)" }
+                    check("Spotlight has the repair, titled with its ticket", entry?.title.hasPrefix(row.repair.ticket.text) == true)
+                    if case .repair(let id)? = entry.flatMap({ Spotlight.destination(for: $0.id) }) {
+                        check("a Spotlight repair opens that repair", id == row.id)
+                    } else {
+                        check("a Spotlight repair opens that repair", false)
+                    }
+                    let passcode = row.device.passcode
+                    check("Spotlight never holds a passcode", passcode.isEmpty || !entries.contains {
+                        $0.title.contains(passcode) || $0.detail.contains(passcode) || $0.keywords.contains(passcode)
+                    })
+                }
+                check("tests never write to Spotlight", Store.isOverridden)
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)

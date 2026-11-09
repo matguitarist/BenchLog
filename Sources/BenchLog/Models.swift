@@ -113,6 +113,7 @@ final class AppModel {
         openRepairCount = read(0) { try $0.openRepairCount() }
         lowStockCount = read(0) { try $0.lowStockCount() }
         toCollect = read([]) { try $0.toCollectRepairIDs() }
+        Spotlight.shared.schedule(self)
     }
 
     // MARK: Navigation

@@ -21,6 +21,7 @@
   - `DocumentPrinter.swift`: HTML to a Letter PDF with an offscreen WKWebView: one tall `pdf(configuration:)` page plus the blocks it measured, handed to the Kit's `PageLayout`.
   - `Models+Actions.swift`: the actions by feature (customers and devices, repairs, notes, photos and files, parts, catalog). State stays in `Models.swift`; a new feature adds its actions here, or its own `Models+<Feature>.swift` once this file passes 300 lines.
   - `Views/SearchPanel.swift`: Search BenchLog (⌘F) over the main window, and `FindCommands`, which gives ⌘F to a PDF guide's find bar when one is in front.
+  - `Spotlight.swift`: customers and repairs in Core Spotlight (never for a /tmp library); `ContentView` opens a chosen result with `onContinueUserActivity`.
   - `Pages/`: one file per sidebar page (list beside detail, in an `HSplitView`).
   - `Sheets/`: the sheets, and the customer and device fields they share.
   - `Views/`: parts used by several pages (Timeline, Passcode).

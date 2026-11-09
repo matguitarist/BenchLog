@@ -388,7 +388,8 @@ As the user, I type a customer name or ticket number in Spotlight and open it in
 Depends: S-027
 Acceptance:
 - [manual] Customers and repairs are indexed with Core Spotlight and open the right page.
-Status: todo
+Built: `Spotlight.swift` indexes every customer (name, phone, email, phone digits) and repair ("#0012 Mario Tremblay", device, status, complaint, serial) in Core Spotlight, rebuilt 2 s after changes stop and only when something changed. Choosing a result opens that customer or repair. Libraries in /tmp are never indexed. Passcodes, notes, and addresses stay out. [manual] Still to try on the real library: type a name or "#0012" in Spotlight and pick the result.
+Status: done
 
 ---
 
