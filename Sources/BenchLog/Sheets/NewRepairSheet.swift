@@ -23,6 +23,9 @@ struct NewRepairSheet: View {
     @State private var hasPromise = false
     @State private var promised = Calendar.current.date(byAdding: .day, value: 3, to: .now) ?? .now
     @State private var showErrors = false
+    /// The rule chosen last time is the default for the next repair.
+    @AppStorage("approvalRule") private var approval: ApprovalRule = .go
+    @State private var approvalLimit: Decimal? = 150
     @State private var confirmDiscard = false
     @FocusState private var focus: Field?
 
@@ -48,6 +51,9 @@ struct NewRepairSheet: View {
                     if hasPromise {
                         DatePicker("Promised for", selection: $promised, displayedComponents: .date)
                     }
+                }
+                Section("Approval") {
+                    ApprovalPicker(rule: $approval, limit: $approvalLimit)
                 }
             }
             .formStyle(.grouped)
@@ -192,7 +198,8 @@ struct NewRepairSheet: View {
             deviceID = model.save(deviceDraft.device(for: owner.id))?.id
         }
         guard let deviceID,
-              let repair = model.createRepair(deviceID: deviceID, complaint: text, promisedAt: hasPromise ? promised : nil) else { return }
+              let repair = model.createRepair(deviceID: deviceID, complaint: text, promisedAt: hasPromise ? promised : nil,
+                                                   approval: approval, approvalLimitCents: Money.cents(approvalLimit)) else { return }
         model.open(.repair(repair.id))
         dismiss()
     }

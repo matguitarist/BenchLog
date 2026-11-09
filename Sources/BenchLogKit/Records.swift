@@ -147,6 +147,10 @@ public struct Repair: BenchRecord {
     public var pickedUpAt: Date?
     /// Taken off the subtotal before taxes, in cents.
     public var discountCents: Int = 0
+    /// What the customer said at check-in about approving the work.
+    public var approvalRule: ApprovalRule = .go
+    /// With `upTo`: the most the work may cost without an approved estimate, before taxes.
+    public var approvalLimitCents: Int?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?

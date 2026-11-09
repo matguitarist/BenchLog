@@ -11,6 +11,7 @@
   - `MarkdownHTML.swift`: Obsidian-flavoured Markdown to HTML (wiki links, image embeds, callouts, tags) and the page around it. Plain Foundation, for the iOS app too.
   - `Billing.swift`: `BusinessProfile` (in `meta`), labour lines, `Billing.totals` (subtotal, TPS and TVQ each rounded half up), and invoices and estimates. Issuing freezes a `DocumentContent` (business, customer, lines, rates, totals) as JSON, so later edits never change a printed document. Invoice numbers have their own sequence.
   - `Search.swift`: global search. An FTS5 table, `search`, filled and kept current by SQL triggers (one `Source` per table, plus the rows that show its text), so no write path can forget it. `Library.search` groups hits by kind. The triggers hold a copy of the SQL from when migration v7 ran: a change to a `Source` needs a new migration that reinstalls the index.
+  - `Approval.swift`: the approval rule and where a repair stands against it (`approvalState(of:)`).
   - `Backup.swift` and `ZipArchive.swift`: a backup is a stored ZIP of a SQLite backup copy, the Files folder, and a manifest; restore checks and migrates it in a scratch folder, then swaps it in. The library must be closed (`close()`).
   - `PageLayout.swift`: cuts one tall PDF page into Letter pages between blocks (Core Graphics only, for the iOS app too).
   - `DocumentHTML.swift`: the intake slip, estimate, and invoice as printable HTML, in the customer's language, with French typography (`typo`). No WebKit: the app prints it.

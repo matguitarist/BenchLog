@@ -6,15 +6,18 @@ extension Library {
     // MARK: Repairs
 
     /// Opens a repair with the next ticket number, in Intake.
-    public func createRepair(deviceID: UUID, complaint: String, promisedAt: Date? = nil, now: Date = .now) throws -> Repair {
+    public func createRepair(deviceID: UUID, complaint: String, promisedAt: Date? = nil,
+                             approval: ApprovalRule = .go, approvalLimitCents: Int? = nil, now: Date = .now) throws -> Repair {
         try db.write { db in
             let stored = try String.fetchOne(db, sql: "SELECT value FROM meta WHERE key = 'nextTicketNumber'")
             // Never reuse a number, even if the counter was edited by hand.
             let highest = try Int.fetchOne(db, sql: "SELECT MAX(ticketNumber) FROM repair") ?? 0
             let number = max(Int(stored ?? "1") ?? 1, highest + 1)
-            let repair = Repair(id: UUID(), deviceId: deviceID, ticketNumber: number, status: .intake,
+            var repair = Repair(id: UUID(), deviceId: deviceID, ticketNumber: number, status: .intake,
                                 complaint: complaint, diagnosis: "", receivedAt: now, promisedAt: promisedAt,
                                 completedAt: nil, pickedUpAt: nil, createdAt: now, updatedAt: now, deletedAt: nil)
+            repair.approvalRule = approval
+            repair.approvalLimitCents = approval == .upTo ? max(approvalLimitCents ?? 0, 0) : nil
             try repair.insert(db)
             try db.execute(sql: "UPDATE meta SET value = ? WHERE key = 'nextTicketNumber'", arguments: [String(number + 1)])
             return repair

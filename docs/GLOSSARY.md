@@ -46,6 +46,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Invoice | A numbered, frozen bill (Facture, F-0001); its number never changes | bill, receipt |
 | Intake Slip | The paper the customer signs at check-in (Bon de dépôt) | receipt, ticket, work order |
 | Paid / Unpaid | Whether an invoice is settled, and how: Cash, Debit, Credit, e-Transfer (Payée / Impayée) | settled, open |
+| Approval rule | What the customer allows at check-in: Go ahead, Ask for an estimate first, or Go ahead up to an amount before taxes (Approbation) | authorization, consent, limit |
 | To Collect | A Ready repair with no paid invoice yet (À encaisser) | owing, due, outstanding |
 | Business | Settings → Business: the details printed on every document (Entreprise) | company, shop, profile |
 

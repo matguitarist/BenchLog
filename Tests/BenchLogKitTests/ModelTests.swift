@@ -26,7 +26,7 @@ import Testing
 @Suite struct LibraryTests {
     @Test func aNewLibraryStartsAtTicketOne() throws {
         let library = try Library()
-        #expect(try library.appliedMigrations() == ["v1-meta", "v2-core", "v3-attachments", "v4-parts", "v5-guides", "v6-billing", "v7-search"])
+        #expect(try library.appliedMigrations() == ["v1-meta", "v2-core", "v3-attachments", "v4-parts", "v5-guides", "v6-billing", "v7-search", "v8-approval"])
         #expect(try library.metaValue("nextTicketNumber") == "1")
     }
 
@@ -37,6 +37,6 @@ import Testing
         _ = try Library(databaseURL: url)
         let again = try Library(databaseURL: url)
         #expect(again.filesURL.lastPathComponent == "Files")
-        #expect(try again.appliedMigrations() == ["v1-meta", "v2-core", "v3-attachments", "v4-parts", "v5-guides", "v6-billing", "v7-search"])
+        #expect(try again.appliedMigrations() == ["v1-meta", "v2-core", "v3-attachments", "v4-parts", "v5-guides", "v6-billing", "v7-search", "v8-approval"])
     }
 }

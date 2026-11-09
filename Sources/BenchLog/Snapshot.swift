@@ -56,6 +56,7 @@ enum Snapshot {
             let pdfGuide = guides.first { $0.guide.format == .pdf }?.id
             let switchRepair = model.read(nil) { try $0.repairRows().first { $0.device.model == "Switch" }?.id }
             let billedRepair = model.read(nil) { try $0.repairRows().first { $0.repair.status == .ready }?.id }
+            let approvalRepair = model.read(nil) { try $0.repairRows().first { $0.repair.approvalRule == .ask }?.id }
             let states: [(String, () -> Void)] = [
                 ("guide-markdown", { model.sidebar = .guides; model.selectedGuide = markdownGuide }),
                 ("guide-pdf", { model.sidebar = .guides; model.selectedGuide = pdfGuide }),
@@ -66,6 +67,7 @@ enum Snapshot {
                 ("parts-incoming", { model.sidebar = .parts; model.partsTab = .incoming }),
                 ("repair-parts", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = waiting }),
                 ("search-results", { model.sidebar = .repairs; model.searchText = "mario"; model.searching = true }),
+                ("repair-approval", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = approvalRepair }),
                 ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
             ]
             for (name, setUp) in states where only == nil || only?.contains(name) == true || only?.contains("states") == true {

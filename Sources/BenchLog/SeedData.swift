@@ -165,6 +165,10 @@ enum SeedData {
             try library.save(LabourLine(repairId: id, description: "Diagnostic", kind: .flat, unitCents: 3000))
             try library.save(LabourLine(repairId: id, description: "Pose de l’écran", hundredthHours: 100, unitCents: 6500))
         }
+        // Approval rules: an estimate first for the MacBook, an amount for the iPhone and the Switch.
+        if let id = repairOf(sMac) { try library.setApproval(.ask, limitCents: nil, of: id) }
+        if let id = repairOf(jPhone) { try library.setApproval(.upTo, limitCents: 15_000, of: id) }
+        if let id = repairOf(mSwitch) { try library.setApproval(.upTo, limitCents: 10_000, of: id) }
 
         // Guides: a PDF for one revision, Markdown notes for a model, a brand, a category, and one general.
         let folder = FileManager.default.temporaryDirectory.appending(path: "BenchLog-seed-guides-\(UUID().uuidString)")

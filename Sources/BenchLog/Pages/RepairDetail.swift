@@ -11,6 +11,7 @@ struct RepairDetail: View {
     @State private var complaint = ""
     @State private var diagnosis = ""
     @State private var loaded = false
+    @State private var approval: ApprovalState = .notNeeded
 
     var body: some View {
         Group {
@@ -37,6 +38,7 @@ struct RepairDetail: View {
 
     private func load() {
         row = model.read(nil) { try $0.repairRow(repairID) }
+        approval = model.read(.notNeeded) { try $0.approvalState(of: repairID) }
         if !loaded, let repair = row?.repair {
             complaint = repair.complaint
             diagnosis = repair.diagnosis
@@ -52,6 +54,7 @@ struct RepairDetail: View {
                         .font(.title.weight(.semibold))
                         .monospacedDigit()
                     StatusMenu(repairID: row.id, status: row.repair.status)
+                    ApprovalBadge(state: approval)
                     Spacer()
                 }
                 LabeledContent("Customer") {
@@ -64,6 +67,8 @@ struct RepairDetail: View {
                         .buttonStyle(.link)
                         .help("Open device \(row.device.title)")
                 }
+                RepairApprovalRow(repair: row.repair)
+                    .id(row.id)
             }
             Section("Complaint") {
                 TextField("Complaint", text: $complaint, prompt: Text("What the customer says is wrong"), axis: .vertical)

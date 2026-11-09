@@ -31,6 +31,21 @@ struct ContentView: View {
                 .environment(model)
                 .themed()
         }
+        .confirmationDialog("Start Without Approval?", isPresented: Binding(get: { model.pendingStart != nil },
+                                                                             set: { if !$0 { model.pendingStart = nil } }),
+                            presenting: model.pendingStart) { pending in
+            Button("Ask for Approval") {
+                model.setStatus(.awaitingApproval, for: pending.repairID, force: true)
+                model.pendingStart = nil
+            }
+            Button("Start Anyway") {
+                model.setStatus(pending.status, for: pending.repairID, force: true)
+                model.pendingStart = nil
+            }
+            Button("Cancel", role: .cancel) { model.pendingStart = nil }
+        } message: { pending in
+            Text(pending.message)
+        }
         .alert("Unable to Save", isPresented: Binding(get: { model.problem != nil }, set: { if !$0 { model.problem = nil } })) {
             Button("OK") { model.problem = nil }
         } message: {

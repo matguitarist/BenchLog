@@ -59,6 +59,19 @@ enum SelfTest {
                     check("ticket numbers go up by one", first.map { $0.ticketNumber + 1 } == second?.ticketNumber)
                     check("a new repair is in Intake", first?.status == .intake)
 
+                    // S-034 Starting work an estimate must approve asks first.
+                    if let asked = model.createRepair(deviceID: device.id, complaint: "Estimate first", promisedAt: nil, approval: .ask) {
+                        model.setStatus(.inProgress, for: asked.id)
+                        check("starting unapproved work asks first", model.pendingStart?.repairID == asked.id
+                              && model.read(nil) { try $0.repair(asked.id)?.status } == .intake)
+                        model.pendingStart = nil
+                        model.setStatus(.awaitingApproval, for: asked.id)
+                        check("asking for approval needs no confirmation", model.read(nil) { try $0.repair(asked.id)?.status } == .awaitingApproval)
+                        model.setStatus(.inProgress, for: asked.id, force: true)
+                        check("Start Anyway starts the work", model.read(nil) { try $0.repair(asked.id)?.status } == .inProgress)
+                        model.write("Self-test: move the estimate repair to the trash") { try $0.trash(Repair.self, id: asked.id) }
+                    }
+
                     // S-006 Statuses, with Undo
                     if let first {
                         let undo = UndoManager()

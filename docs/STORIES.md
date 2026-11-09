@@ -432,7 +432,12 @@ Acceptance:
 - [snap] The repair shows "Estimate required" or "Approved up to 150,00 $" next to its status, and the New Repair sheet has the rule.
 - [self] Moving an unapproved repair to In Progress, Waiting on Parts, or Ready asks first: "Ask for Approval" moves it to Awaiting Approval, "Start Anyway" goes ahead.
 - [snap] The intake slip prints the rule in French: « Estimation requise avant toute réparation » or « Réparation autorisée jusqu’à 150,00 $, taxes en sus ».
-Status: todo
+UX:
+- Flow: New Repair → Approval: "Before repairing" (Go ahead / Ask for an estimate first / Go ahead up to an amount + "Up to, before taxes"); the last choice is the next default. Changeable on the repair. Moving to Waiting on Parts, In Progress, or Ready while it blocks → "Start Without Approval?" with Ask for Approval, Start Anyway, Cancel.
+- Surface: a picker in the sheet and in the repair's top section; a confirmation dialog only when work would start without approval.
+- States: badge beside the status: "Estimate required", "Approved up to 150,00 $", "Over the approved 100,00 $", "Estimate approved", "Estimate refused" (symbol + words + color).
+Built: `Approval.swift` (rule, state, `approvalState(of:)`; the newest decided estimate counts; with an amount, an approved estimate covers work up to its own subtotal). Migration v8-approval. The intake slip prints the rule above the signature. Snapshots: repair-approval, doc-intake-slip.
+Status: done
 
 ### S-035 Internal jobs on shop devices
 As the user, I repair a device the shop owns (to resell or to keep) without a customer: its repairs are internal.

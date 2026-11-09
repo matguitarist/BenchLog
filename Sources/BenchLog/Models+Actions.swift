@@ -28,12 +28,20 @@ extension AppModel {
 
     // MARK: Repairs
 
-    func createRepair(deviceID: UUID, complaint: String, promisedAt: Date?) -> Repair? {
+    func createRepair(deviceID: UUID, complaint: String, promisedAt: Date?,
+                      approval: ApprovalRule = .go, approvalLimitCents: Int? = nil) -> Repair? {
         guard let repair = write("Opened a repair for device \(deviceID.stored)", {
-            try $0.createRepair(deviceID: deviceID, complaint: complaint, promisedAt: promisedAt)
+            try $0.createRepair(deviceID: deviceID, complaint: complaint, promisedAt: promisedAt,
+                                approval: approval, approvalLimitCents: approvalLimitCents)
         }) else { return nil }
         log.post(.info, "Repair \(repair.ticket.text) is in Intake", source: "Repairs")
         return repair
+    }
+
+    func setApproval(_ rule: ApprovalRule, limitCents: Int?, of repairID: UUID) {
+        write("Repair \(repairID.stored) approval: \(rule.rawValue) \(limitCents.map(String.init) ?? "")") {
+            try $0.setApproval(rule, limitCents: limitCents, of: repairID)
+        }
     }
 
     func update(_ repair: Repair) {
@@ -41,11 +49,18 @@ extension AppModel {
     }
 
     /// Changes the status; Edit > Undo puts the old one back.
-    func setStatus(_ status: RepairStatus, for repairID: UUID) {
+    /// Changes a repair's status. Starting work the customer has not approved asks first
+    /// (`pendingStart`), unless `force` is set.
+    func setStatus(_ status: RepairStatus, for repairID: UUID, force: Bool = false) {
         guard let old = read(nil, { try $0.repair(repairID) }), old.status != status else { return }
+        if !force, status.isWork, !old.status.isWork,
+           let state = read(nil, { try $0.approvalState(of: repairID) }), state.blocksWork {
+            pendingStart = PendingStart(repairID: repairID, status: status, state: state)
+            return
+        }
         write("Repair \(old.ticket.text): \(old.status.rawValue) → \(status.rawValue)") { try $0.setStatus(status, of: repairID) }
         undoManager?.registerUndo(withTarget: self) { model in
-            MainActor.assumeIsolated { model.setStatus(old.status, for: repairID) }
+            MainActor.assumeIsolated { model.setStatus(old.status, for: repairID, force: true) }
         }
         undoManager?.setActionName(String(localized: "Change Status"))
     }

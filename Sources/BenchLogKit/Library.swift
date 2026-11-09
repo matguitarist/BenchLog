@@ -282,6 +282,14 @@ public final class Library: Sendable {
             // and guides, kept current by triggers (Search.swift).
             try SearchIndex.install(db)
         }
+        migrator.registerMigration("v8-approval") { db in
+            // What the customer said at check-in: go ahead, ask first (an estimate is
+            // required), or go ahead up to an amount before taxes.
+            try db.execute(sql: """
+                ALTER TABLE repair ADD COLUMN approvalRule TEXT NOT NULL DEFAULT 'go';
+                ALTER TABLE repair ADD COLUMN approvalLimitCents INTEGER;
+                """)
+        }
         return migrator
     }
 

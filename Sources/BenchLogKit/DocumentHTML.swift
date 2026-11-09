@@ -21,6 +21,8 @@ public struct DocumentHTML {
             discount, tps, tvq, total, tpsNumber, tvqNumber, warranty, terms, signature, validUntil, paid, phone,
             email, hourly, flat, received, approval, approvalLine: String
         var paidOn: (String, String) -> String
+        /// The approval rule the customer signs at check-in, with the amount for `upTo`.
+        var approvalRule: (ApprovalRule, String) -> String?
         var payment: (PaymentMethod) -> String
     }
 
@@ -38,6 +40,13 @@ public struct DocumentHTML {
                   flat: "forfait", received: "Reçu le", approval: "Approbation du client",
                   approvalLine: "J’accepte cette estimation et autorise la réparation.",
                   paidOn: { date, method in "Payé le \(date) par \(method)" },
+                  approvalRule: { rule, amount in
+                      switch rule {
+                      case .go: nil
+                      case .ask: "Estimation requise avant toute réparation. Aucuns travaux sans votre approbation."
+                      case .upTo: "Réparation autorisée jusqu’à \(amount), taxes en sus. Au-delà, une estimation vous sera soumise."
+                      }
+                  },
                   payment: { method in
                       switch method {
                       case .cash: "argent comptant"
@@ -58,6 +67,13 @@ public struct DocumentHTML {
                   flat: "flat rate", received: "Received", approval: "Customer Approval",
                   approvalLine: "I accept this estimate and authorize the repair.",
                   paidOn: { date, method in "Paid on \(date) by \(method)" },
+                  approvalRule: { rule, amount in
+                      switch rule {
+                      case .go: nil
+                      case .ask: "Estimate required before any repair. No work without your approval."
+                      case .upTo: "Repair authorized up to \(amount), plus taxes. Above that, we send you an estimate first."
+                      }
+                  },
                   payment: { method in
                       switch method {
                       case .cash: "cash"
@@ -130,6 +146,9 @@ public struct DocumentHTML {
             body += "<h2>\(e(w.intakePhotos))</h2><div class=\"photos\">"
             body += photoSources.map { "<img src=\"\(e($0))\" alt=\"\">" }.joined()
             body += "</div>"
+        }
+        if let rule = w.approvalRule(repair.approvalRule, money(repair.approvalLimitCents ?? 0)) {
+            body += "<p class=\"approval\"><strong>\(e(typo(rule)))</strong></p>"
         }
         body += footer(business: business, warranty: false)
         body += signature(w.signature)
@@ -292,6 +311,7 @@ public struct DocumentHTML {
         footer .numbers { margin-bottom: 8px; }
         .photos { display: flex; flex-wrap: wrap; gap: 8px; }
         .photos img { width: 140px; height: 140px; object-fit: cover; border-radius: 4px; border: 1px solid #d2d2d7; }
+        .approval { border-left: 3px solid #1d1d1f; padding: 4px 0 4px 12px; margin: 16px 0 0; }
         .signature { margin-top: 40px; page-break-inside: avoid; }
         .signature .line { border-bottom: 1px solid #1d1d1f; width: 60%; height: 36px; }
         .signature .caption { font-size: 9pt; color: #6e6e73; margin-top: 4px; } /* grid: ok print points */

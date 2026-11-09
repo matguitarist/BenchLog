@@ -431,6 +431,16 @@
         }
       }
     },
+    "Approval": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approbation"
+          }
+        }
+      }
+    },
     "Approve": {
       "localizations": {
         "fr": {
@@ -447,6 +457,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Approuvée"
+          }
+        }
+      }
+    },
+    "Approved up to %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Approuvée jusqu’à %@"
+          }
+        }
+      }
+    },
+    "Ask for Approval": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demander l’approbation"
+          }
+        }
+      }
+    },
+    "Ask for an estimate first": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimation d’abord"
           }
         }
       }
@@ -527,6 +567,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sauvegardes"
+          }
+        }
+      }
+    },
+    "Before repairing": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Avant de réparer"
           }
         }
       }
@@ -1451,6 +1501,16 @@
         }
       }
     },
+    "Estimate required": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimation requise"
+          }
+        }
+      }
+    },
     "Estimates are valid for": {
       "localizations": {
         "fr": {
@@ -1627,6 +1687,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aller"
+          }
+        }
+      }
+    },
+    "Go ahead": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réparer sans attendre"
+          }
+        }
+      }
+    },
+    "Go ahead up to an amount": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réparer jusqu’à un montant"
           }
         }
       }
@@ -2781,6 +2861,16 @@
         }
       }
     },
+    "Over the approved %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dépasse les %@ approuvés"
+          }
+        }
+      }
+    },
     "Overview": {
       "localizations": {
         "fr": {
@@ -3027,6 +3117,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Imprimer le bon de dépôt"
+          }
+        }
+      }
+    },
+    "Print an estimate and record the customer's answer before you start": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imprimez une estimation et notez la réponse du client avant de commencer"
           }
         }
       }
@@ -3651,6 +3751,26 @@
         }
       }
     },
+    "Start Anyway": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencer quand même"
+          }
+        }
+      }
+    },
+    "Start Without Approval?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commencer sans approbation ?"
+          }
+        }
+      }
+    },
     "Status": {
       "localizations": {
         "fr": {
@@ -3781,12 +3901,42 @@
         }
       }
     },
+    "The customer allowed this work": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le client a autorisé ces travaux"
+          }
+        }
+      }
+    },
+    "The customer asked for an estimate before any repair.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le client veut une estimation avant toute réparation."
+          }
+        }
+      }
+    },
     "The customer declines; a note records it": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Le client refuse; une note le consigne"
+          }
+        }
+      }
+    },
+    "The customer refused the estimate.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le client a refusé l’estimation."
           }
         }
       }
@@ -3857,6 +4007,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "La nouvelle langue s’applique après un redémarrage."
+          }
+        }
+      }
+    },
+    "The work comes to %@ before taxes, over the %@ the customer allowed.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les travaux atteignent %1$@ avant taxes, plus que les %2$@ autorisés par le client."
           }
         }
       }
@@ -4041,6 +4201,16 @@
         }
       }
     },
+    "Up to, before taxes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jusqu’à, avant taxes"
+          }
+        }
+      }
+    },
     "Updates": {
       "localizations": {
         "fr": {
@@ -4137,6 +4307,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce qu’un client paie pour une"
+          }
+        }
+      }
+    },
+    "What the customer said about approving the work; it prints on the intake slip": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que le client a dit sur l’approbation des travaux; imprimé sur le bon de dépôt"
           }
         }
       }
