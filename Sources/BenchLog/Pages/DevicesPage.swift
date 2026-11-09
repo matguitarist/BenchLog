@@ -39,8 +39,13 @@ struct DevicesPage: View {
             shopList
         } else if rows.isEmpty {
             if model.deviceSearch.isEmpty {
-                ContentUnavailableView("No Devices", systemImage: "laptopcomputer.and.iphone",
-                                       description: Text("Devices appear here when you add them to a customer."))
+                ContentUnavailableView {
+                    Label("No Devices", systemImage: "laptopcomputer.and.iphone")
+                } description: {
+                    Text("Devices appear here when you open a repair or add one to a customer.")
+                } actions: {
+                    Button("New Repair") { model.newRepair() }.buttonStyle(.borderedProminent)
+                }
             } else {
                 ContentUnavailableView.search(text: model.deviceSearch)
             }
@@ -84,7 +89,7 @@ struct DevicesPage: View {
                 } description: {
                     Text("Devices the shop buys to repair and resell, or keeps, appear here.")
                 } actions: {
-                    Button("Add Shop Device…") { addShopDevice() }
+                    Button("Add Shop Device…") { addShopDevice() }.buttonStyle(.borderedProminent)
                 }
             } else {
                 List(shown, selection: $model.selectedDevice) { row in

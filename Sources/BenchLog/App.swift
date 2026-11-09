@@ -59,6 +59,12 @@ struct BenchLogApp: App {
                     .keyboardShortcut(.delete, modifiers: .command)
                     .disabled(model.focusedTrashItem == nil || model.sheet != nil)
             }
+            #if DEBUG
+            CommandGroup(after: .help) {
+                Button("Load Sample Data") { SeedData.load(into: model) }
+                    .disabled(model.library == nil || !SeedData.isEmpty(model))
+            }
+            #endif
             CommandGroup(after: .appInfo) {
                 Button("Check for Updates…") { Updater.shared.checkForUpdates() }
                     .disabled(!Updater.shared.isAvailable)

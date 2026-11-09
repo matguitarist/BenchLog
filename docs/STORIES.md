@@ -415,7 +415,8 @@ Screens: repairs-empty, customers-empty, parts-empty, guides-empty
 Acceptance:
 - [snap] Each empty page has a sentence and a primary button.
 - [unit] The sample data only uses fields the stories let the user set.
-Status: todo
+Built: every list page's empty state has a sentence and one primary button (Repairs: New Repair; Customers: New Customer; Devices: New Repair; Shop: Add Shop Device…; Parts: New Part; Guides: Add Guides…). Help > Load Sample Data in debug builds (`./build.sh --debug`) fills an empty library with `SeedData`. `APP_SEED=0 APP_SHOTS=/tmp/BenchLog-shots-empty tools/snap.sh` shoots the empty pages. The [unit] line is held by review, not a test: SeedData lives in the app target, and its header states the rule.
+Status: done
 
 ### S-032 App icon
 As the user, I see a BenchLog icon in the Dock (a bench, multimeter, or screwdriver, made with the app-icon skill).

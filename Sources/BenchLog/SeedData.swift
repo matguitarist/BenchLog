@@ -6,8 +6,18 @@ import Foundation
 /// empty library. Every field it sets is one people can set in the app.
 enum SeedData {
     static func fillIfRequested(model: AppModel) {
-        guard ProcessInfo.processInfo.environment["APP_SEED"] == "1", Store.isOverridden,
-              let library = model.library, (try? library.customers().isEmpty) == true else { return }
+        guard ProcessInfo.processInfo.environment["APP_SEED"] == "1", Store.isOverridden else { return }
+        load(into: model)
+    }
+
+    /// True when the library has nothing yet: no customers, parts, or guides.
+    static func isEmpty(_ model: AppModel) -> Bool {
+        model.read(false) { try $0.customers().isEmpty && $0.parts().isEmpty && $0.guideRows().isEmpty }
+    }
+
+    /// Help > Load Sample Data (debug builds), and snapshots: fills an empty library.
+    static func load(into model: AppModel) {
+        guard let library = model.library, isEmpty(model) else { return }
         do {
             try fill(library)
             model.log.post(.info, "Filled the library with sample data", source: "Seed")

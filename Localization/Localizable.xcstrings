@@ -1361,12 +1361,12 @@
         }
       }
     },
-    "Devices appear here when you add them to a customer.": {
+    "Devices appear here when you open a repair or add one to a customer.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les appareils s’affichent ici quand vous les ajoutez à un client."
+            "value": "Les appareils apparaissent ici quand vous ouvrez une réparation ou en ajoutez un à un client."
           }
         }
       }
@@ -2297,6 +2297,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lien"
+          }
+        }
+      }
+    },
+    "Load Sample Data": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Charger des données d’exemple"
           }
         }
       }
