@@ -40,6 +40,8 @@ final class AppModel {
     var searchText = ""
     /// Set by ⌘⇧K; the note field of the page shown takes focus and clears it.
     var focusNoteField = false
+    /// Set by ⌘⇧P to the record whose Photos and Files section should open the file picker.
+    var choosingFilesFor: UUID?
     /// A problem to show in an alert (a failed save).
     var problem: String?
     /// The window's undo manager, so Edit > Undo undoes status changes and trashed notes.

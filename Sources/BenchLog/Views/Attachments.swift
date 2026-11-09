@@ -56,6 +56,11 @@ struct AttachmentsSection: View {
                 .help("Copy photos or files from your Mac into this record")
         }
         .quickLookPreview($preview, in: photos.map(url))
+        .onChange(of: model.choosingFilesFor, initial: true) { _, wanted in
+            guard wanted == ownerID else { return }
+            choosing = true
+            model.choosingFilesFor = nil
+        }
         .fileImporter(isPresented: $choosing, allowedContentTypes: [.item], allowsMultipleSelection: true) { result in
             if case .success(let urls) = result { model.addFiles(urls, to: owner, id: ownerID) }
         }

@@ -380,7 +380,8 @@ Screens: menu-file, menu-repair
 Depends: S-006, S-010
 Acceptance:
 - [snap] A Repair menu exists. Every item there is disabled when no repair is selected.
-Status: todo
+Built: File has New Repair ⌘N, New Customer ⇧⌘N, Add Device ⇧⌘D, Add Note ⇧⌘K, and Add Photo or File… ⇧⌘P (the last two act on the repair, customer, or device shown). The Repair menu has Status (⌘1–8), Print Intake Slip ⌘P, Print Estimate, Invoice ⇧⌘I, Open Customer, and Open Device, each disabled with no repair selected. Search BenchLog… ⌘F is in Edit. A self-test reads the real menu bar to check this, in place of the menu-file and menu-repair snapshots: an open menu cannot be captured while the snapshot run is going.
+Status: done
 
 ### S-029 Spotlight
 As the user, I type a customer name or ticket number in Spotlight and open it in BenchLog.

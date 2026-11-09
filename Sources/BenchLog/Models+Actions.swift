@@ -50,6 +50,17 @@ extension AppModel {
         undoManager?.setActionName(String(localized: "Change Status"))
     }
 
+    /// The record that File > Add Note and Add Photo or File act on: the repair, customer,
+    /// or device shown on its page.
+    var focusedRecord: (owner: NoteOwner, id: UUID)? {
+        switch sidebar {
+        case .repairs: selectedRepair.map { (.repair, $0) }
+        case .customers: selectedCustomer.map { (.customer, $0) }
+        case .devices: selectedDevice.map { (.device, $0) }
+        default: nil
+        }
+    }
+
     /// The repair the Repair menu acts on: the one shown on the Repairs page.
     var focusedRepairID: UUID? { sidebar == .repairs ? selectedRepair : nil }
 

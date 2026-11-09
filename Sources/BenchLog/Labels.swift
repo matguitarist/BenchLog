@@ -240,6 +240,7 @@ struct StatusButtons: View {
                                               set: { if $0, let repairID { model.setStatus(status, for: repairID) } })) {
                 Label(status.title, systemImage: status.symbol)
             }
+            .disabled(repairID == nil)
             if shortcuts {
                 button.keyboardShortcut(status.shortcut, modifiers: .command)
             } else {

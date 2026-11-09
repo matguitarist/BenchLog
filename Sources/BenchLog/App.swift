@@ -45,6 +45,13 @@ struct BenchLogApp: App {
                 }
                 .keyboardShortcut("d", modifiers: [.command, .shift])
                 .disabled(model.customerForNewDevice == nil || model.sheet != nil)
+                Divider()
+                Button("Add Note") { model.focusNoteField = true }
+                    .keyboardShortcut("k", modifiers: [.command, .shift])
+                    .disabled(model.focusedRecord == nil || model.sheet != nil)
+                Button("Add Photo or File…") { model.choosingFilesFor = model.focusedRecord?.id }
+                    .keyboardShortcut("p", modifiers: [.command, .shift])
+                    .disabled(model.focusedRecord == nil || model.sheet != nil)
             }
             CommandGroup(after: .appInfo) {
                 Button("Check for Updates…") { Updater.shared.checkForUpdates() }
@@ -67,15 +74,15 @@ struct BenchLogApp: App {
                 }
                 .keyboardShortcut("p")
                 .disabled(model.focusedRepairID == nil)
+                Button("Print Estimate") {
+                    if let id = model.focusedRepairID { Task { await model.issue(.estimate, for: id) } }
+                }
+                .disabled(model.focusedRepairID == nil)
                 Button("Invoice") {
                     if let id = model.focusedRepairID { Task { await model.issue(.invoice, for: id) } }
                 }
                 .keyboardShortcut("i", modifiers: [.command, .shift])
                 .disabled(model.focusedRepairID == nil)
-                Divider()
-                Button("Add Note") { model.focusNoteField = true }
-                    .keyboardShortcut("k", modifiers: [.command, .shift])
-                    .disabled(model.sidebar.map { ![.repairs, .customers, .devices].contains($0) } ?? true)
                 Divider()
                 Button("Open Customer") {
                     if let id = model.focusedRepairID, let row = model.read(nil, { try $0.repairRow(id) }) { model.open(.customer(row.customer.id)) }

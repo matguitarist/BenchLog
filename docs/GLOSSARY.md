@@ -71,6 +71,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Show Passcode / Hide Passcode | Reveal or mask the passcode | unlock, view |
 | Move to Trash | Soft delete, can be undone | delete, remove, archive |
 | Add Labour | Add a labour line at the hourly rate | add service, add time |
+| Add Photo or File | Copy photos or files into the record shown (⇧⌘P) | attach, upload, import |
 | Print Intake Slip | Make the intake slip PDF and open it (⌘P) | print receipt |
 | Print Estimate | Issue an estimate PDF and open it | send quote |
 | Invoice | Issue the next numbered invoice (⇧⌘I); « Facturer » | bill, create invoice |

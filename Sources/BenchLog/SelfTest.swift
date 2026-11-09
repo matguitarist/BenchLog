@@ -216,6 +216,26 @@ enum SelfTest {
                     }
                 }
 
+                // S-028 Every Repair menu item is disabled when no repair is selected, and enabled with one.
+                let repairToSelect = model.read(nil) { try $0.repairRows().first?.id }
+                model.sidebar = .repairs
+                model.selectedRepair = nil
+                try? await Task.sleep(for: .seconds(0.5))
+                let off = repairMenuItems()
+                check("the Repair menu exists", !off.isEmpty)
+                // A submenu item stays enabled in AppKit; what counts is that nothing inside it is.
+                let usable = off.filter { item in
+                    if let submenu = item.submenu { submenu.update(); return submenu.items.contains(where: \.isEnabled) }
+                    return item.isEnabled
+                }
+                check("every Repair menu item is disabled with no repair selected", usable.isEmpty,
+                      usable.map(\.title).joined(separator: ", "))
+                model.selectedRepair = repairToSelect
+                try? await Task.sleep(for: .seconds(0.5))
+                check("the Repair menu is enabled with a repair selected", repairMenuItems().contains { $0.isEnabled })
+                let file = NSApp.mainMenu?.items.first { $0.submenu?.items.contains { $0.title == String(localized: "Add Photo or File…") } == true }
+                check("File has Add Photo or File… (⇧⌘P)", file?.submenu?.items.first { $0.title == String(localized: "Add Photo or File…") }?.keyEquivalent == "p")
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)
@@ -233,6 +253,13 @@ enum SelfTest {
             print(failures == 0 ? "SELFTEST PASS \(count) checks" : "SELFTEST FAIL \(failures) of \(count) checks")
             finish(code: failures == 0 ? 0 : 1)
         }
+    }
+
+    /// The Repair menu's commands, after SwiftUI has updated their state.
+    private static func repairMenuItems() -> [NSMenuItem] {
+        guard let menu = NSApp.mainMenu?.items.first(where: { $0.title == String(localized: "Repair") })?.submenu else { return [] }
+        menu.update()
+        return menu.items.filter { !$0.isSeparatorItem }
     }
 
     private static func check(_ name: String, _ ok: Bool, _ detail: String = "") {
