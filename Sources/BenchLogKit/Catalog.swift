@@ -94,7 +94,7 @@ extension Library {
     }
 
     /// Renames a brand, model, or revision everywhere: in the catalog, on devices, and on
-    /// the models parts fit. Renaming to a name that already exists merges the two.
+    /// the models parts fit and guides cover. Renaming to a name that already exists merges the two.
     public func renameCatalog(_ path: CatalogPath, to newName: String, now: Date = .now) throws {
         let newName = newName.trimmingCharacters(in: .whitespaces)
         guard !newName.isEmpty, newName != path.name else { return }
@@ -106,6 +106,8 @@ extension Library {
             try db.execute(sql: "DELETE FROM catalog WHERE \(filter) AND \(column) <> ?", arguments: arguments + [newName])
             try db.execute(sql: "UPDATE device SET \(column) = ?, updatedAt = ? WHERE \(filter)",
                            arguments: [newName, now] + arguments)
+            try db.execute(sql: "UPDATE OR IGNORE guideLink SET \(column) = ? WHERE \(filter)", arguments: [newName] + arguments)
+            try db.execute(sql: "DELETE FROM guideLink WHERE \(filter) AND \(column) <> ?", arguments: arguments + [newName])
             if path.revision == nil {
                 try db.execute(sql: "UPDATE OR IGNORE partFit SET \(column) = ? WHERE \(filter)", arguments: [newName] + arguments)
                 try db.execute(sql: "DELETE FROM partFit WHERE \(filter) AND \(column) <> ?", arguments: arguments + [newName])
@@ -123,7 +125,7 @@ extension Library {
     }
 
     /// The column a rename changes, and the WHERE clause that matches the path in the
-    /// catalog, device, and partFit tables (they share these column names).
+    /// catalog, device, guideLink, and partFit tables (they share these column names).
     private static func catalogFilter(_ path: CatalogPath) -> (String, String, StatementArguments) {
         var filter = "category = ? AND brand = ? COLLATE NOCASE"
         var arguments: StatementArguments = [path.category.rawValue, path.brand]

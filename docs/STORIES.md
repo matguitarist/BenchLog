@@ -250,7 +250,8 @@ Acceptance:
 - [unit] A guide has a `format` (pdf, markdown). Its file is stored as an attachment owned by the guide, and images a Markdown guide embeds are stored as attachments too.
 - [snap] The Guides page lists guides grouped by category and brand, with a page-1 thumbnail.
 - [unit] Merging catalog models (S-016) moves guide links to the model that remains.
-Status: todo
+Status: done
+Built: Add Guides… (⌘ none), drop files or a folder on Guides; a single dropped note brings the images beside it. Edit Guide sets title, tags, and what it covers (category, brand, model, revision; empty widens). Markdown guides have no page-1 thumbnail: they show a document glyph. Snapshots: guides, guide-edit-sheet.
 
 ### S-018 Read a guide in the app
 As the user, I open a guide and read it in the app: PDFs in a PDF viewer with page thumbnails, search, and zoom, reopening at the page where I left off; Markdown guides rendered with headings, lists, and their images.
@@ -261,7 +262,8 @@ Acceptance:
 - [self] The last page read is remembered for each guide.
 - [snap] A Markdown guide renders Obsidian image embeds `![[photo.jpg]]` as well as standard `![](photo.jpg)`, and shows a table of contents built from its `##` headings.
 - [manual] "Open in Window" puts the guide in its own window beside the repair.
-Status: todo
+Status: done
+Built: PDFKit with a thumbnail column, a find bar (⌘F, ⌘G, ⇧⌘G), and zoom (⌘−, ⌘0, ⌘+); the page is saved as you read, without reloading the app. Markdown renders in a web view with the Contents list; wiki links open the linked guide, web links open in the browser. [manual] Open in Window still needs a try by hand. Snapshots: guide-pdf, guide-markdown.
 
 ### S-019 See matching guides on a repair
 As the user, I see guides for the device's model, brand, or category on a repair, most specific first.
@@ -270,7 +272,8 @@ Depends: S-017, S-005
 Acceptance:
 - [unit] Matching order: revision → model → brand → category.
 - [snap] A "Guides" section on the repair lists the matches. One click opens one.
-Status: todo
+Status: done
+Built: the Guides section on a repair, between Diagnosis and Parts, with "This revision", "This model", the brand, or the category beside each. Snapshot: repair-guides.
 
 ### S-020 Bulk import a guide folder
 As the user, I drop a folder of PDFs and Markdown notes (for example my Obsidian "Repair Guides" vault), and BenchLog adds each one and guesses its brand and model from the folder path.
@@ -283,7 +286,8 @@ Acceptance:
 - [unit] Importing the same folder again updates the guides that changed and does not duplicate any.
 - [self] The test fixture is a copy of the real vault (`~/Library/Mobile Documents/iCloud~md~obsidian/Documents/Repair Guides/Repair Guide`) in `Tests/Fixtures/RepairGuides/`.
 - [snap] A review sheet lets me fix the guessed links before importing.
-Status: todo
+Status: done
+Built: a folder from Add Guides… or a drop opens Import Guides. Change… sets what a guide covers for its whole folder. "Playstation" maps to Sony. The fixture is Tests/Fixtures/RepairGuides (25 notes, 3 images); the unit test imports all of it. Snapshot: guides-import-sheet.
 
 ---
 

@@ -49,7 +49,14 @@ enum Snapshot {
             let waiting = model.read(nil) { library in
                 try library.repairRows().first { try library.isWaitingOnParts($0.id) && $0.repair.status != .waitingOnParts }?.id
             }
+            let guides = model.read([]) { try $0.guideRows() }
+            let markdownGuide = guides.first { $0.guide.title == "Blinking Red Light" }?.id
+            let pdfGuide = guides.first { $0.guide.format == .pdf }?.id
+            let switchRepair = model.read(nil) { try $0.repairRows().first { $0.device.model == "Switch" }?.id }
             let states: [(String, () -> Void)] = [
+                ("guide-markdown", { model.sidebar = .guides; model.selectedGuide = markdownGuide }),
+                ("guide-pdf", { model.sidebar = .guides; model.selectedGuide = pdfGuide }),
+                ("repair-guides", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = switchRepair }),
                 ("parts-inventory", { model.sidebar = .parts; model.partsTab = .inventory; model.selectedPart = firstPart }),
                 ("parts-low", { model.sidebar = .parts; model.partsTab = .low }),
                 ("parts-toorder", { model.sidebar = .parts; model.partsTab = .toOrder }),
@@ -62,6 +69,8 @@ enum Snapshot {
                     NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
                     try? await Task.sleep(for: .seconds(0.8))
                     if name == "repair-parts" { scrollDetail(toShow: 0.45) }
+                    if name == "repair-guides" { scrollDetail(toShow: 0.42) }
+                    if name.hasPrefix("guide-") { try? await Task.sleep(for: .seconds(1)) }
                     try? await Task.sleep(for: .seconds(0.3))
                     capture(to: "\(dir)/\(name)-\(mode).png")
                 }
@@ -75,6 +84,8 @@ enum Snapshot {
                 ("repair-new-sheet", .repairs, .newRepair(customer: nil, device: nil)),
                 ("repair-new-for-customer-sheet", .customers, .newRepair(customer: customer, device: nil)),
                 ("part-edit-sheet", .parts, firstPart.map { .editPart($0) } ?? .newPart),
+                ("guide-edit-sheet", .guides, markdownGuide.map { .editGuide($0) } ?? .newPart),
+                ("guides-import-sheet", .guides, .importGuides(Self.sampleVault())),
             ]
             for (name, page, sheet) in sheets where only == nil || only?.contains(name) == true || only?.contains("sheets") == true {
                 model.sidebar = page
@@ -114,6 +125,22 @@ enum Snapshot {
     /// permission for the app that started this one (your terminal, or Claude).
     /// Without it, falls back to drawing the view hierarchy, which leaves
     /// sidebars and glass blank.
+    /// A small vault for the import sheet: model folders, a revision, a general note.
+    private static func sampleVault() -> URL {
+        let root = URL(fileURLWithPath: "/tmp/BenchLog-snapshot-vault")
+        try? FileManager.default.removeItem(at: root)
+        let notes = ["Nintendo/Consoles/NES/_index.md": "# Nintendo Entertainment System",
+                     "Nintendo/Consoles/NES/blank-screen.md": "# Blank Screen", "Nintendo/Consoles/NES/audio-problems.md": "![[missing.png]]",
+                     "Nintendo/Switch/OLED Model/fan.pdf": "%PDF", "Microsoft/Consoles/Xbox/frag-error.md": "# FRAG Error",
+                     "Sega/Portable Consoles/Game Gear/capacitors.md": "# Recapping the Game Gear", "Electronic Repair Guide.md": "# Electronic Repair Guide"]
+        for (path, text) in notes {
+            let url = root.appending(path: path)
+            try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
+            try? Data(text.utf8).write(to: url)
+        }
+        return root
+    }
+
     /// Scrolls the rightmost scroll view (the detail form) so the given fraction of its content is at the top.
     private static func scrollDetail(toShow fraction: CGFloat) {
         guard let root = NSApp.windows.first(where: { $0.canBecomeMain && !$0.isSheet })?.contentView else { return }

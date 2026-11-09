@@ -136,7 +136,6 @@ extension AppModel {
 
     // MARK: Parts
 
-
     @discardableResult
     func save(_ part: Part, fits: [PartFit]) -> Part? {
         write("Saved part \(part.id.stored) (\(part.name))") { try $0.save(part, fits: fits) }

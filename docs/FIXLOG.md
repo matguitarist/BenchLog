@@ -25,3 +25,10 @@ Symptom: a part's Received status read "Reçue le", the label of the repair's re
 Cause: the same English key, "Received", had two meanings.
 Fix: part statuses use their own keys (`part.needed`, `part.ordered`, `part.received`, `part.installed`).
 Rule: a status or filter word gets a context key; check new words against the existing keys before you use them.
+
+## 2026-11-09 An AppKit view with Auto Layout inside collapsed to nothing
+
+Symptom: the PDF reader and the Markdown reader showed an empty area; the PDFView was 1 point tall.
+Cause: SwiftUI sizes an `NSViewRepresentable` by its view's fitting size. A container whose subviews are pinned with constraints fits to zero, and `sizeThatFits` did not override it.
+Fix: the PDF container lays out its subviews by hand in `layout()`; the web view has no constraints and a `sizeThatFits` that takes what is offered.
+Rule: in an NSViewRepresentable, never pin subviews with Auto Layout to the root view; lay them out in `layout()` and return the proposal from `sizeThatFits`.

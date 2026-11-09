@@ -83,6 +83,9 @@ struct RepairDetail: View {
                     .labelsHidden()
                     .lineLimit(2...8)
             }
+            Section("Guides") {
+                RepairGuides(device: row.device)
+            }
             Section("Parts") {
                 RepairParts(repair: row.repair, device: row.device)
             }

@@ -51,6 +51,16 @@
         }
       }
     },
+    "%lld of %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld sur %2$lld"
+          }
+        }
+      }
+    },
     "1 open": {
       "localizations": {
         "fr": {
@@ -87,6 +97,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couleur d’accentuation"
+          }
+        }
+      }
+    },
+    "Add": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter"
           }
         }
       }
@@ -131,6 +151,16 @@
         }
       }
     },
+    "Add Guides…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter des guides…"
+          }
+        }
+      }
+    },
     "Add Model": {
       "localizations": {
         "fr": {
@@ -147,6 +177,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter une note"
+          }
+        }
+      }
+    },
+    "Add PDF or Markdown guides, or a folder of them": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter des guides PDF ou Markdown, ou un dossier qui en contient"
           }
         }
       }
@@ -231,6 +271,16 @@
         }
       }
     },
+    "Add the Models It Covers…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter les modèles couverts…"
+          }
+        }
+      }
+    },
     "Add the parts you keep on hand.": {
       "localizations": {
         "fr": {
@@ -257,6 +307,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter ce modèle à ceux compatibles avec la pièce"
+          }
+        }
+      }
+    },
+    "Add “%@”": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter « %@ »"
           }
         }
       }
@@ -297,6 +357,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Toutes"
+          }
+        }
+      }
+    },
+    "Any brand": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les marques"
+          }
+        }
+      }
+    },
+    "Any model": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tous les modèles"
+          }
+        }
+      }
+    },
+    "Any revision": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les révisions"
           }
         }
       }
@@ -367,6 +457,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "BenchLog"
+          }
+        }
+      }
+    },
+    "BenchLog imports PDF and Markdown files.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BenchLog importe les fichiers PDF et Markdown."
           }
         }
       }
@@ -481,6 +581,16 @@
         }
       }
     },
+    "Change the title, tags, and models this guide covers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier le titre, les étiquettes et les modèles couverts par ce guide"
+          }
+        }
+      }
+    },
     "Change this customer's details": {
       "localizations": {
         "fr": {
@@ -511,12 +621,32 @@
         }
       }
     },
+    "Change what this guide and the others in its folder cover": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier ce que couvrent ce guide et les autres de son dossier"
+          }
+        }
+      }
+    },
     "Change where this part is": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Changer l’état de cette pièce"
+          }
+        }
+      }
+    },
+    "Change…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier…"
           }
         }
       }
@@ -671,6 +801,16 @@
         }
       }
     },
+    "Computers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordinateurs"
+          }
+        }
+      }
+    },
     "Condition": {
       "localizations": {
         "fr": {
@@ -691,6 +831,26 @@
         }
       }
     },
+    "Consoles": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consoles"
+          }
+        }
+      }
+    },
+    "Contents": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sommaire"
+          }
+        }
+      }
+    },
     "Copy photos or files from your Mac into this record": {
       "localizations": {
         "fr": {
@@ -707,6 +867,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Coût"
+          }
+        }
+      }
+    },
+    "Covers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couvre"
+          }
+        }
+      }
+    },
+    "Covers no model yet. A guide shows on a repair when it covers the device.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ne couvre aucun modèle pour l’instant. Un guide s’affiche sur une réparation quand il couvre l’appareil."
+          }
+        }
+      }
+    },
+    "Covers no model; it shows on the Guides page only": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ne couvre aucun modèle; il s’affiche seulement dans Guides"
           }
         }
       }
@@ -891,12 +1081,32 @@
         }
       }
     },
+    "Done": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terminé"
+          }
+        }
+      }
+    },
     "Dot %lld": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Point %lld"
+          }
+        }
+      }
+    },
+    "Drop PDF or Markdown guides here, or a whole folder such as an Obsidian vault.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déposez ici des guides PDF ou Markdown, ou un dossier entier comme un coffre Obsidian."
           }
         }
       }
@@ -937,6 +1147,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Modifier l’appareil"
+          }
+        }
+      }
+    },
+    "Edit Guide": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier le guide"
           }
         }
       }
@@ -1001,6 +1221,66 @@
         }
       }
     },
+    "Enter a title.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrez un titre."
+          }
+        }
+      }
+    },
+    "Find": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher"
+          }
+        }
+      }
+    },
+    "Find in Guide": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher dans le guide"
+          }
+        }
+      }
+    },
+    "Find text in this guide (⌘F)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher du texte dans ce guide (⌘F)"
+          }
+        }
+      }
+    },
+    "Fit": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajuster"
+          }
+        }
+      }
+    },
+    "Fit the page to the window (⌘0)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajuster la page à la fenêtre (⌘0)"
+          }
+        }
+      }
+    },
     "Fits": {
       "localizations": {
         "fr": {
@@ -1061,12 +1341,52 @@
         }
       }
     },
+    "Go to “%@”": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aller à « %@ »"
+          }
+        }
+      }
+    },
     "Goes on the customer's timeline": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "S’ajoute à l’historique du client"
+          }
+        }
+      }
+    },
+    "Guide": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guide"
+          }
+        }
+      }
+    },
+    "Guide File Missing": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fichier du guide introuvable"
+          }
+        }
+      }
+    },
+    "Guide Not Found": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guide introuvable"
           }
         }
       }
@@ -1091,12 +1411,32 @@
         }
       }
     },
+    "Guides are PDF or Markdown files.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les guides sont des fichiers PDF ou Markdown."
+          }
+        }
+      }
+    },
     "Handheld": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Console portable"
+          }
+        }
+      }
+    },
+    "Handhelds": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consoles portables"
           }
         }
       }
@@ -1127,6 +1467,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Masquer le code (⌥⌘P)"
+          }
+        }
+      }
+    },
+    "Import": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer"
+          }
+        }
+      }
+    },
+    "Import Guides from “%@”": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer les guides de « %@ »"
+          }
+        }
+      }
+    },
+    "Import ^[%lld Guide](inflect: true)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Importer ^[%lld guide](inflect: true)"
           }
         }
       }
@@ -1281,6 +1651,36 @@
         }
       }
     },
+    "Make It General": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En faire un guide général"
+          }
+        }
+      }
+    },
+    "Make the page bigger (⌘+)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agrandir la page (⌘+)"
+          }
+        }
+      }
+    },
+    "Make the page smaller (⌘−)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réduire la page (⌘−)"
+          }
+        }
+      }
+    },
     "Merge Into": {
       "localizations": {
         "fr": {
@@ -1411,6 +1811,16 @@
         }
       }
     },
+    "Next": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivant"
+          }
+        }
+      }
+    },
     "No Closed Repairs": {
       "localizations": {
         "fr": {
@@ -1457,6 +1867,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucun appareil"
+          }
+        }
+      }
+    },
+    "No Guide Selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun guide sélectionné"
+          }
+        }
+      }
+    },
+    "No Guides": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun guide"
+          }
+        }
+      }
+    },
+    "No Guides in This Folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun guide dans ce dossier"
           }
         }
       }
@@ -1541,6 +1981,26 @@
         }
       }
     },
+    "No guide named “%@”. Import the note it links to, then try again.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun guide nommé « %@ ». Importez la note vers laquelle il pointe, puis réessayez."
+          }
+        }
+      }
+    },
+    "No guides cover this device yet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun guide ne couvre encore cet appareil."
+          }
+        }
+      }
+    },
     "No notes yet": {
       "localizations": {
         "fr": {
@@ -1587,6 +2047,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucun"
+          }
+        }
+      }
+    },
+    "Not found": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Introuvable"
           }
         }
       }
@@ -1761,12 +2231,52 @@
         }
       }
     },
+    "Open in Window": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir dans une fenêtre"
+          }
+        }
+      }
+    },
     "Open repair %@": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ouvrir la réparation %@"
+          }
+        }
+      }
+    },
+    "Open this guide in its own window, beside the repair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir ce guide dans sa propre fenêtre, à côté de la réparation"
+          }
+        }
+      }
+    },
+    "Open this guide in its own window, to keep it beside a repair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir ce guide dans sa propre fenêtre, pour le garder à côté d’une réparation"
+          }
+        }
+      }
+    },
+    "Open “%@” on the Guides page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir « %@ » dans Guides"
           }
         }
       }
@@ -1787,6 +2297,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Autres pièces"
+          }
+        }
+      }
+    },
+    "Overview": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vue d’ensemble"
           }
         }
       }
@@ -1921,6 +2441,16 @@
         }
       }
     },
+    "Phones": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Téléphones"
+          }
+        }
+      }
+    },
     "Photo, %@, %@": {
       "localizations": {
         "fr": {
@@ -1957,6 +2487,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aperçu de la couleur d’accentuation"
+          }
+        }
+      }
+    },
+    "Previous": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Précédent"
           }
         }
       }
@@ -2007,6 +2547,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Coup d’œil"
+          }
+        }
+      }
+    },
+    "Reading the folder…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture du dossier…"
           }
         }
       }
@@ -2211,6 +2761,16 @@
         }
       }
     },
+    "Select a guide to read it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez un guide pour le lire."
+          }
+        }
+      }
+    },
     "Select a part to see its stock and the models it fits.": {
       "localizations": {
         "fr": {
@@ -2301,6 +2861,16 @@
         }
       }
     },
+    "Show the next match (⌘G)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le résultat suivant (⌘G)"
+          }
+        }
+      }
+    },
     "Show the passcode": {
       "localizations": {
         "fr": {
@@ -2317,6 +2887,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afficher le code (⌥⌘P)"
+          }
+        }
+      }
+    },
+    "Show the previous match (⇧⌘G)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le résultat précédent (⇧⌘G)"
+          }
+        }
+      }
+    },
+    "Show this guide on repairs for these devices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher ce guide sur les réparations de ces appareils"
           }
         }
       }
@@ -2381,6 +2971,36 @@
         }
       }
     },
+    "Tablets": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tablettes"
+          }
+        }
+      }
+    },
+    "Tags": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Étiquettes"
+          }
+        }
+      }
+    },
+    "The guide's file is not in the library. Add the guide again.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fichier du guide n’est pas dans la bibliothèque. Ajoutez le guide de nouveau."
+          }
+        }
+      }
+    },
     "The language of this customer's intake slips, estimates, and invoices": {
       "localizations": {
         "fr": {
@@ -2401,12 +3021,52 @@
         }
       }
     },
+    "This model": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce modèle"
+          }
+        }
+      }
+    },
+    "This revision": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette révision"
+          }
+        }
+      }
+    },
     "Timeline": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Historique"
+          }
+        }
+      }
+    },
+    "Title": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titre"
+          }
+        }
+      }
+    },
+    "Title or tag": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Titre ou étiquette"
           }
         }
       }
@@ -2427,6 +3087,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Impossible d’ouvrir la bibliothèque"
+          }
+        }
+      }
+    },
+    "Unable to Read the Folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de lire le dossier"
           }
         }
       }
@@ -2541,12 +3211,42 @@
         }
       }
     },
+    "Words to find the guide by, separated by commas or spaces": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Des mots pour retrouver le guide, séparés par des virgules ou des espaces"
+          }
+        }
+      }
+    },
     "Your repair guides, linked to device models, arrive in a later version.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Vos guides de réparation, liés aux modèles d’appareils, arrivent dans une version ultérieure."
+          }
+        }
+      }
+    },
+    "Zoom In": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom avant"
+          }
+        }
+      }
+    },
+    "Zoom Out": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom arrière"
           }
         }
       }
@@ -2560,6 +3260,43 @@
           }
         }
       }
+    },
+    "^[%lld guide](inflect: true) found. Check what each one covers.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "^[%lld guide trouvé](inflect: true). Vérifiez ce que chacun couvre."
+          }
+        }
+      }
+    },
+    "^[%lld image](inflect: true) not in the folder.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "^[%lld image absente](inflect: true) du dossier."
+          }
+        }
+      }
+    },
+    "category.other.plural": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autres appareils"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Other Devices"
+          }
+        }
+      },
+      "comment": "Guides for devices in no other category"
     },
     "filter.open": {
       "localizations": {
@@ -2731,6 +3468,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Travail"
+          }
+        }
+      }
+    },
+    "power, nes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alimentation, nes"
           }
         }
       }

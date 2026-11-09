@@ -84,6 +84,14 @@ struct BenchLogApp: App {
             }
         }
 
+        // Open in Window: a guide beside the main window.
+        WindowGroup("Guide", id: "guide", for: UUID.self) { $guideID in
+            GuideWindow(guideID: guideID)
+                .environment(model)
+                .themed()
+        }
+        .defaultSize(width: 760, height: 860)
+
         Settings {
             SettingsView()
                 .environment(model)

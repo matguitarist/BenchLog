@@ -21,6 +21,8 @@ final class AppModel {
     var partsTab: PartsTab = .inventory
     var partSearch = ""
     var selectedPart: UUID?
+    var guideSearch = ""
+    var selectedGuide: UUID?
 
     var sidebar: SidebarItem? = .repairs
     var settingsTab: SettingsTab = .general
@@ -114,7 +116,7 @@ final class AppModel {
     }
 
     enum Destination {
-        case repair(UUID), customer(UUID), device(UUID)
+        case repair(UUID), customer(UUID), device(UUID), guide(UUID)
     }
 
     private var here: Place {
@@ -122,6 +124,7 @@ final class AppModel {
         case .repairs: selectedRepair
         case .customers: selectedCustomer
         case .devices: selectedDevice
+        case .guides: selectedGuide
         default: nil
         }
         return Place(sidebar: sidebar, selection: selection)
@@ -133,6 +136,7 @@ final class AppModel {
         case .repairs: selectedRepair = place.selection
         case .customers: selectedCustomer = place.selection
         case .devices: selectedDevice = place.selection
+        case .guides: selectedGuide = place.selection
         default: break
         }
     }
@@ -152,6 +156,9 @@ final class AppModel {
         case .device(let id):
             deviceSearch = ""
             go(to: Place(sidebar: .devices, selection: id))
+        case .guide(let id):
+            guideSearch = ""
+            go(to: Place(sidebar: .guides, selection: id))
         }
     }
 
@@ -196,6 +203,8 @@ enum SheetKind: Identifiable, Hashable {
     case newRepair(customer: UUID?, device: UUID?)
     case newPart
     case editPart(UUID)
+    case editGuide(UUID)
+    case importGuides(URL)
 
     var id: Self { self }
 }

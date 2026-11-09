@@ -51,10 +51,7 @@ struct ContentView: View {
         case .customers: CustomersPage()
         case .devices: DevicesPage()
         case .parts: PartsPage()
-        case .guides:
-            ContentUnavailableView("Guides Are Coming", systemImage: "book.pages",
-                                   description: Text("Your repair guides, linked to device models, arrive in a later version."))
-                .navigationTitle("Guides")
+        case .guides: GuidesPage()
         case .log:
             LogViewer(model: model.logViewer, options: LogViewerOptions(
                 emptyTitle: String(localized: "No Log Messages"),

@@ -60,6 +60,18 @@ extension DeviceCategory {
         }
     }
 
+    /// For lists of guides: "Consoles · Nintendo", "All Consoles".
+    var pluralTitle: String {
+        switch self {
+        case .computer: String(localized: "Computers")
+        case .phone: String(localized: "Phones")
+        case .tablet: String(localized: "Tablets")
+        case .console: String(localized: "Consoles")
+        case .handheld: String(localized: "Handhelds")
+        case .other: String(localized: "category.other.plural", defaultValue: "Other Devices", comment: "Guides for devices in no other category")
+        }
+    }
+
     var symbol: String {
         switch self {
         case .computer: "laptopcomputer"

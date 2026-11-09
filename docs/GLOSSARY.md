@@ -31,7 +31,12 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Fits | The catalog models a part works with (Compatible avec) | compatible, supports |
 | Needed / Ordered / Received / Installed | Where a part for a repair is (Requise, Commandée, Reçue, Installée) | missing, pending, used |
 | To Order / Incoming | Parts Needed / Ordered across open repairs (À commander, En route) | backorder, shipping |
-| Guide | A repair manual or schematic PDF linked to catalog models | manual, doc, schematic |
+| Guide | A repair manual: a PDF or a Markdown note, linked to what it covers | manual, doc, schematic |
+| Covers | The categories, brands, models, or revisions a guide is for (Couvre) | links to, fits, applies to |
+| Overview | A model's main guide (`_index.md` in a vault), listed first (Vue d’ensemble) | index, home |
+| General | A guide that covers nothing in the catalog (Général) | misc, uncategorized |
+| Import Guides | Add a folder of guides at once, after checking what each covers | sync, bulk add |
+| Open in Window | Show a guide in its own window, beside a repair | pop out, detach |
 | Library | BenchLog's folder of data and files on disk | vault, database, store |
 
 ## Statuses (in order)

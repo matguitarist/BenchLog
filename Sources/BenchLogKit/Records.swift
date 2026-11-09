@@ -165,7 +165,7 @@ public struct Repair: BenchRecord {
 
 /// What a note is attached to.
 public enum NoteOwner: String, Codable, Sendable {
-    case customer, device, repair
+    case customer, device, repair, guide
 }
 
 public enum NoteKind: String, Codable, Sendable {

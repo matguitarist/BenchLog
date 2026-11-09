@@ -198,6 +198,39 @@ public final class Library: Sendable {
                 CREATE INDEX partUse_status ON partUse(status);
                 """)
         }
+        migrator.registerMigration("v5-guides") { db in
+            // Repair guides (PDF or Markdown). The file and a Markdown guide's images are
+            // attachments owned by the guide. A link with an empty brand covers a whole
+            // category; an empty model a whole brand; an empty revision a whole model.
+            try db.execute(sql: """
+                CREATE TABLE guide (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    title TEXT NOT NULL,
+                    format TEXT NOT NULL,
+                    tags TEXT NOT NULL DEFAULT '',
+                    fileId TEXT REFERENCES attachment(id),
+                    sourcePath TEXT NOT NULL DEFAULT '',
+                    sourceHash TEXT NOT NULL DEFAULT '',
+                    isOverview BOOLEAN NOT NULL DEFAULT 0,
+                    lastPage INTEGER NOT NULL DEFAULT 0,
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX guide_title ON guide(title COLLATE NOCASE);
+                CREATE INDEX guide_source ON guide(sourcePath);
+
+                CREATE TABLE guideLink (
+                    guideId TEXT NOT NULL REFERENCES guide(id),
+                    category TEXT NOT NULL,
+                    brand TEXT NOT NULL DEFAULT '',
+                    model TEXT NOT NULL DEFAULT '',
+                    revision TEXT NOT NULL DEFAULT '',
+                    PRIMARY KEY (guideId, category, brand, model, revision)
+                );
+                CREATE INDEX guideLink_model ON guideLink(category, brand, model);
+                """)
+        }
         return migrator
     }
 

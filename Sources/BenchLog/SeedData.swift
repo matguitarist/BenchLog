@@ -137,6 +137,31 @@ enum SeedData {
             let use = try library.usePart(deckStick.id, on: id)
             try library.setStatus(.installed, ofUse: use.id)
         }
+
+        // Guides: a PDF for one revision, Markdown notes for a model, a brand, a category, and one general.
+        let folder = FileManager.default.temporaryDirectory.appending(path: "BenchLog-seed-guides-\(UUID().uuidString)")
+        try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+        func file(_ name: String, _ data: Data) throws -> URL {
+            let url = folder.appending(path: name)
+            try data.write(to: url)
+            return url
+        }
+        try library.addGuide(file: file("Switch OLED fan replacement.pdf", samplePDF("Switch OLED Fan Replacement", pages: 4)),
+                             title: "Switch OLED Fan Replacement", tags: ["fan", "switch"],
+                             links: [GuideLink(category: .console, brand: "Nintendo", model: "Switch", revision: "OLED Model")])
+        let board = try file("nes_board.png", samplePhoto(.systemGreen, "cpu"))
+        try library.addGuide(file: file("_index.md", Data(nesOverview.utf8)), tags: ["nes"],
+                             links: [GuideLink(category: .console, brand: "Nintendo", model: "NES")],
+                             images: [board], sourcePath: "Nintendo/Consoles/NES/_index.md", isOverview: true)
+        try library.addGuide(file: file("blinking-red-light.md", Data(nesBlinking.utf8)), tags: ["nes", "power"],
+                             links: [GuideLink(category: .console, brand: "Nintendo", model: "NES")],
+                             images: [board], sourcePath: "Nintendo/Consoles/NES/blinking-red-light.md")
+        try library.addGuide(file: file("joy-con-drift.md", Data("# Joy-Con Stick Drift\n\nReplace the stick module; cleaning rarely lasts.\n".utf8)),
+                             links: [GuideLink(category: .console, brand: "Nintendo")])
+        try library.addGuide(file: file("console-cleaning.md", Data("# Console Cleaning Checklist\n\n- [ ] Dust the fan\n- [ ] Fresh thermal paste\n".utf8)),
+                             links: [GuideLink(category: .console)])
+        try library.addGuide(file: file("soldering-basics.md", Data("# Soldering Basics\n\n#electronics\n\nTin the tip, heat the pad, feed the solder.\n".utf8)))
+        try? FileManager.default.removeItem(at: folder)
     }
 
     /// A flat colored square with a symbol, standing in for a photo of the device.
@@ -157,4 +182,68 @@ enum SeedData {
               let png = bitmap.representation(using: .png, properties: [:]) else { return Data() }
         return png
     }
+
+    /// A PDF with a title page and numbered pages, for the guide reader.
+    private static func samplePDF(_ title: String, pages: Int) -> Data {
+        let data = NSMutableData()
+        var box = CGRect(x: 0, y: 0, width: 612, height: 792)
+        guard let consumer = CGDataConsumer(data: data as CFMutableData),
+              let context = CGContext(consumer: consumer, mediaBox: &box, nil) else { return Data() }
+        for page in 1...pages {
+            context.beginPDFPage(nil)
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+            let heading = page == 1 ? title : "Step \(page - 1)"
+            NSAttributedString(string: heading, attributes: [.font: NSFont.boldSystemFont(ofSize: 28)])
+                .draw(at: NSPoint(x: 56, y: 700))
+            let body = page == 1
+                ? "Tools: Y00 tri-wing, Phillips #00, spudger, thermal paste.\nTime: 45 minutes."
+                : "Remove the screws shown in the picture, then lift the shield.\nKeep the screws in order: they are three lengths."
+            NSAttributedString(string: body, attributes: [.font: NSFont.systemFont(ofSize: 14)])
+                .draw(in: NSRect(x: 56, y: 560, width: 500, height: 120))
+            NSColor.systemTeal.withAlphaComponent(0.3).setFill()
+            NSBezierPath(roundedRect: NSRect(x: 56, y: 180, width: 500, height: 340), xRadius: 12, yRadius: 12).fill()
+            NSGraphicsContext.restoreGraphicsState()
+            context.endPDFPage()
+        }
+        context.closePDF()
+        return data as Data
+    }
+
+    private static let nesOverview = """
+        # Nintendo Entertainment System (NES)
+
+        Troubleshooting for the front-loading NES-001.
+        ![[nes_board.png]]
+
+        ## Common Faults
+        - [[blinking-red-light|Blinking Red Light]]
+        - [[blank-screen|Blank Screen]]
+
+        ## Tools Needed
+        - Phillips screwdriver
+        - 3.8 mm gamebit
+        - Isopropyl alcohol (90%+)
+
+        > [!warning] Safety
+        > Unplug the console before opening it.
+        """
+
+    private static let nesBlinking = """
+        # Blinking Red Light
+
+        ## Overview
+        The power light blinks and the screen stays grey: the **lockout chip** is resetting the console.
+
+        ## Diagnosis
+        1. Try a known-good cartridge.
+        2. Clean the cartridge contacts.
+        3. Check the 72-pin connector.
+
+        ![[nes_board.png|320]]
+
+        ## Fix
+        - Boil or replace the 72-pin connector.
+        - Clip pin 4 of the CIC chip.
+        """
 }

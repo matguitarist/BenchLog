@@ -151,6 +151,35 @@ enum SelfTest {
                       model.read(false) { try $0.deviceRows(matching: "").contains { $0.device.revision == "Self-Test Edition 2" } })
                 check("the catalog outline has every category's brands", model.read(0) { try $0.catalogOutline().count } >= 4)
 
+                // S-017 to S-020 Guides
+                let guideFolder = URL(fileURLWithPath: "/tmp/BenchLog-self-guides")
+                try? FileManager.default.removeItem(at: guideFolder)
+                let nesFolder = guideFolder.appending(path: "Nintendo/Portable Consoles/Game Boy")
+                try? FileManager.default.createDirectory(at: nesFolder, withIntermediateDirectories: true)
+                try? Data("# Dead Speaker\n![[speaker.png]]".utf8).write(to: nesFolder.appending(path: "dead-speaker.md"))
+                try? Data([0x89, 0x50, 0x4E, 0x47]).write(to: guideFolder.appending(path: "speaker.png"))
+                try? Data("%PDF-1.4".utf8).write(to: guideFolder.appending(path: "Self manual.pdf"))
+                let added = model.addGuides([guideFolder.appending(path: "Self manual.pdf")])
+                check("a PDF is added as a guide", added.first?.format == .pdf)
+                if let pdf = added.first {
+                    model.rememberPage(3, of: pdf.id)
+                    check("the last page read is remembered", model.read(nil) { try $0.guide(pdf.id) }?.lastPage == 3)
+                    model.sheet = nil
+                }
+                let candidates = model.read([]) { try GuideScanner(library: $0).scan(guideFolder) }
+                let speaker = candidates.first { $0.sourcePath.hasSuffix("dead-speaker.md") }
+                check("a folder import guesses Handheld, Nintendo, Game Boy",
+                      speaker?.link == GuideLink(category: .handheld, brand: "Nintendo", model: "Game Boy"))
+                check("an embedded image is found anywhere in the folder", speaker?.images.map(\.lastPathComponent) == ["speaker.png"])
+                model.importGuides(candidates)
+                let afterFirst = model.read(0) { try $0.guideRows().count }
+                model.importGuides(candidates)
+                check("importing the folder again adds nothing", model.read(0) { try $0.guideRows().count } == afterFirst)
+                if let device {
+                    let matches = model.read([]) { try $0.guides(for: device) }
+                    check("the repair's device finds the imported guide", matches.first?.guide.title == "Dead Speaker")
+                }
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)
