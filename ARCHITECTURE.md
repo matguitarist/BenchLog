@@ -9,7 +9,8 @@
   - `CatalogSeed.swift`: the catalog a new library starts with.
   - `Attachment.swift`, `Part.swift`, `Catalog.swift` (outline, rename and merge, which also move devices, part fits, and guide links), `Guide.swift` (guides, their links, and matching a device: revision → model → brand → category).
   - `MarkdownHTML.swift`: Obsidian-flavoured Markdown to HTML (wiki links, image embeds, callouts, tags) and the page around it. Plain Foundation, for the iOS app too.
-  - `Billing.swift`: `BusinessProfile` (in `meta`), labour lines, `Billing.totals` (subtotal, TPS and TVQ each rounded half up), and invoices and estimates. Issuing freezes a `DocumentContent` (business, customer, lines, rates, totals) as JSON, so later edits never change a printed document. Invoice numbers have their own sequence.
+  - `Billing.swift`: `BusinessProfile` (in `meta`), labour lines, and pricing: `Billing.totals` (subtotal, the taxable amount, and one line per tax, each rounded half up) and `bill(for:)`.
+  - `Documents.swift`: estimates, invoices, credit notes, and sale invoices. Issuing freezes a `DocumentContent` (business, customer, lines, taxes, totals) as JSON, so later edits never change a printed document. Invoices and credit notes have their own sequences (`nextNumber`).
   - `Search.swift`: global search. An FTS5 table, `search`, filled and kept current by SQL triggers (one `Source` per table, plus the rows that show its text), so no write path can forget it. `Library.search` groups hits by kind. The sources are versioned (`sources(version:)`): each migration installs the version of its own time, so v7 never names a column v9 adds. A change to a `Source` is a new version and a new migration that calls `reinstall`.
   - `Approval.swift`: the approval rule and where a repair stands against it (`approvalState(of:)`).
   - `Taxes.swift`: countries, provinces and states with their standard taxes, tax names in each language, and what a profile charges (`chargedTaxes`). `Billing.totals` takes these taxes; documents take the country (currency, en_US or en_CA) from the business details they froze.
@@ -23,7 +24,7 @@
 - **BenchLog** (the app, main-actor by default):
   - `Models.swift`: `AppModel` holds the open `Library`, the page and selection, the sheet, history, and undo. Every change goes through its `write`, so it is logged, and pages reload when `dataVersion` changes.
   - `Models+Guides.swift`: adding, importing, and reading guides. Turning a PDF page saves the page without `write`, so the app does not reload.
-  - `Models+Billing.swift`: labour, discount, Business settings, and issuing documents. Each document is printed to PDF, saved on the repair as a document attachment, and opened in Preview.
+  - `Models+Billing.swift`: labour, discount, Business settings, and issuing documents. Each document is printed to PDF, saved as a document attachment on the repair (or, for a sale, the device), and opened in Preview.
   - `DocumentPrinter.swift`: HTML to a Letter PDF with an offscreen WKWebView: one tall `pdf(configuration:)` page plus the blocks it measured, handed to the Kit's `PageLayout`.
   - `Models+Actions.swift`: the actions by feature (customers and devices, repairs, notes, photos and files, parts, catalog). State stays in `Models.swift`; a new feature adds its actions here, or its own `Models+<Feature>.swift` once this file passes 300 lines.
   - `Views/SearchPanel.swift`: Search BenchLog (⌘F) over the main window, and `FindCommands`, which gives ⌘F to a PDF guide's find bar when one is in front.
