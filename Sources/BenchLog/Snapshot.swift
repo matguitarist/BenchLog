@@ -134,7 +134,7 @@ enum Snapshot {
     /// permission for the app that started this one (your terminal, or Claude).
     /// Without it, falls back to drawing the view hierarchy, which leaves
     /// sidebars and glass blank.
-    /// doc-intake-slip, doc-estimate, doc-invoice, doc-invoice-paid, doc-invoice-english.
+    /// doc-intake-slip, doc-estimate, doc-invoice, doc-invoice-paid, and doc-invoice-french or -english.
     private static func snapshotDocuments(model: AppModel, dir: String) async {
         guard let library = model.library, let rows = try? library.repairRows() else { return }
         func save(_ html: String, _ name: String) async {
@@ -161,9 +161,10 @@ enum Snapshot {
         if let estimate = documents.first(where: { $0.kind == .estimate }) { await save(model.html(for: estimate), "doc-estimate") }
         if let invoice = documents.first(where: { $0.kind == .invoice && $0.paidAt == nil }) {
             await save(model.html(for: invoice), "doc-invoice")
-            var english = invoice
-            english.language = .english
-            await save(model.html(for: english), "doc-invoice-english")
+            // The same invoice in the other documents language.
+            var other = invoice
+            other.language = invoice.language == .french ? .english : .french
+            await save(model.html(for: other), other.language == .french ? "doc-invoice-french" : "doc-invoice-english")
         }
         if let paid = documents.first(where: { $0.paidAt != nil }) { await save(model.html(for: paid), "doc-invoice-paid") }
     }

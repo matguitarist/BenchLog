@@ -333,7 +333,7 @@ Acceptance:
 - [unit] Once issued, an invoice is frozen (its lines, prices, rates, and number). Changes need a new invoice or a credit note (Later).
 - [snap] The invoice matches Québec practice: « Facture », « N° de TPS », « N° de TVQ », « Sous-total », « Total ».
 - [self] The PDF is saved as an attachment (kind: document) on the repair and opens in Preview.
-Built: Facturer (⇧⌘I) issues the next number and freezes the content; the PDF is saved on the repair and opens in Preview. Pages break between lines, never through one. Snapshots: doc-invoice, doc-invoice-english.
+Built: Facturer (⇧⌘I) issues the next number and freezes the content; the PDF is saved on the repair and opens in Preview. Pages break between lines, never through one. Snapshots: doc-invoice (English customer), doc-invoice-french.
 Status: done
 
 ### S-025 Quote before work (estimation)
