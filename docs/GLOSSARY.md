@@ -74,6 +74,8 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Print Intake Slip | Make the intake slip PDF and open it (⌘P) | print receipt |
 | Print Estimate | Issue an estimate PDF and open it | send quote |
 | Invoice | Issue the next numbered invoice (⇧⌘I); « Facturer » | bill, create invoice |
+| Search BenchLog | Find any customer, phone, device, serial, ticket, note, part, or guide (⌘F); « Rechercher dans BenchLog » | global search, quick open, spotlight |
+| Find in Guide | Find text inside the guide in front (⌘F there) | search guide |
 | Approve / Refuse | Record the customer's answer to an estimate | accept, decline |
 
 ## Document terms (fr-CA, printed)

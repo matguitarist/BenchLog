@@ -14,6 +14,17 @@ struct ContentView: View {
         } detail: {
             page(model.sidebar ?? .repairs)
         }
+        .overlay(alignment: .top) {
+            if model.searching {
+                ZStack(alignment: .top) {
+                    // A click outside the panel closes it.
+                    Color.black.opacity(0.001)
+                        .onTapGesture { model.searching = false }
+                    SearchPanel()
+                        .padding(.top, 72) // grid: ok below the toolbar
+                }
+            }
+        }
         .sheet(item: $model.sheet) { kind in
             SheetHost(kind: kind)
                 .environment(model)

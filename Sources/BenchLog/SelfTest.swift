@@ -202,6 +202,20 @@ enum SelfTest {
                     }
                 }
 
+                // S-027 Global search: a ticket number and a phone find their records, and a hit opens its page.
+                if let row = model.read(nil, { try $0.repairRows().first }) {
+                    let hits = model.read([]) { try $0.search("#\(row.repair.ticketNumber)") }
+                    check("searching a ticket number finds the repair", hits.contains { $0.kind == .repair && $0.id == row.id })
+                    let phone = model.read([]) { try $0.search(row.customer.phone) }
+                    check("searching a phone number finds the customer", row.customer.phone.isEmpty || phone.contains { $0.id == row.customer.id })
+                    if let hit = hits.first(where: { $0.id == row.id }) {
+                        model.searching = true
+                        model.open(hit)
+                        check("opening a search result shows its page and closes the search",
+                              model.sidebar == .repairs && model.selectedRepair == row.id && !model.searching)
+                    }
+                }
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)

@@ -81,6 +81,8 @@ struct PDFGuideReader: View {
                 model.rememberPage(page, of: guideID)
             }
         }
+        // Edit > Find in Guide… (⌘F) opens this reader's find bar.
+        .focusedSceneValue(\.guideFind, GuideFindAction(guideID: guideID, open: openFind))
     }
 
     private var bar: some View {
@@ -109,12 +111,8 @@ struct PDFGuideReader: View {
                 .fixedSize()
                 Button("Done") { closeFind() }
             } else {
-                Button("Find", systemImage: "magnifyingglass") {
-                    finding = true
-                    findFocused = true
-                }
-                .keyboardShortcut("f")
-                .help("Find text in this guide (⌘F)")
+                Button("Find", systemImage: "magnifyingglass") { openFind() }
+                    .help("Find text in this guide (⌘F)")
             }
             Spacer()
             ControlGroup {
@@ -133,6 +131,11 @@ struct PDFGuideReader: View {
         .labelStyle(.iconOnly)
         .padding(.horizontal, Space.md)
         .padding(.vertical, Space.sm)
+    }
+
+    private func openFind() {
+        finding = true
+        findFocused = true
     }
 
     private func search() {

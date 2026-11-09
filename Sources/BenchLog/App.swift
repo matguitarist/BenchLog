@@ -32,6 +32,7 @@ struct BenchLogApp: App {
             // File > Import from iPhone: Take Photo, Scan Documents (Continuity Camera).
             ImportFromDevicesCommands()
             ToolbarCommands()
+            FindCommands(model: model)
             CommandGroup(replacing: .newItem) {
                 Button("New Repair…") { model.newRepair() }
                     .keyboardShortcut("n")

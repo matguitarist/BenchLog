@@ -1031,6 +1031,16 @@
         }
       }
     },
+    "Customers, phones, serials, tickets, notes, parts, guides": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clients, téléphones, numéros de série, dossiers, notes, pièces, guides"
+          }
+        }
+      }
+    },
     "Dates": {
       "localizations": {
         "fr": {
@@ -1427,6 +1437,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rechercher dans le guide"
+          }
+        }
+      }
+    },
+    "Find in Guide…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher dans le guide…"
           }
         }
       }
@@ -2451,6 +2471,16 @@
         }
       }
     },
+    "Nothing matches “%@”.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien ne correspond à « %@ »."
+          }
+        }
+      }
+    },
     "Nothing on the Way": {
       "localizations": {
         "fr": {
@@ -3267,6 +3297,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Égratignures, fissures, vis manquantes…"
+          }
+        }
+      }
+    },
+    "Search BenchLog": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher dans BenchLog"
+          }
+        }
+      }
+    },
+    "Search BenchLog…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher dans BenchLog…"
           }
         }
       }

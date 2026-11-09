@@ -23,6 +23,7 @@ Migrations live in `Sources/BenchLogKit/Library.swift`. They are only ever added
 | `note` | `ownerType` (`customer` `device` `repair`), `ownerId`, `kind` (`text`, or `status`, where `text` holds the new status), `text` |
 | `labourLine` | `repairId` → repair, `description`, `kind` (`hourly` or `flat`), `hundredthHours` (1.5 h = 150), `unitCents` (the rate, or the flat price) |
 | `invoice` | Estimates and invoices. `repairId` → repair, `kind` (`estimate` or `invoice`), `number` INTEGER UNIQUE (invoices only, shown as `F-0001`), `issuedAt`, `validUntil`, `language`, `content` (the frozen document as JSON: business, customer, lines, tax rates in millionths, totals), `totalCents`, `paidAt`, `paymentMethod` (`cash` `debit` `credit` `eTransfer`), `decision` (`approved` or `refused`), `decidedAt`, `fileId` → the PDF attachment |
+| `search` | FTS5, derived: never edit it by hand. `kind`, `itemId`, `targetKind`, `targetId` (what opens), `title`, `subtitle`, `keys` (ticket digits, phone digits, diagnosis, note text). Triggers named `search_<table>_*` keep it current. A sync client can rebuild it. |
 | `catalog` | `category`, `brand`, `model`, `revision` ('' for the model itself). PK is all four. No id: it is reference data that grows from what people enter. |
 
 Repair `status` values, in workflow order: `intake`, `diagnosing`, `awaitingApproval`, `waitingOnParts`,

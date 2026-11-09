@@ -35,6 +35,9 @@ final class AppModel {
     var customerSearch = ""
     var deviceSearch = ""
     var sheet: SheetKind?
+    /// Search BenchLog (⌘F) is open over the main window.
+    var searching = false
+    var searchText = ""
     /// Set by ⌘⇧K; the note field of the page shown takes focus and clears it.
     var focusNoteField = false
     /// A problem to show in an alert (a failed save).
@@ -119,7 +122,7 @@ final class AppModel {
     }
 
     enum Destination {
-        case repair(UUID), customer(UUID), device(UUID), guide(UUID)
+        case repair(UUID), customer(UUID), device(UUID), guide(UUID), part(UUID)
     }
 
     private var here: Place {
@@ -128,6 +131,7 @@ final class AppModel {
         case .customers: selectedCustomer
         case .devices: selectedDevice
         case .guides: selectedGuide
+        case .parts: selectedPart
         default: nil
         }
         return Place(sidebar: sidebar, selection: selection)
@@ -140,6 +144,7 @@ final class AppModel {
         case .customers: selectedCustomer = place.selection
         case .devices: selectedDevice = place.selection
         case .guides: selectedGuide = place.selection
+        case .parts: selectedPart = place.selection
         default: break
         }
     }
@@ -162,6 +167,24 @@ final class AppModel {
         case .guide(let id):
             guideSearch = ""
             go(to: Place(sidebar: .guides, selection: id))
+        case .part(let id):
+            partSearch = ""
+            partsTab = .inventory
+            go(to: Place(sidebar: .parts, selection: id))
+        }
+    }
+
+    /// Opens what a search result points at, and closes the search.
+    func open(_ hit: SearchHit) {
+        searching = false
+        let id = hit.target.id
+        switch hit.target.kind {
+        case .repair: open(.repair(id))
+        case .customer: open(.customer(id))
+        case .device: open(.device(id))
+        case .guide: open(.guide(id))
+        case .part: open(.part(id))
+        case .note: break
         }
     }
 

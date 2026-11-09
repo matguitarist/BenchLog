@@ -367,7 +367,12 @@ Depends: S-009
 Acceptance:
 - [unit] SQLite FTS5 index. Searching "#12" or "12" finds ticket #0012, and digits match phone numbers.
 - [snap] Results are grouped by type, and Return opens the top hit.
-Status: todo
+UX:
+- Flow: ⌘F (Edit > Search BenchLog…) -> type -> ↑↓ move, Return opens the selected result (the top hit first) -> the page shows it. Escape or a click outside closes. In a PDF guide, ⌘F is Find in Guide and Search moves to ⌥⌘F.
+- Surface: a panel over the main window, like Open Quickly (a lookup kept beside the work, not a page to come back to).
+- States: hint prompt before typing; "Nothing matches « … »."; up to 6 results per kind.
+Built: an FTS5 index (migration v7-search) kept current by triggers on customer, device, repair, note, part, and guide; passcodes are never indexed; accents are ignored. A note opens its customer, device, repair, or guide. Snapshot: search-results.
+Status: done
 
 ### S-028 Keyboard and menu commands
 As the user, I do every main action from the menu bar with shortcuts: New Repair ⌘N, New Customer ⌘⇧N, Add Note ⌘⇧K, Add Photo ⌘⇧P, Print Slip ⌘P, Status ⌘1–8.

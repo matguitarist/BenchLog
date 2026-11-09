@@ -65,9 +65,11 @@ enum Snapshot {
                 ("parts-toorder", { model.sidebar = .parts; model.partsTab = .toOrder }),
                 ("parts-incoming", { model.sidebar = .parts; model.partsTab = .incoming }),
                 ("repair-parts", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = waiting }),
+                ("search-results", { model.sidebar = .repairs; model.searchText = "mario"; model.searching = true }),
                 ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
             ]
             for (name, setUp) in states where only == nil || only?.contains(name) == true || only?.contains("states") == true {
+                model.searching = false
                 setUp()
                 for mode in ["light", "dark"] {
                     NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
@@ -81,6 +83,7 @@ enum Snapshot {
                 }
             }
             model.partsTab = .inventory
+            model.searching = false
             // The printed documents, page 1 of each as a PNG.
             if only == nil || only?.contains("docs") == true {
                 await snapshotDocuments(model: model, dir: dir)

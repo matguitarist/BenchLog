@@ -259,3 +259,28 @@ extension PaymentMethod {
         }
     }
 }
+
+extension SearchKind {
+    /// The heading over this kind's search results.
+    var pluralTitle: String {
+        switch self {
+        case .repair: String(localized: "Repairs")
+        case .customer: String(localized: "Customers")
+        case .device: String(localized: "Devices")
+        case .part: String(localized: "Parts")
+        case .guide: String(localized: "Guides")
+        case .note: String(localized: "Notes")
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .repair: "wrench.and.screwdriver"
+        case .customer: "person"
+        case .device: "laptopcomputer.and.iphone"
+        case .part: "shippingbox"
+        case .guide: "book.pages"
+        case .note: "note.text"
+        }
+    }
+}
