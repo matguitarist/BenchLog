@@ -49,6 +49,88 @@ public final class Library: Sendable {
                 INSERT INTO meta (key, value) VALUES ('nextTicketNumber', '1');
                 """)
         }
+        migrator.registerMigration("v2-core") { db in
+            // Customers, their devices, repairs, notes, and the device catalog.
+            // Ids are lowercase UUID text; dates are "YYYY-MM-DD HH:MM:SS.SSS" in UTC.
+            try db.execute(sql: """
+                CREATE TABLE customer (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    name TEXT NOT NULL,
+                    phone TEXT NOT NULL DEFAULT '',
+                    phoneDigits TEXT NOT NULL DEFAULT '',
+                    email TEXT NOT NULL DEFAULT '',
+                    address TEXT NOT NULL DEFAULT '',
+                    documentsLanguage TEXT NOT NULL DEFAULT 'fr',
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX customer_name ON customer(name COLLATE NOCASE);
+                CREATE INDEX customer_phone ON customer(phoneDigits);
+
+                CREATE TABLE device (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    customerId TEXT NOT NULL REFERENCES customer(id),
+                    category TEXT NOT NULL,
+                    brand TEXT NOT NULL,
+                    model TEXT NOT NULL,
+                    revision TEXT NOT NULL DEFAULT '',
+                    serial TEXT NOT NULL DEFAULT '',
+                    colour TEXT NOT NULL DEFAULT '',
+                    condition TEXT NOT NULL DEFAULT '',
+                    passcode TEXT NOT NULL DEFAULT '',
+                    passcodeIsPattern BOOLEAN NOT NULL DEFAULT 0,
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX device_customer ON device(customerId);
+
+                CREATE TABLE repair (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    deviceId TEXT NOT NULL REFERENCES device(id),
+                    ticketNumber INTEGER NOT NULL UNIQUE,
+                    status TEXT NOT NULL,
+                    complaint TEXT NOT NULL,
+                    diagnosis TEXT NOT NULL DEFAULT '',
+                    receivedAt DATETIME NOT NULL,
+                    promisedAt DATETIME,
+                    completedAt DATETIME,
+                    pickedUpAt DATETIME,
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX repair_device ON repair(deviceId);
+                CREATE INDEX repair_status ON repair(status);
+
+                CREATE TABLE note (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    ownerType TEXT NOT NULL,
+                    ownerId TEXT NOT NULL,
+                    kind TEXT NOT NULL DEFAULT 'text',
+                    text TEXT NOT NULL,
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX note_owner ON note(ownerType, ownerId);
+
+                CREATE TABLE catalog (
+                    category TEXT NOT NULL,
+                    brand TEXT NOT NULL,
+                    model TEXT NOT NULL,
+                    revision TEXT NOT NULL DEFAULT '',
+                    PRIMARY KEY (category, brand, model, revision)
+                );
+                """)
+            for (category, brand, model, revisions) in CatalogSeed.entries {
+                for revision in [""] + revisions {
+                    try db.execute(sql: "INSERT OR IGNORE INTO catalog VALUES (?, ?, ?, ?)",
+                                   arguments: [category, brand, model, revision])
+                }
+            }
+        }
         return migrator
     }
 

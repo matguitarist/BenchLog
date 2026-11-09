@@ -36,6 +36,67 @@ enum SelfTest {
             let file = (try? String(contentsOf: Store.logURL, encoding: .utf8)) ?? ""
             check("the log file has the line", file.contains("Self-test"))
 
+            if let library = model.library {
+                // S-002 Add a customer
+                let customer = model.save(Customer(name: "Self Test", phone: "(514) 555-0000"), firstNote: "First visit")
+                check("a new customer is saved", customer != nil)
+                check("phone search matches digits only", (try? library.customers(matching: "5145550000"))?.count == 1)
+                check("the first note goes on the customer's timeline",
+                      customer.map { id in (try? library.notes(for: .customer, id: id.id))?.map(\.text) == ["First visit"] } ?? false)
+
+                // S-003 Add a device
+                let device = customer.flatMap { model.save(Device(customerId: $0.id, category: .handheld, brand: "Nintendo",
+                                                                   model: "Game Boy", revision: "Self-Test Edition", passcode: "1234")) }
+                check("a device is saved for the customer", device != nil)
+                check("a new revision joins the catalog",
+                      (try? library.catalogRevisions(.handheld, brand: "Nintendo", model: "Game Boy"))?.contains("Self-Test Edition") == true)
+
+                // S-005 Open a repair
+                if let device {
+                    let first = model.createRepair(deviceID: device.id, complaint: "No power", promisedAt: nil)
+                    let second = model.createRepair(deviceID: device.id, complaint: "No sound", promisedAt: nil)
+                    check("ticket numbers go up by one", first.map { $0.ticketNumber + 1 } == second?.ticketNumber)
+                    check("a new repair is in Intake", first?.status == .intake)
+
+                    // S-006 Statuses, with Undo
+                    if let first {
+                        let undo = UndoManager()
+                        undo.groupsByEvent = false
+                        model.undoManager = undo
+                        undo.beginUndoGrouping()
+                        model.setStatus(.ready, for: first.id)
+                        undo.endUndoGrouping()
+                        let ready = try? library.repair(first.id)
+                        check("Ready sets the completed date", ready?.status == .ready && ready?.completedAt != nil)
+                        check("a status change writes a status note",
+                              (try? library.notes(for: .repair, id: first.id))?.compactMap(\.status) == [.ready])
+                        undo.undo()
+                        check("Undo puts the old status back", (try? library.repair(first.id))?.status == .intake)
+                        model.undoManager = nil
+
+                        // S-008 Notes
+                        model.addNote("Cleaned the contacts", to: .repair, id: first.id)
+                        check("a note is added to the repair",
+                              (try? library.notes(for: .repair, id: first.id))?.contains { $0.text == "Cleaned the contacts" } == true)
+
+                        // S-009 Links and Back
+                        model.sidebar = .repairs
+                        model.selectedRepair = first.id
+                        model.open(.customer(device.customerId))
+                        check("a customer link opens the customer", model.sidebar == .customers && model.selectedCustomer == device.customerId)
+                        model.goBack()
+                        check("Back returns to the repair", model.sidebar == .repairs && model.selectedRepair == first.id)
+                        model.goForward()
+                        check("Forward goes to the customer again", model.sidebar == .customers)
+                    }
+                    check("the Repairs badge counts open repairs", model.openRepairCount == 2)
+                }
+
+                // S-001 Data survives a restart
+                let reopened = try? Library(databaseURL: Store.url)
+                check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)
+            }
+
             for tab in SettingsTab.allCases {
                 model.settingsTab = tab
                 check("Settings has the \(tab.rawValue) tab", model.settingsTab == tab && !tab.title.isEmpty)

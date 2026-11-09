@@ -1,6 +1,36 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%@ (%lld)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ (%2$lld)"
+          }
+        }
+      }
+    },
+    "%lld d": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld j"
+          }
+        }
+      }
+    },
+    "%lld days": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld jours"
+          }
+        }
+      }
+    },
     "1 open": {
       "localizations": {
         "fr": {
@@ -17,6 +47,116 @@
           "stringUnit": {
             "state": "translated",
             "value": "Couleur d’accentuation"
+          }
+        }
+      }
+    },
+    "Add Customer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter le client"
+          }
+        }
+      }
+    },
+    "Add Device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter l’appareil"
+          }
+        }
+      }
+    },
+    "Add Device…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un appareil…"
+          }
+        }
+      }
+    },
+    "Add Note": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une note"
+          }
+        }
+      }
+    },
+    "Add a customer (⌘⇧N)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un client (⌘⇧N)"
+          }
+        }
+      }
+    },
+    "Add a device to this customer (⌘⇧D)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un appareil à ce client (⌘⇧D)"
+          }
+        }
+      }
+    },
+    "Add a note…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une note…"
+          }
+        }
+      }
+    },
+    "Add the people who bring you devices.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez les personnes qui vous apportent des appareils."
+          }
+        }
+      }
+    },
+    "Address": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Adresse"
+          }
+        }
+      }
+    },
+    "Adds “%@” to the catalog": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoute « %@ » au catalogue"
+          }
+        }
+      }
+    },
+    "All": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes"
           }
         }
       }
@@ -51,12 +191,122 @@
         }
       }
     },
+    "Awaiting Approval": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente d’approbation"
+          }
+        }
+      }
+    },
+    "Back": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Précédent"
+          }
+        }
+      }
+    },
     "BenchLog": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "BenchLog"
+          }
+        }
+      }
+    },
+    "Brand": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marque"
+          }
+        }
+      }
+    },
+    "Cancel": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler"
+          }
+        }
+      }
+    },
+    "Cancelled": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annulée"
+          }
+        }
+      }
+    },
+    "Category": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Catégorie"
+          }
+        }
+      }
+    },
+    "Change": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changer"
+          }
+        }
+      }
+    },
+    "Change Status": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changer le statut"
+          }
+        }
+      }
+    },
+    "Change the status (⌘1–⌘8)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changer le statut (⌘1–⌘8)"
+          }
+        }
+      }
+    },
+    "Change this customer's details": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier les coordonnées de ce client"
+          }
+        }
+      }
+    },
+    "Change this device's details": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier les détails de cet appareil"
           }
         }
       }
@@ -91,12 +341,472 @@
         }
       }
     },
+    "Choose All to see every repair.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez Toutes pour voir toutes les réparations."
+          }
+        }
+      }
+    },
+    "Choose a brand and model.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez une marque et un modèle."
+          }
+        }
+      }
+    },
+    "Choose a customer, or add a new one.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez un client ou ajoutez-en un."
+          }
+        }
+      }
+    },
+    "Choose an Existing Customer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir un client existant"
+          }
+        }
+      }
+    },
+    "Choose an Existing Device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir un appareil existant"
+          }
+        }
+      }
+    },
+    "Choose which repairs the list shows": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir les réparations affichées dans la liste"
+          }
+        }
+      }
+    },
+    "Clear": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effacer"
+          }
+        }
+      }
+    },
+    "Closed": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fermées"
+          }
+        }
+      }
+    },
+    "Colour": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleur"
+          }
+        }
+      }
+    },
+    "Complaint": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Problème signalé"
+          }
+        }
+      }
+    },
+    "Computer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordinateur"
+          }
+        }
+      }
+    },
+    "Condition": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "État"
+          }
+        }
+      }
+    },
+    "Console": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Console"
+          }
+        }
+      }
+    },
+    "Create Repair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Créer la réparation"
+          }
+        }
+      }
+    },
+    "Customer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Client"
+          }
+        }
+      }
+    },
+    "Customers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clients"
+          }
+        }
+      }
+    },
+    "Dates": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dates"
+          }
+        }
+      }
+    },
+    "Describe the complaint.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Décrivez le problème signalé."
+          }
+        }
+      }
+    },
+    "Device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appareil"
+          }
+        }
+      }
+    },
+    "Devices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appareils"
+          }
+        }
+      }
+    },
+    "Devices appear here when you add them to a customer.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les appareils s’affichent ici quand vous les ajoutez à un client."
+          }
+        }
+      }
+    },
+    "Diagnosing": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostic"
+          }
+        }
+      }
+    },
+    "Diagnosis": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostic"
+          }
+        }
+      }
+    },
+    "Discard": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abandonner"
+          }
+        }
+      }
+    },
+    "Discard this customer?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abandonner ce client?"
+          }
+        }
+      }
+    },
+    "Discard this repair?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abandonner cette réparation?"
+          }
+        }
+      }
+    },
+    "Documents language": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Langue des documents"
+          }
+        }
+      }
+    },
+    "Dot %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Point %lld"
+          }
+        }
+      }
+    },
+    "Edit Customer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier le client"
+          }
+        }
+      }
+    },
+    "Edit Device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier l’appareil"
+          }
+        }
+      }
+    },
+    "Edit Note": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier la note"
+          }
+        }
+      }
+    },
+    "Edit…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier…"
+          }
+        }
+      }
+    },
+    "Email": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Courriel"
+          }
+        }
+      }
+    },
+    "Empty": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vide"
+          }
+        }
+      }
+    },
+    "Enter a name.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Entrez un nom."
+          }
+        }
+      }
+    },
+    "Forward": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivant"
+          }
+        }
+      }
+    },
     "General": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Général"
+          }
+        }
+      }
+    },
+    "Go": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aller"
+          }
+        }
+      }
+    },
+    "Goes on the customer's timeline": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "S’ajoute à l’historique du client"
+          }
+        }
+      }
+    },
+    "Guides": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Guides"
+          }
+        }
+      }
+    },
+    "Guides Are Coming": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les guides arrivent bientôt"
+          }
+        }
+      }
+    },
+    "Handheld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Console portable"
+          }
+        }
+      }
+    },
+    "Hide Passcode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer le code"
+          }
+        }
+      }
+    },
+    "Hide the passcode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer le code"
+          }
+        }
+      }
+    },
+    "Hide the passcode (⌥⌘P)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer le code (⌥⌘P)"
+          }
+        }
+      }
+    },
+    "In Progress": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En cours"
+          }
+        }
+      }
+    },
+    "Intake": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reçue"
           }
         }
       }
@@ -151,12 +861,152 @@
         }
       }
     },
+    "Model": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modèle"
+          }
+        }
+      }
+    },
+    "Model, serial, or customer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modèle, numéro de série ou client"
+          }
+        }
+      }
+    },
+    "Move to Trash": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placer dans la corbeille"
+          }
+        }
+      }
+    },
+    "Name": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom"
+          }
+        }
+      }
+    },
+    "Name or phone": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom ou téléphone"
+          }
+        }
+      }
+    },
+    "Name, phone, or email": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom, téléphone ou courriel"
+          }
+        }
+      }
+    },
+    "New Customer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveau client"
+          }
+        }
+      }
+    },
+    "New Customer…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveau client…"
+          }
+        }
+      }
+    },
     "New Repair": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Nouvelle réparation"
+          }
+        }
+      }
+    },
+    "New Repair…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle réparation…"
+          }
+        }
+      }
+    },
+    "No Closed Repairs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune réparation fermée"
+          }
+        }
+      }
+    },
+    "No Customer Selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun client sélectionné"
+          }
+        }
+      }
+    },
+    "No Customers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun client"
+          }
+        }
+      }
+    },
+    "No Device Selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun appareil sélectionné"
+          }
+        }
+      }
+    },
+    "No Devices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun appareil"
           }
         }
       }
@@ -171,12 +1021,322 @@
         }
       }
     },
-    "Overview": {
+    "No Open Repairs": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Aperçu"
+            "value": "Aucune réparation ouverte"
+          }
+        }
+      }
+    },
+    "No Repair Selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune réparation sélectionnée"
+          }
+        }
+      }
+    },
+    "No Repairs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune réparation"
+          }
+        }
+      }
+    },
+    "No Repairs Ready": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune réparation prête"
+          }
+        }
+      }
+    },
+    "No devices yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun appareil pour l’instant"
+          }
+        }
+      }
+    },
+    "No notes yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune note pour l’instant"
+          }
+        }
+      }
+    },
+    "No passcode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun code"
+          }
+        }
+      }
+    },
+    "No repairs yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune réparation pour l’instant"
+          }
+        }
+      }
+    },
+    "Note": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note"
+          }
+        }
+      }
+    },
+    "Notes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Notes"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "On the bench": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur l’établi"
+          }
+        }
+      }
+    },
+    "On the bench for %lld days": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur l’établi depuis %lld jours"
+          }
+        }
+      }
+    },
+    "Open": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvertes"
+          }
+        }
+      }
+    },
+    "Open Customer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir le client"
+          }
+        }
+      }
+    },
+    "Open Device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir l’appareil"
+          }
+        }
+      }
+    },
+    "Open a repair for a device (⌘N)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir une réparation pour un appareil (⌘N)"
+          }
+        }
+      }
+    },
+    "Open a repair for this device (⌘N)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir une réparation pour cet appareil (⌘N)"
+          }
+        }
+      }
+    },
+    "Open a repair when a customer brings in a device.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrez une réparation quand un client apporte un appareil."
+          }
+        }
+      }
+    },
+    "Open customer %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir le client %@"
+          }
+        }
+      }
+    },
+    "Open device %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir l’appareil %@"
+          }
+        }
+      }
+    },
+    "Open repair %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir la réparation %@"
+          }
+        }
+      }
+    },
+    "Other": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autre"
+          }
+        }
+      }
+    },
+    "Parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièces"
+          }
+        }
+      }
+    },
+    "Parts Are Coming": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les pièces arrivent bientôt"
+          }
+        }
+      }
+    },
+    "Parts inventory and parts per repair arrive in the next version.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’inventaire des pièces et les pièces par réparation arrivent dans la prochaine version."
+          }
+        }
+      }
+    },
+    "Passcode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code"
+          }
+        }
+      }
+    },
+    "Passcode, hidden": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code, masqué"
+          }
+        }
+      }
+    },
+    "Pattern": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schéma"
+          }
+        }
+      }
+    },
+    "Pattern %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schéma %@"
+          }
+        }
+      }
+    },
+    "Phone": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Téléphone"
+          }
+        }
+      }
+    },
+    "Picked Up": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Récupérée"
           }
         }
       }
@@ -187,6 +1347,66 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aperçu de la couleur d’accentuation"
+          }
+        }
+      }
+    },
+    "Promised": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Promise"
+          }
+        }
+      }
+    },
+    "Promised for": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Promise pour le"
+          }
+        }
+      }
+    },
+    "Ready": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prête"
+          }
+        }
+      }
+    },
+    "Received": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reçue le"
+          }
+        }
+      }
+    },
+    "Repair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réparation"
+          }
+        }
+      }
+    },
+    "Repair %@, %@, %@, %@, %lld days": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réparation %1$@, %2$@, %3$@, %4$@, %5$lld jours"
           }
         }
       }
@@ -211,12 +1431,152 @@
         }
       }
     },
+    "Revision": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Révision"
+          }
+        }
+      }
+    },
+    "Save": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer"
+          }
+        }
+      }
+    },
+    "Scratches, cracks, missing screws…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Égratignures, fissures, vis manquantes…"
+          }
+        }
+      }
+    },
+    "Select a customer to see their devices and notes.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez un client pour voir ses appareils et ses notes."
+          }
+        }
+      }
+    },
+    "Select a device to see its details and repair history.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez un appareil pour voir ses détails et ses réparations."
+          }
+        }
+      }
+    },
+    "Select a repair to see its details and timeline.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez une réparation pour voir ses détails et son historique."
+          }
+        }
+      }
+    },
+    "Serial or IMEI": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Numéro de série ou IMEI"
+          }
+        }
+      }
+    },
+    "Show": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher"
+          }
+        }
+      }
+    },
     "Show Closed": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Afficher les fermées"
+          }
+        }
+      }
+    },
+    "Show Passcode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le code"
+          }
+        }
+      }
+    },
+    "Show the passcode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le code"
+          }
+        }
+      }
+    },
+    "Show the passcode (⌥⌘P)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le code (⌥⌘P)"
+          }
+        }
+      }
+    },
+    "Status": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statut"
+          }
+        }
+      }
+    },
+    "Status → %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statut → %@"
+          }
+        }
+      }
+    },
+    "Status: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statut : %@"
           }
         }
       }
@@ -231,6 +1591,26 @@
         }
       }
     },
+    "Tablet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tablette"
+          }
+        }
+      }
+    },
+    "The language of this customer's intake slips, estimates, and invoices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La langue des bons de dépôt, estimations et factures de ce client"
+          }
+        }
+      }
+    },
     "The new language applies after a restart.": {
       "localizations": {
         "fr": {
@@ -241,12 +1621,12 @@
         }
       }
     },
-    "Track your customers, their devices, and every repair from check-in to pickup, with parts, guides, photos, and invoices.": {
+    "Timeline": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Suivez vos clients, leurs appareils et chaque réparation, du dépôt à la récupération, avec les pièces, les guides, les photos et les factures."
+            "value": "Historique"
           }
         }
       }
@@ -257,6 +1637,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Impossible d’ouvrir la bibliothèque"
+          }
+        }
+      }
+    },
+    "Unable to Save": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’enregistrer"
           }
         }
       }
@@ -291,12 +1681,78 @@
         }
       }
     },
+    "Waiting on Parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente de pièces"
+          }
+        }
+      }
+    },
     "What BenchLog does with your library shows here.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ce que BenchLog fait avec votre bibliothèque s’affiche ici."
+          }
+        }
+      }
+    },
+    "What the customer says is wrong": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que le client dit qui ne va pas"
+          }
+        }
+      }
+    },
+    "What you found": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que vous avez trouvé"
+          }
+        }
+      }
+    },
+    "What you typed is not saved.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que vous avez tapé n’est pas enregistré."
+          }
+        }
+      }
+    },
+    "Your repair guides, linked to device models, arrive in a later version.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vos guides de réparation, liés aux modèles d’appareils, arrivent dans une version ultérieure."
+          }
+        }
+      }
+    },
+    "filter.ready": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ready"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prêtes"
           }
         }
       }

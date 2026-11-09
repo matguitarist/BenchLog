@@ -24,6 +24,6 @@ let package = Package(
             // Sparkle.framework sits in Contents/Frameworks (build.sh copies it).
             linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"])]
         ),
-        .testTarget(name: "BenchLogKitTests", dependencies: ["BenchLogKit"]),
+        .testTarget(name: "BenchLogKitTests", dependencies: ["BenchLogKit", .product(name: "GRDB", package: "GRDB.swift")]),
     ]
 )

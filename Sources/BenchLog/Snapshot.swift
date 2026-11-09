@@ -44,6 +44,26 @@ enum Snapshot {
                     capture(to: "\(dir)/\(page.rawValue)-\(mode).png")
                 }
             }
+            // The sheets, each over the page it opens from.
+            let customer = model.selectedCustomer
+            let sheets: [(String, SidebarItem, SheetKind)] = [
+                ("customer-new-sheet", .customers, .newCustomer),
+                ("device-new-sheet", .customers, customer.map { .addDevice(customer: $0) } ?? .newCustomer),
+                ("repair-new-sheet", .repairs, .newRepair(customer: nil, device: nil)),
+                ("repair-new-for-customer-sheet", .customers, .newRepair(customer: customer, device: nil)),
+            ]
+            for (name, page, sheet) in sheets where only == nil || only?.contains(name) == true || only?.contains("sheets") == true {
+                model.sidebar = page
+                for mode in ["light", "dark"] {
+                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                    model.sheet = sheet
+                    try? await Task.sleep(for: .seconds(1))
+                    let main = NSApp.windows.first { $0.canBecomeMain && !$0.isSheet }
+                    capture(to: "\(dir)/\(name)-\(mode).png", window: main?.attachedSheet)
+                    model.sheet = nil
+                    try? await Task.sleep(for: .seconds(0.6))
+                }
+            }
             if only == nil || only?.contains("settings") == true {
                 let main = NSApp.windows.first { $0.canBecomeMain && !$0.isSheet }
                 openSettings()

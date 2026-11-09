@@ -5,14 +5,28 @@ import SwiftUI
 struct ContentView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openSettings) private var openSettings
+    @Environment(\.undoManager) private var undoManager
 
     var body: some View {
+        @Bindable var model = model
         NavigationSplitView {
             sidebar
         } detail: {
-            page(model.sidebar ?? .overview)
+            page(model.sidebar ?? .repairs)
         }
+        .sheet(item: $model.sheet) { kind in
+            SheetHost(kind: kind)
+                .environment(model)
+                .themed()
+        }
+        .alert("Unable to Save", isPresented: Binding(get: { model.problem != nil }, set: { if !$0 { model.problem = nil } })) {
+            Button("OK") { model.problem = nil }
+        } message: {
+            Text(model.problem ?? "")
+        }
+        .onChange(of: undoManager, initial: true) { _, manager in model.undoManager = manager }
         .task {
+            SeedData.fillIfRequested(model: model)
             SelfTest.runIfRequested(model: model)
             Snapshot.runIfRequested(model: model, openSettings: openSettings)
         }
@@ -23,45 +37,32 @@ struct ContentView: View {
         return List(selection: $model.sidebar) {
             ForEach(SidebarItem.allCases) { item in
                 Label(item.title, systemImage: item.symbol)
+                    .badge(item == .repairs ? model.openRepairCount : 0)
                     .tag(item)
             }
         }
-        .navigationSplitViewColumnWidth(min: 200, ideal: 220)
+        .navigationSplitViewColumnWidth(min: 180, ideal: 200)
     }
 
     @ViewBuilder
     private func page(_ item: SidebarItem) -> some View {
         switch item {
-        case .overview: OverviewPage()
+        case .repairs: RepairsPage()
+        case .customers: CustomersPage()
+        case .devices: DevicesPage()
+        case .parts:
+            ContentUnavailableView("Parts Are Coming", systemImage: "shippingbox",
+                                   description: Text("Parts inventory and parts per repair arrive in the next version."))
+                .navigationTitle("Parts")
+        case .guides:
+            ContentUnavailableView("Guides Are Coming", systemImage: "book.pages",
+                                   description: Text("Your repair guides, linked to device models, arrive in a later version."))
+                .navigationTitle("Guides")
         case .log:
             LogViewer(model: model.logViewer, options: LogViewerOptions(
                 emptyTitle: String(localized: "No Log Messages"),
                 emptyMessage: String(localized: "What BenchLog does with your library shows here.")))
                 .navigationTitle("Log")
         }
-    }
-}
-
-/// What BenchLog will do, until the Repairs, Customers, Devices, Parts and Guides pages arrive.
-struct OverviewPage: View {
-    @Environment(AppModel.self) private var model
-
-    var body: some View {
-        Group {
-            if let error = model.libraryError {
-                ContentUnavailableView {
-                    Label("Unable to Open the Library", systemImage: "exclamationmark.triangle")
-                } description: {
-                    Text(error)
-                }
-            } else {
-                ContentUnavailableView {
-                    Label("BenchLog", systemImage: "wrench.and.screwdriver")
-                } description: {
-                    Text("Track your customers, their devices, and every repair from check-in to pickup, with parts, guides, photos, and invoices.")
-                }
-            }
-        }
-        .navigationTitle("Overview")
     }
 }

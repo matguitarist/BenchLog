@@ -30,7 +30,19 @@ struct BenchLogApp: App {
         .commands {
             SidebarCommands()
             ToolbarCommands()
-            CommandGroup(replacing: .newItem) {}
+            CommandGroup(replacing: .newItem) {
+                Button("New Repair…") { model.newRepair() }
+                    .keyboardShortcut("n")
+                    .disabled(model.library == nil || model.sheet != nil)
+                Button("New Customer…") { model.sheet = .newCustomer }
+                    .keyboardShortcut("n", modifiers: [.command, .shift])
+                    .disabled(model.library == nil || model.sheet != nil)
+                Button("Add Device…") {
+                    if let customer = model.customerForNewDevice { model.sheet = .addDevice(customer: customer) }
+                }
+                .keyboardShortcut("d", modifiers: [.command, .shift])
+                .disabled(model.customerForNewDevice == nil || model.sheet != nil)
+            }
             CommandGroup(after: .appInfo) {
                 Button("Check for Updates…") { Updater.shared.checkForUpdates() }
                     .disabled(!Updater.shared.isAvailable)
@@ -41,6 +53,32 @@ struct BenchLogApp: App {
                     Button(item.title) { model.sidebar = item }
                         .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: [.command, .option])
                 }
+            }
+            CommandMenu("Repair") {
+                Menu("Status") {
+                    StatusButtons(model: model, repairID: model.focusedRepairID, current: model.focusedRepairStatus)
+                }
+                .disabled(model.focusedRepairID == nil)
+                Button("Add Note") { model.focusNoteField = true }
+                    .keyboardShortcut("k", modifiers: [.command, .shift])
+                    .disabled(model.sidebar.map { ![.repairs, .customers, .devices].contains($0) } ?? true)
+                Divider()
+                Button("Open Customer") {
+                    if let id = model.focusedRepairID, let row = model.read(nil, { try $0.repairRow(id) }) { model.open(.customer(row.customer.id)) }
+                }
+                .disabled(model.focusedRepairID == nil)
+                Button("Open Device") {
+                    if let id = model.focusedRepairID, let row = model.read(nil, { try $0.repairRow(id) }) { model.open(.device(row.device.id)) }
+                }
+                .disabled(model.focusedRepairID == nil)
+            }
+            CommandMenu("Go") {
+                Button("Back") { model.goBack() }
+                    .keyboardShortcut("[")
+                    .disabled(!model.canGoBack)
+                Button("Forward") { model.goForward() }
+                    .keyboardShortcut("]")
+                    .disabled(!model.canGoForward)
             }
         }
 

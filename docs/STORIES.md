@@ -21,7 +21,7 @@ UX:
 - States: first launch shows the Repairs empty state; on a later launch with a database from a newer version: "This library was made by a newer BenchLog. Update the app to open it."
 - Words: Library (never "database" in the UI)
 - Access: n/a
-Status: todo
+Status: done
 
 ### S-002 Add a customer
 As the user, I press ⌘⇧N (or + in Customers), type a name, phone, email, and notes, and save.
@@ -37,7 +37,8 @@ UX:
 - States: empty Customers "No Customers" with "New Customer"; error "Enter a name." under Name; a long name truncates in the list with a tooltip
 - Words: "New Customer", "Add Customer" (confirm button), "Documents language: Français / English", tooltip "Add a customer (⌘⇧N)"
 - Access: tab order Name → Phone → Email → Address → Notes → language; VoiceOver labels match the field labels
-Status: todo
+Built: the Notes field becomes the first note on the customer's timeline (one idea of a note). Edit… on the customer page reuses this sheet.
+Status: done
 
 ### S-003 Add a device to a customer
 As the user, I click "Add Device" on a customer's page and pick a category, brand, model, and revision, then enter the serial or IMEI, colour, and condition.
@@ -54,7 +55,7 @@ UX:
 - States: an empty device list on a customer shows "No devices yet" with "Add Device"; a new catalog value shows "Adds “OLED Model” to the catalog" under the field; error "Choose a brand and model." when either is empty
 - Words: "Add Device", "Serial or IMEI", "Condition" (placeholder "Scratches, cracks, missing screws…")
 - Access: the combo boxes accept typing plus ↓ to open; a category is shown with an icon and a word, never the icon alone
-Status: todo
+Status: done
 
 ### S-004 Store a device passcode, hidden
 As the user, I enter the device's passcode or pattern on intake, and it stays hidden until I click to show it.
@@ -69,7 +70,7 @@ UX:
 - States: empty shows "No passcode"; there is a "Pattern" toggle with a 3×3 dot pad to record Android patterns as numbers 1–9
 - Words: "Show Passcode" / "Hide Passcode" (tooltip with the shortcut), "Passcode", "Pattern"
 - Access: VoiceOver reads "Passcode, hidden" until shown; the eye button has a label
-Status: todo
+Status: done
 
 ### S-005 Open a repair ticket for a device
 As the user, I click "New Repair" on a device (or press ⌘N anywhere, then pick a customer and device) and type the complaint. The ticket gets the next number.
@@ -85,7 +86,7 @@ UX:
 - States: a customer with no devices opens the inline Add Device section automatically; error "Describe the complaint." under Complaint
 - Words: "New Repair", "Create Repair", "Complaint" (placeholder "What the customer says is wrong"), "Promised", tooltip "Open a repair for a device (⌘N)"
 - Access: the customer field is a search-as-you-type list (name or phone digits), ↓/↑ and Return pick
-Status: todo
+Status: done
 
 ### S-006 Move a repair through its statuses
 As the user, I change a repair's status from its detail page, its context menu, or ⌘1–⌘8.
@@ -101,7 +102,7 @@ UX:
 - States: Picked Up and Cancelled rows are dimmed; leaving Picked Up needs no confirmation (Undo covers it)
 - Words: the status names from the glossary, "Undo Change Status"
 - Access: each pill has an icon and a word as well as a colour (circle.dotted, hourglass, wrench, checkmark…)
-Status: todo
+Status: done
 
 ### S-007 Repairs list grouped by status
 As the user, I open Repairs in the sidebar and see the open tickets grouped by status, with the oldest first in each group.
@@ -117,7 +118,7 @@ UX:
 - States: empty "No Repairs" with "New Repair"; the filter (Open / Ready / Closed / All) is a segmented control in the toolbar; 1,000+ rows scroll in a lazy list; days on the bench turns orange after 14 days, shown with a number and not colour alone
 - Words: "Open", "Ready", "Closed", "All", "3 d" for bench days with the tooltip "On the bench for 3 days"
 - Access: VoiceOver row "Repair #0042, Mario Tremblay, Nintendo Switch OLED, In Progress, 3 days"
-Status: todo
+Status: done
 
 ### S-008 Log a note on a repair
 As the user, I type in the note field on a repair and press Return. The note is saved with its time and shows in the repair's timeline.
@@ -133,7 +134,8 @@ UX:
 - States: empty timeline "No notes yet"; a note can be edited or moved to trash from its context menu (⌘Z undoes); status notes are greyed and cannot be edited
 - Words: "Add Note", placeholder "Add a note…", "Edit Note", "Move to Trash"
 - Access: each note reads "Note, 9 Nov 2026 14:32, <text>"
-Status: todo
+Built: Return adds the note; ⌥Return makes a new line (macOS's own key for a vertical field), not ⇧Return.
+Status: done
 
 ### S-009 Sidebar and navigation
 As the user, I move between Repairs, Customers, Devices, Parts, and Guides in a sidebar, and links take me from a repair to its customer or device and back.
@@ -149,7 +151,8 @@ UX:
 - States: the Repairs badge counts open repairs only; Parts and Guides show "Coming soon" empty states until M2/M3
 - Words: "Repairs", "Customers", "Devices", "Parts", "Guides"
 - Access: the sidebar is reachable with ⌘⌥S (focus); links are buttons with the label "Open customer Mario Tremblay"
-Status: todo
+Built: ⌘⌥1–6 pick the pages (Log is the 6th). Not built: ⌘⌥S to focus the sidebar.
+Status: done
 
 ---
 

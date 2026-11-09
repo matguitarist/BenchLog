@@ -1,20 +1,44 @@
+import AppKit
 import BenchLogKit
 import LogKitUI
 import Observation
 import SwiftUI
 
-/// The app's state: the open library, the page shown, and the app's own settings.
+/// The app's state: the open library, the page and record shown, the open sheet,
+/// and every change people make (each one logged, and undoable where it says so).
 @Observable
 final class AppModel {
     let library: Library?
-    /// Why the library did not open, in words for the Overview page.
+    /// Why the library did not open, in words for the Repairs page.
     let libraryError: String?
     let log: LogStore
     /// The Log page's viewer; kept here so its filters survive moving between pages.
     let logViewer: LogViewerModel
 
-    var sidebar: SidebarItem? = .overview
+    // MARK: Pages and selection
+
+    var sidebar: SidebarItem? = .repairs
     var settingsTab: SettingsTab = .general
+    var selectedRepair: UUID?
+    var selectedCustomer: UUID?
+    var selectedDevice: UUID?
+    var repairFilter: RepairFilter = .open
+    var customerSearch = ""
+    var deviceSearch = ""
+    var sheet: SheetKind?
+    /// Set by ⌘⇧K; the note field of the page shown takes focus and clears it.
+    var focusNoteField = false
+    /// A problem to show in an alert (a failed save).
+    var problem: String?
+    /// The window's undo manager, so Edit > Undo undoes status changes and trashed notes.
+    var undoManager: UndoManager?
+
+    /// Goes up on every change, so pages reload what they show.
+    private(set) var dataVersion = 0
+    private(set) var openRepairCount = 0
+
+    private var backStack: [Place] = []
+    private var forwardStack: [Place] = []
 
     var language: AppLanguage = .current {
         didSet { language.apply() }
@@ -36,25 +60,231 @@ final class AppModel {
         }
         self.log = log
         logViewer = LogViewerModel(store: log)
+        reload()
     }
+
+    // MARK: Reading
+
+    /// Runs a read; a failure is logged and gives `fallback`.
+    func read<T>(_ fallback: T, _ body: (Library) throws -> T) -> T {
+        guard let library else { return fallback }
+        do { return try body(library) } catch {
+            log.post(.error, "Unable to read the library: \(error.localizedDescription)", source: "Library")
+            return fallback
+        }
+    }
+
+    /// Runs a change, logs it, and tells every page to reload. A failure shows an alert.
+    @discardableResult
+    private func write<T>(_ what: String, _ body: (Library) throws -> T) -> T? {
+        guard let library else { return nil }
+        do {
+            let result = try body(library)
+            log.post(.info, what, source: "Library")
+            reload()
+            return result
+        } catch {
+            log.post(.error, "\(what) failed: \(error.localizedDescription)", source: "Library")
+            problem = error.localizedDescription
+            return nil
+        }
+    }
+
+    /// Tells every page to reload, and recounts the open repairs.
+    func reload() {
+        dataVersion += 1
+        openRepairCount = read(0) { try $0.openRepairCount() }
+    }
+
+    // MARK: Customers and devices
+
+    /// Adds or updates a customer. A first note typed in the New Customer sheet goes on its timeline.
+    @discardableResult
+    func save(_ customer: Customer, firstNote: String = "") -> Customer? {
+        let isNew = read(nil) { try $0.customer(customer.id) } == nil
+        return write(isNew ? "Added customer \(customer.id.stored)" : "Updated customer \(customer.id.stored)") { library in
+            let saved = try library.save(customer)
+            if isNew { try library.addNote(firstNote, to: .customer, id: saved.id) }
+            return saved
+        }
+    }
+
+    @discardableResult
+    func save(_ device: Device) -> Device? {
+        let isNew = read(nil) { try $0.device(device.id) } == nil
+        return write(isNew ? "Added device \(device.id.stored) (\(device.title))" : "Updated device \(device.id.stored)") {
+            try $0.save(device)
+        }
+    }
+
+    // MARK: Repairs
+
+    func createRepair(deviceID: UUID, complaint: String, promisedAt: Date?) -> Repair? {
+        guard let repair = write("Opened a repair for device \(deviceID.stored)", {
+            try $0.createRepair(deviceID: deviceID, complaint: complaint, promisedAt: promisedAt)
+        }) else { return nil }
+        log.post(.info, "Repair \(repair.ticket.text) is in Intake", source: "Repairs")
+        return repair
+    }
+
+    func update(_ repair: Repair) {
+        write("Updated repair \(repair.ticket.text)") { try $0.update(repair) }
+    }
+
+    /// Changes the status; Edit > Undo puts the old one back.
+    func setStatus(_ status: RepairStatus, for repairID: UUID) {
+        guard let old = read(nil, { try $0.repair(repairID) }), old.status != status else { return }
+        write("Repair \(old.ticket.text): \(old.status.rawValue) → \(status.rawValue)") { try $0.setStatus(status, of: repairID) }
+        undoManager?.registerUndo(withTarget: self) { model in
+            MainActor.assumeIsolated { model.setStatus(old.status, for: repairID) }
+        }
+        undoManager?.setActionName(String(localized: "Change Status"))
+    }
+
+    /// The repair the Repair menu acts on: the one shown on the Repairs page.
+    var focusedRepairID: UUID? { sidebar == .repairs ? selectedRepair : nil }
+
+    var focusedRepairStatus: RepairStatus? {
+        guard let id = focusedRepairID else { return nil }
+        return read(nil) { try $0.repair(id)?.status }
+    }
+
+    // MARK: Notes
+
+    func addNote(_ text: String, to owner: NoteOwner, id: UUID) {
+        write("Added a note to \(owner.rawValue) \(id.stored)") { try $0.addNote(text, to: owner, id: id) }
+    }
+
+    func editNote(_ id: UUID, text: String) {
+        write("Edited note \(id.stored)") { try $0.editNote(id, text: text) }
+    }
+
+    /// Moves a note to the trash; Edit > Undo brings it back.
+    func trashNote(_ id: UUID) {
+        write("Moved note \(id.stored) to the trash") { try $0.trash(Note.self, id: id) }
+        undoManager?.registerUndo(withTarget: self) { model in
+            MainActor.assumeIsolated { model.write("Restored note \(id.stored)") { try $0.restore(Note.self, id: id) } }
+        }
+        undoManager?.setActionName(String(localized: "Move to Trash"))
+    }
+
+    // MARK: Navigation
+
+    /// Where people are: a page and the record selected on it.
+    struct Place: Equatable {
+        var sidebar: SidebarItem?
+        var selection: UUID?
+    }
+
+    enum Destination {
+        case repair(UUID), customer(UUID), device(UUID)
+    }
+
+    private var here: Place {
+        let selection: UUID? = switch sidebar {
+        case .repairs: selectedRepair
+        case .customers: selectedCustomer
+        case .devices: selectedDevice
+        default: nil
+        }
+        return Place(sidebar: sidebar, selection: selection)
+    }
+
+    private func go(to place: Place) {
+        sidebar = place.sidebar
+        switch place.sidebar {
+        case .repairs: selectedRepair = place.selection
+        case .customers: selectedCustomer = place.selection
+        case .devices: selectedDevice = place.selection
+        default: break
+        }
+    }
+
+    /// Opens a record on its page; Go > Back returns here.
+    func open(_ destination: Destination) {
+        backStack.append(here)
+        forwardStack.removeAll()
+        switch destination {
+        case .repair(let id):
+            // A closed repair is hidden by the Open filter.
+            if let status = read(nil, { try $0.repair(id)?.status }), !repairFilter.statuses.contains(status) { repairFilter = .all }
+            go(to: Place(sidebar: .repairs, selection: id))
+        case .customer(let id):
+            customerSearch = ""
+            go(to: Place(sidebar: .customers, selection: id))
+        case .device(let id):
+            deviceSearch = ""
+            go(to: Place(sidebar: .devices, selection: id))
+        }
+    }
+
+    var canGoBack: Bool { !backStack.isEmpty }
+    var canGoForward: Bool { !forwardStack.isEmpty }
+
+    func goBack() {
+        guard let place = backStack.popLast() else { return }
+        forwardStack.append(here)
+        go(to: place)
+    }
+
+    func goForward() {
+        guard let place = forwardStack.popLast() else { return }
+        backStack.append(here)
+        go(to: place)
+    }
+
+    // MARK: Commands
+
+    /// File > New Repair: for the customer or device on screen, if any.
+    func newRepair() {
+        switch sidebar {
+        case .customers: sheet = .newRepair(customer: selectedCustomer, device: nil)
+        case .devices:
+            let device = selectedDevice.flatMap { id in read(nil) { try $0.device(id) } }
+            sheet = .newRepair(customer: device?.customerId, device: device?.id)
+        default: sheet = .newRepair(customer: nil, device: nil)
+        }
+    }
+
+    /// The customer File > Add Device adds to.
+    var customerForNewDevice: UUID? { sidebar == .customers ? selectedCustomer : nil }
+}
+
+/// The sheets the main window shows, one at a time.
+enum SheetKind: Identifiable, Hashable {
+    case newCustomer
+    case editCustomer(UUID)
+    case addDevice(customer: UUID)
+    case editDevice(UUID)
+    case newRepair(customer: UUID?, device: UUID?)
+
+    var id: Self { self }
 }
 
 /// The sidebar pages. Snapshot mode walks through every case.
 enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
-    case overview, log
+    case repairs, customers, devices, parts, guides, log
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
-        case .overview: String(localized: "Overview")
+        case .repairs: String(localized: "Repairs")
+        case .customers: String(localized: "Customers")
+        case .devices: String(localized: "Devices")
+        case .parts: String(localized: "Parts")
+        case .guides: String(localized: "Guides")
         case .log: String(localized: "Log")
         }
     }
 
     var symbol: String {
         switch self {
-        case .overview: "wrench.and.screwdriver"
+        case .repairs: "wrench.and.screwdriver"
+        case .customers: "person.2"
+        case .devices: "laptopcomputer.and.iphone"
+        case .parts: "shippingbox"
+        case .guides: "book.pages"
         case .log: "list.bullet.rectangle"
         }
     }
