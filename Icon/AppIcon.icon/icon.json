@@ -1,0 +1,14 @@
+{
+  "fill" : { "automatic-gradient" : "srgb:0.08000,0.45000,0.52000,1.00000" },
+  "groups" : [
+    {
+      "layers" : [
+        { "glass" : true, "image-name" : "screwdriver.svg", "name" : "screwdriver" },
+        { "glass" : true, "image-name" : "chip.svg", "name" : "chip", "opacity" : 0.55 }
+      ],
+      "shadow" : { "kind" : "neutral", "opacity" : 0.5 },
+      "translucency" : { "enabled" : true, "value" : 0.5 }
+    }
+  ],
+  "supported-platforms" : { "squares" : [ "macOS" ] }
+}

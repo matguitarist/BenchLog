@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- A precision screwdriver, drawn upright then turned 45 degrees -->
+  <g fill="#ffffff" transform="rotate(45 512 512)">
+    <rect x="412" y="110" width="200" height="350" rx="80"/>
+    <rect x="442" y="440" width="140" height="76" rx="20"/>
+    <rect x="474" y="500" width="76" height="320" rx="18"/>
+    <path d="M474 810 L550 810 L534 900 L490 900 Z"/>
+  </g>
+</svg>

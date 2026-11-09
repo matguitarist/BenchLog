@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- A microchip: body plus four pins per side -->
+  <g fill="#ffffff">
+    <rect x="292" y="292" width="440" height="440" rx="56"/>
+    <rect x="353" y="196" width="48" height="120" rx="20"/>
+    <rect x="353" y="708" width="48" height="120" rx="20"/>
+    <rect x="196" y="353" width="120" height="48" rx="20"/>
+    <rect x="708" y="353" width="120" height="48" rx="20"/>
+    <rect x="443" y="196" width="48" height="120" rx="20"/>
+    <rect x="443" y="708" width="48" height="120" rx="20"/>
+    <rect x="196" y="443" width="120" height="48" rx="20"/>
+    <rect x="708" y="443" width="120" height="48" rx="20"/>
+    <rect x="533" y="196" width="48" height="120" rx="20"/>
+    <rect x="533" y="708" width="48" height="120" rx="20"/>
+    <rect x="196" y="533" width="120" height="48" rx="20"/>
+    <rect x="708" y="533" width="120" height="48" rx="20"/>
+    <rect x="623" y="196" width="48" height="120" rx="20"/>
+    <rect x="623" y="708" width="48" height="120" rx="20"/>
+    <rect x="196" y="623" width="120" height="48" rx="20"/>
+    <rect x="708" y="623" width="120" height="48" rx="20"/>
+  </g>
+</svg>
