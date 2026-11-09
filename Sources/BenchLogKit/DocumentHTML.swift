@@ -7,10 +7,20 @@ public struct DocumentHTML {
     public let language: DocumentsLanguage
     /// The logo as an `src` (a data: URL), or nil.
     public var logoSource: String?
+    /// The business's country: the currency, and US or Canadian English. A document takes
+    /// it from the business details it froze, so it keeps the currency it was issued in.
+    public var country: Country
 
-    public init(language: DocumentsLanguage, logoSource: String? = nil) {
+    public init(language: DocumentsLanguage, logoSource: String? = nil, country: Country = .canada) {
         self.language = language
         self.logoSource = logoSource
+        self.country = country
+    }
+
+    private func `in`(_ country: Country) -> DocumentHTML {
+        var copy = self
+        copy.country = country
+        return copy
     }
 
     // MARK: Words
@@ -18,7 +28,7 @@ public struct DocumentHTML {
     struct Words {
         var intakeSlip, invoice, estimate, ticket, invoiceNumber, date, customer, device, serial, complaint,
             condition, intakePhotos, diagnosis, description, quantity, unitPrice, amount, labour, parts, subtotal,
-            discount, tps, tvq, total, tpsNumber, tvqNumber, warranty, terms, signature, validUntil, paid, phone,
+            discount, taxable, total, warranty, terms, signature, validUntil, paid, phone,
             email, hourly, flat, received, approval, approvalLine: String
         var paidOn: (String, String) -> String
         /// The approval rule the customer signs at check-in, with the amount for `upTo`.
@@ -34,7 +44,7 @@ public struct DocumentHTML {
                   complaint: "Description du problème", condition: "État à la réception", intakePhotos: "Photos à la réception",
                   diagnosis: "Diagnostic", description: "Description", quantity: "Qté", unitPrice: "Prix unitaire",
                   amount: "Montant", labour: "Main-d’œuvre", parts: "Pièces", subtotal: "Sous-total", discount: "Rabais",
-                  tps: "TPS", tvq: "TVQ", total: "Total", tpsNumber: "N° de TPS", tvqNumber: "N° de TVQ",
+                  taxable: "Montant taxable (pièces)", total: "Total",
                   warranty: "Garantie", terms: "Conditions", signature: "Signature du client",
                   validUntil: "Valide jusqu’au", paid: "PAYÉ", phone: "Tél.", email: "Courriel", hourly: "h",
                   flat: "forfait", received: "Reçu le", approval: "Approbation du client",
@@ -61,7 +71,7 @@ public struct DocumentHTML {
                   complaint: "Problem Description", condition: "Condition at Intake", intakePhotos: "Photos at Intake",
                   diagnosis: "Diagnosis", description: "Description", quantity: "Qty", unitPrice: "Unit Price",
                   amount: "Amount", labour: "Labour", parts: "Parts", subtotal: "Subtotal", discount: "Discount",
-                  tps: "GST", tvq: "QST", total: "Total", tpsNumber: "GST No.", tvqNumber: "QST No.",
+                  taxable: "Taxable amount (parts)", total: "Total",
                   warranty: "Warranty", terms: "Terms", signature: "Customer Signature",
                   validUntil: "Valid until", paid: "PAID", phone: "Tel.", email: "Email", hourly: "h",
                   flat: "flat rate", received: "Received", approval: "Customer Approval",
@@ -87,11 +97,13 @@ public struct DocumentHTML {
 
     // MARK: Formats
 
-    var locale: Locale { Locale(identifier: language == .french ? "fr_CA" : "en_CA") }
+    var locale: Locale {
+        Locale(identifier: language == .french ? "fr_CA" : country == .unitedStates ? "en_US" : "en_CA")
+    }
 
-    /// « 1 234,56 $ » in French, "$1,234.56" in English.
+    /// « 1 234,56 $ » in French, "$1,234.56" in English; US dollars for a US business.
     public func money(_ cents: Int) -> String {
-        (Decimal(cents) / 100).formatted(.currency(code: "CAD").locale(locale))
+        (Decimal(cents) / 100).formatted(.currency(code: country.currencyCode).locale(locale))
     }
 
     /// « 9 novembre 2026 », "November 9, 2026".
@@ -134,6 +146,10 @@ public struct DocumentHTML {
     /// The slip a customer signs at check-in. The device's passcode is never on it.
     public func intakeSlip(business: BusinessProfile, customer: Customer, device: Device, repair: Repair,
                            photoSources: [String] = [], now: Date = .now) -> String {
+        guard country == business.country else {
+            return self.in(business.country).intakeSlip(business: business, customer: customer, device: device, repair: repair,
+                                                        photoSources: photoSources, now: now)
+        }
         let w = words
         var body = header(business: business, title: w.intakeSlip, facts: [
             (w.ticket, repair.ticket.text), (w.received, date(repair.receivedAt)),
@@ -159,6 +175,7 @@ public struct DocumentHTML {
 
     public func document(_ invoice: Invoice) -> String {
         guard let content = invoice.document else { return page("", title: "") }
+        guard country == content.business.country else { return self.in(content.business.country).document(invoice) }
         let w = words
         let isEstimate = invoice.kind == .estimate
         var facts: [(String, String)] = []
@@ -244,8 +261,12 @@ public struct DocumentHTML {
             rows.append((w.discount, "−\u{2009}" + money(totals.discountCents), ""))
         }
         rows.append((w.subtotal, money(totals.subtotalCents), "subtotal"))
-        rows.append(("\(w.tps) (\(percent(totals.tpsRate)))", money(totals.tpsCents), ""))
-        rows.append(("\(w.tvq) (\(percent(totals.tvqRate)))", money(totals.tvqCents), ""))
+        if totals.taxableCents != totals.subtotalCents, !totals.taxes.isEmpty {
+            rows.append((w.taxable, money(totals.taxableCents), ""))
+        }
+        for tax in totals.taxes {
+            rows.append(("\(tax.kind.name(language)) (\(percent(tax.rate)))", money(tax.cents), ""))
+        }
         rows.append((w.total, money(totals.totalCents), "total"))
         return "<table class=\"totals\">" + rows.map { "<tr class=\"\($0.2)\"><th>\(e($0.0))</th><td>\(e($0.1))</td></tr>" }.joined() + "</table>"
     }
@@ -254,8 +275,9 @@ public struct DocumentHTML {
         let w = words
         var html = "<footer>"
         var numbers: [String] = []
-        if !business.tpsNumber.isEmpty { numbers.append("\(label(w.tpsNumber)) \(e(business.tpsNumber))") }
-        if !business.tvqNumber.isEmpty { numbers.append("\(label(w.tvqNumber)) \(e(business.tvqNumber))") }
+        for tax in business.taxes where !tax.number.isEmpty {
+            numbers.append("\(label(tax.kind.numberLabel(language))) \(e(tax.number))")
+        }
         if !numbers.isEmpty { html += "<div class=\"numbers\">\(numbers.joined(separator: " &nbsp;·&nbsp; "))</div>" }
         if warranty, !business.warranty(language).isEmpty {
             html += "<p><strong>\(label(w.warranty))</strong> \(multiline(business.warranty(language)))</p>"

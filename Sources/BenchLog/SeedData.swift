@@ -154,8 +154,8 @@ enum SeedData {
         profile.address = "1234, rue Saint-Denis\nMontréal (Québec)  H2X 3K9"
         profile.phone = "514 555-0100"
         profile.email = "atelier@example.com"
-        profile.tpsNumber = "123456789 RT0001"
-        profile.tvqNumber = "1234567890 TQ0001"
+        profile.taxes[0].number = "123456789 RT0001"
+        profile.taxes[1].number = "1234567890 TQ0001"
         try library.save(profile)
         if let id = repairOf(sMac) {
             try library.save(LabourLine(repairId: id, description: "Nettoyage de la carte USB-C", hundredthHours: 150, unitCents: 6500))

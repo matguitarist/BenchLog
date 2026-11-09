@@ -10,8 +10,6 @@ struct BusinessSettings: View {
     @State private var loaded = false
     @State private var choosingLogo = false
     @State private var hourly: Decimal?
-    @State private var tps: Decimal?
-    @State private var tvq: Decimal?
 
     var body: some View {
         Group {
@@ -39,12 +37,7 @@ struct BusinessSettings: View {
                     printed("Logo", "En-tête")
                 }
             }
-            Section("Taxes") {
-                field("GST number", "N° de TPS", text: $profile.tpsNumber)
-                field("QST number", "N° de TVQ", text: $profile.tvqNumber)
-                rate("GST rate", "TPS", value: $tps)
-                rate("QST rate", "TVQ", value: $tvq)
-            }
+            TaxSection(profile: $profile)
             Section("Pricing") {
                 LabeledContent {
                     TextField("Hourly rate", value: $hourly, format: Money.format).labelsHidden().multilineTextAlignment(.trailing)
@@ -91,8 +84,6 @@ struct BusinessSettings: View {
             if !loaded {
                 profile = saved
                 hourly = Money.decimal(saved.hourlyRateCents)
-                tps = Decimal(saved.tpsRate) / 10_000
-                tvq = Decimal(saved.tvqRate) / 10_000
                 loaded = true
             } else {
                 profile.logoPath = saved.logoPath
@@ -109,8 +100,6 @@ struct BusinessSettings: View {
     private func save() {
         var changed = profile
         changed.hourlyRateCents = Money.cents(hourly) ?? profile.hourlyRateCents
-        changed.tpsRate = tps.map { Self.millionths($0) } ?? profile.tpsRate
-        changed.tvqRate = tvq.map { Self.millionths($0) } ?? profile.tvqRate
         let saved = model.read(BusinessProfile()) { try $0.businessProfile() }
         changed.logoPath = saved.logoPath
         guard changed != saved else { return }
@@ -136,20 +125,6 @@ struct BusinessSettings: View {
     private func field(_ title: LocalizedStringKey, _ french: String, text: Binding<String>) -> some View {
         LabeledContent {
             TextField(title, text: text).labelsHidden()
-        } label: {
-            printed(title, french)
-        }
-    }
-
-    private func rate(_ title: LocalizedStringKey, _ french: String, value: Binding<Decimal?>) -> some View {
-        LabeledContent {
-            HStack(spacing: Space.xs) {
-                TextField(title, value: value, format: .number.precision(.fractionLength(0...4)))
-                    .labelsHidden()
-                    .multilineTextAlignment(.trailing)
-                    .frame(width: 80)
-                Text(verbatim: "%").foregroundStyle(.secondary)
-            }
         } label: {
             printed(title, french)
         }

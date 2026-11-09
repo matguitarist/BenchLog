@@ -20,15 +20,14 @@ import Testing
     @Test func totalsRoundHalfUpPerTax() {
         let lines = [BillLine(kind: .labour, description: "Pose", hundredths: 150, unitCents: 6500, amountCents: 9750, isHourly: true),
                      BillLine(kind: .part, description: "Écran", hundredths: 100, unitCents: 28999, amountCents: 28999)]
-        let totals = Billing.totals(lines, discountCents: 1000, tpsRate: 50_000, tvqRate: 99_750)
+        let totals = Billing.totals(lines, discountCents: 1000, taxes: [TaxRate(.gst, rate: 50_000), TaxRate(.qst, rate: 99_750)])
         #expect(totals.subtotalCents == 37749)
-        #expect(totals.tpsCents == 1887)        // 1887.45
-        #expect(totals.tvqCents == 3765)        // 3765.46…
+        #expect(totals.taxes.map(\.cents) == [1887, 3765])   // 1887.45, 3765.46…
         #expect(totals.totalCents == 37749 + 1887 + 3765)
         // Half a cent rounds up: 10 $ × 5 % of 0.10 $ … 1 cent × 50 % = 0.5 → 1.
         #expect(Billing.roundHalfUp(5, 10) == 1)
         #expect(Billing.totals([BillLine(kind: .part, description: "", hundredths: 100, unitCents: 10, amountCents: 10)],
-                               discountCents: 0, tpsRate: 50_000, tvqRate: 0).tpsCents == 1) // 0.5 ¢ → 1 ¢
+                               discountCents: 0, taxes: [TaxRate(.gst, rate: 50_000)]).taxes.first?.cents == 1) // 0.5 ¢ → 1 ¢
     }
 
     @Test func hourlyLabourIsHoursTimesRate() {
@@ -52,12 +51,12 @@ import Testing
         try library.save(LabourLine(repairId: repair.id, description: "Pose", kind: .flat, unitCents: 10000))
         let first = try library.issue(.invoice, for: repair.id)
         var profile = try library.businessProfile()
-        profile.tpsRate = 70_000
+        profile.taxes[0].rate = 70_000
         try library.save(profile)
         let reread = try #require(try library.invoice(first.id)?.document)
-        #expect(reread.totals.tpsRate == 50_000)
-        #expect(reread.totals.tpsCents == 500)
-        #expect(try library.bill(for: repair.id).totals.tpsCents == 700)
+        #expect(reread.totals.taxes.first?.rate == 50_000)
+        #expect(reread.totals.taxes.first?.cents == 500)
+        #expect(try library.bill(for: repair.id).totals.taxes.first?.cents == 700)
     }
 
     // S-022
@@ -77,7 +76,7 @@ import Testing
     @Test func aBusinessProfileRoundTrips() throws {
         var profile = BusinessProfile()
         profile.name = "Atelier Mathieu"
-        profile.tvqNumber = "1234567890 TQ0001"
+        profile.taxes[1].number = "1234567890 TQ0001"
         try library.save(profile)
         #expect(try library.businessProfile() == profile)
     }
@@ -167,8 +166,8 @@ import Testing
     // S-024, S-026
     @Test func theInvoiceFollowsQuebecPracticeAndShowsPayment() throws {
         var profile = BusinessProfile()
-        profile.tpsNumber = "123456789 RT0001"
-        profile.tvqNumber = "1234567890 TQ0001"
+        profile.taxes[0].number = "123456789 RT0001"
+        profile.taxes[1].number = "1234567890 TQ0001"
         try library.save(profile)
         try library.save(LabourLine(repairId: repair.id, description: "Pose", kind: .flat, unitCents: 10000))
         let issued = try library.issue(.invoice, for: repair.id)

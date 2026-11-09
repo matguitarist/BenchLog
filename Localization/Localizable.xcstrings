@@ -1,6 +1,16 @@
 {
   "sourceLanguage": "en",
   "strings": {
+    "%@ (%@)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ (%@)"
+          }
+        }
+      }
+    },
     "%@ (%lld)": {
       "localizations": {
         "fr": {
@@ -421,6 +431,16 @@
         }
       }
     },
+    "Alberta": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alberta"
+          }
+        }
+      }
+    },
     "All": {
       "localizations": {
         "fr": {
@@ -727,6 +747,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Marque"
+          }
+        }
+      }
+    },
+    "British Columbia": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Colombie-Britannique"
           }
         }
       }
@@ -1167,6 +1197,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Coût : %@"
+          }
+        }
+      }
+    },
+    "Country": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pays"
           }
         }
       }
@@ -2311,6 +2351,16 @@
         }
       }
     },
+    "Local rate": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taux local"
+          }
+        }
+      }
+    },
     "Log": {
       "localizations": {
         "fr": {
@@ -2451,6 +2501,16 @@
         }
       }
     },
+    "Manitoba": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manitoba"
+          }
+        }
+      }
+    },
     "Mark Unpaid": {
       "localizations": {
         "fr": {
@@ -2561,6 +2621,16 @@
         }
       }
     },
+    "New Brunswick": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveau-Brunswick"
+          }
+        }
+      }
+    },
     "New Customer": {
       "localizations": {
         "fr": {
@@ -2617,6 +2687,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les nouvelles lignes de main-d’œuvre commencent à ce taux"
+          }
+        }
+      }
+    },
+    "Newfoundland and Labrador": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Terre-Neuve-et-Labrador"
           }
         }
       }
@@ -2901,6 +2981,26 @@
         }
       }
     },
+    "None at the state level": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune au niveau de l’État"
+          }
+        }
+      }
+    },
+    "Northwest Territories": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Territoires du Nord-Ouest"
+          }
+        }
+      }
+    },
     "Not found": {
       "localizations": {
         "fr": {
@@ -2971,6 +3071,26 @@
         }
       }
     },
+    "Nova Scotia": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle-Écosse"
+          }
+        }
+      }
+    },
+    "Nunavut": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nunavut"
+          }
+        }
+      }
+    },
     "OK": {
       "localizations": {
         "fr": {
@@ -2997,6 +3117,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sur l’établi depuis %lld jours"
+          }
+        }
+      }
+    },
+    "Ontario": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ontario"
           }
         }
       }
@@ -3451,6 +3581,16 @@
         }
       }
     },
+    "Prince Edward Island": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Île-du-Prince-Édouard"
+          }
+        }
+      }
+    },
     "Print Estimate": {
       "localizations": {
         "fr": {
@@ -3497,6 +3637,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Imprimé « %@ »"
+          }
+        }
+      }
+    },
+    "Prints as « %@ » and “%@”": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Imprimé « %@ » et « %@ »"
           }
         }
       }
@@ -3551,6 +3701,26 @@
         }
       }
     },
+    "Province or territory": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Province ou territoire"
+          }
+        }
+      }
+    },
+    "Put back the standard rates for this province or state; numbers stay": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remettre les taux standard de cette province ou de cet État ; les numéros restent"
+          }
+        }
+      }
+    },
     "QST (%@)": {
       "localizations": {
         "fr": {
@@ -3587,6 +3757,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Quantité"
+          }
+        }
+      }
+    },
+    "Quebec": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Québec"
           }
         }
       }
@@ -3677,6 +3857,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Refusée"
+          }
+        }
+      }
+    },
+    "Registration number": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Numéro d’inscription"
           }
         }
       }
@@ -3877,6 +4067,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "SKU"
+          }
+        }
+      }
+    },
+    "Sales tax": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taxe de vente"
+          }
+        }
+      }
+    },
+    "Saskatchewan": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saskatchewan"
           }
         }
       }
@@ -4301,6 +4511,26 @@
         }
       }
     },
+    "Tax labour": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taxer la main-d’œuvre"
+          }
+        }
+      }
+    },
+    "Taxable (parts)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Taxable (pièces)"
+          }
+        }
+      }
+    },
     "Taxes": {
       "localizations": {
         "fr": {
@@ -4471,6 +4701,26 @@
         }
       }
     },
+    "The standard rates for the province are filled in.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les taux standard de la province sont inscrits."
+          }
+        }
+      }
+    },
+    "The state's base rate is filled in. Check your rates with your state.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le taux de base de l’État est inscrit. Vérifiez vos taux auprès de votre État."
+          }
+        }
+      }
+    },
     "The work comes to %@ before taxes, over the %@ the customer allowed.": {
       "localizations": {
         "fr": {
@@ -4611,6 +4861,16 @@
         }
       }
     },
+    "Turn off where repair labour is not taxed: only parts are taxed then": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Désactiver là où la main-d’œuvre de réparation n’est pas taxée : seules les pièces le sont alors"
+          }
+        }
+      }
+    },
     "Unable to Open the Library": {
       "localizations": {
         "fr": {
@@ -4727,6 +4987,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les mises à jour sont désactivées dans cette version."
+          }
+        }
+      }
+    },
+    "Use Standard Rates": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utiliser les taux standard"
           }
         }
       }
@@ -4891,12 +5161,42 @@
         }
       }
     },
+    "Your %@ number; it prints at the bottom of estimates and invoices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Votre numéro de %@ ; il est imprimé au bas des estimations et des factures"
+          }
+        }
+      }
+    },
+    "Your county and city rate, added to the state's": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le taux de votre comté et de votre ville, ajouté à celui de l’État"
+          }
+        }
+      }
+    },
     "Your repair guides, linked to device models, arrive in a later version.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Vos guides de réparation, liés aux modèles d’appareils, arrivent dans une version ultérieure."
+          }
+        }
+      }
+    },
+    "Yukon": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yukon"
           }
         }
       }

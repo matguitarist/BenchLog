@@ -49,15 +49,19 @@ struct RepairBilling: View {
     }
 }
 
-/// Sous-total, TPS, TVQ, and Total, in the Mac's format.
+/// Subtotal, each of the region's taxes, and Total, in the Mac's format.
 struct TotalsBlock: View {
     let totals: Totals
 
     var body: some View {
         VStack(spacing: Space.xs) {
             row("Subtotal", totals.subtotalCents)
-            row("GST (\(Self.percent(totals.tpsRate)))", totals.tpsCents)
-            row("QST (\(Self.percent(totals.tvqRate)))", totals.tvqCents)
+            if totals.taxableCents != totals.subtotalCents, !totals.taxes.isEmpty {
+                row("Taxable (parts)", totals.taxableCents)
+            }
+            ForEach(totals.taxes, id: \.kind) { tax in
+                row("\(tax.kind.title) (\(Self.percent(tax.rate)))", tax.cents)
+            }
             Divider()
             row("Total", totals.totalCents).font(.headline)
         }

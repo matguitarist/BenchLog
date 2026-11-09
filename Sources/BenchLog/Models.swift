@@ -130,6 +130,9 @@ final class AppModel {
         openRepairCount = read(0) { try $0.openRepairCount() }
         lowStockCount = read(0) { try $0.lowStockCount() }
         toCollect = read([]) { try $0.toCollectRepairIDs() }
+        let profile = read(BusinessProfile()) { try $0.businessProfile() }
+        Money.currencyCode = profile.country.currencyCode
+        CustomerDraft.defaultLanguage = profile.defaultDocumentsLanguage
         Spotlight.shared.schedule(self)
     }
 

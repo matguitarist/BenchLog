@@ -176,6 +176,18 @@ enum Snapshot {
             var other = invoice
             other.language = invoice.language == .french ? .english : .french
             await save(model.html(for: other), other.language == .french ? "doc-invoice-french" : "doc-invoice-english")
+            // The same work billed by a shop in Los Angeles, where repair labour is not taxed.
+            if var content = invoice.document {
+                content.business.setRegion(.unitedStates, "CA")
+                content.business.localRate = 25_000
+                content.business.taxesLabour = false
+                content.totals = Billing.totals(content.lines, discountCents: content.totals.discountCents,
+                                                taxes: content.business.chargedTaxes, taxesLabour: false)
+                var us = invoice
+                us.language = .english
+                us.content = String(decoding: (try? JSONEncoder().encode(content)) ?? Data(), as: UTF8.self)
+                await save(model.html(for: us), "doc-invoice-us")
+            }
         }
         if let paid = documents.first(where: { $0.paidAt != nil }) { await save(model.html(for: paid), "doc-invoice-paid") }
     }

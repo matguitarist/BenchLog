@@ -55,6 +55,10 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Approval rule | What the customer allows at check-in: Go ahead, Ask for an estimate first, or Go ahead up to an amount before taxes (Approbation) | authorization, consent, limit |
 | To Collect | A Ready repair with no paid invoice yet (À encaisser) | owing, due, outstanding |
 | Business | Settings → Business: the details printed on every document (Entreprise) | company, shop, profile |
+| Region | The province, territory, or state the business is in; it sets the taxes and the currency | location, jurisdiction |
+| Tax | One sales tax charged on a bill: GST, HST, QST, PST, RST, or a US sales tax, each with a rate and a registration number | levy, VAT |
+| Local rate | US only: the county and city rate added to the state's sales tax | city tax |
+| Tax labour | Whether labour is taxed; off in states that tax only parts | taxable services |
 
 ## Statuses (in order)
 
@@ -100,4 +104,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Ticket Number | N° de dossier |
 | Subtotal | Sous-total |
 | GST / QST | TPS / TVQ |
+| HST / PST / RST | TVH / TVP / TVD |
+| Sales tax (US) | Taxe de vente |
+| Taxable amount (parts) | Montant taxable (pièces) |
 | Paid | Payé |

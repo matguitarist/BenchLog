@@ -473,13 +473,86 @@ Status: done
 
 ---
 
+## M7 Money and taxes — any province or state, credit notes, tax report
+
+### S-037 Taxes for my country and province or state
+As the user, in Settings → Business I pick Canada or the United States and my province or state. Its taxes fill in at the standard rates, each with its own registration number, and I can change any rate.
+Screens: settings-business
+Depends: S-021
+Acceptance:
+- [unit] Canada: QC GST 5 % + QST 9.975 %; ON HST 13 %; NB, NL, PE HST 15 %; NS HST 14 %; BC GST + PST 7 %; MB GST + RST 7 %; SK GST + PST 6 %; AB, NT, NU, YT GST only.
+- [unit] United States: one sales tax at the state's base rate plus a local rate I enter; AK, DE, MT, NH, OR have no state sales tax. A "Tax labour" switch, because states differ on repair labour.
+- [unit] A profile saved before this story opens as Québec with its GST and QST rates and numbers.
+- [snap] Settings → Business → Taxes: Country, Province or State, one row per tax (rate and number), Local rate and Tax labour in the US, and Use Standard Rates.
+Built: `Taxes.swift` (`Country`, `TaxKind`, `TaxRate`, `TaxRegion` with 13 provinces and territories and 51 states and DC; `setRegion`, `useStandardTaxes`, `chargedTaxes`). The profile has `country`, `region`, `taxes`, `localRate`, `taxesLabour`; an old profile decodes as Québec with its numbers. `Views/TaxSection.swift`. Snapshot: settings-business.
+Status: done
+
+### S-038 Bills and documents use my region's taxes
+As the user, the repair's Billing and every estimate and invoice show my region's taxes by their own names.
+Screens: repair-billing, doc-invoice
+Depends: S-037
+Acceptance:
+- [unit] Totals have one line per tax, each a share of the taxable amount rounded half up to the cent. With Tax labour off, labour is left out of the taxable amount.
+- [unit] An invoice issued before this story still prints its TPS and TVQ as issued.
+- [snap] Taxes print by name in the document's language: TPS, TVQ, TVH, TVP, TVD in French; GST, QST, HST, PST, RST, Sales tax in English, with each registration number.
+Built: `Totals.taxes` (one `TaxLine` per tax) and `taxableCents`; old documents decode their TPS and TVQ. Documents name each tax with `TaxKind.name(language)`, print every registration number, and add "Taxable amount (parts)" when labour is not taxed. Snapshots: repair-billing, doc-invoice, doc-invoice-us.
+Status: done
+
+### S-039 Currency follows the country
+As the user in the United States, amounts show and print in US dollars.
+Screens: repair-billing, doc-invoice
+Depends: S-037
+Acceptance:
+- [unit] A document keeps the currency it was issued in: CAD in Canada, USD in the US ("$1,234.56").
+- [self] Switching the country to the United States changes the money shown in the app.
+- [unit] A new customer's document language starts as French in Québec and English elsewhere.
+Built: `DocumentHTML.country` comes from the business details a document froze, so it keeps its currency; en_US for a US business. In the app, `Money.currencyCode` and `CustomerDraft.defaultLanguage` follow the profile on every reload. Snapshot: doc-invoice-us.
+Status: done
+
+### S-040 Credit note for an invoice
+As the user, I cancel or correct an issued invoice with a credit note; the invoice keeps its number and the repair can be billed again.
+Screens: repair-billing, doc-credit-note
+Depends: S-038
+Acceptance:
+- [unit] A credit note has its own sequence (NC-0001), refers to its invoice, and reverses its lines and each tax. An invoice is credited at most once.
+- [unit] A credited invoice no longer counts as paid for To Collect; a new invoice gets the next invoice number.
+- [snap] « Note de crédit » / "Credit Note" prints "Credits invoice F-0003" with negative amounts.
+Status: todo
+
+### S-041 Record a refund
+As the user, I record that I paid a credit note back, with the method and date.
+Screens: repair-billing
+Depends: S-040
+Acceptance:
+- [unit] A refund records method and date on the credit note; the reprinted PDF reads REMBOURSÉ / REFUNDED.
+- [snap] The credit note row shows Refunded with its method.
+Status: todo
+
+### S-042 Sales and tax report
+As the user, I see what I invoiced and the tax I collected for a month, a quarter, or a year, so I can file my returns.
+Screens: reports
+Depends: S-040
+Acceptance:
+- [unit] For a period: invoices and credit notes by issue date; sales before taxes, each tax collected, and totals, with credit notes subtracted; amounts paid and still owed.
+- [snap] A Reports page in the sidebar: period picker, totals per tax, and the list of documents.
+- [self] Export CSV writes one row per document with each tax in its own column.
+Status: todo
+
+### S-043 Sales invoice for a shop device
+As the user, when I sell a shop device I issue an invoice to the buyer with my region's taxes.
+Screens: devices-shop, doc-invoice
+Depends: S-036, S-038
+Acceptance:
+- [unit] The invoice takes the next invoice number, one line for the device at its sale price, and the taxes; it counts in the sales report.
+- [snap] The Shop section of a sold device has Invoice Sale, then the invoice with Open and Mark Paid.
+Status: todo
+
 ## Later
 - **v2 Sync**: the Node server becomes a REST and SQLite sync service (pull and push by `updatedAt`, last-writer-wins per row, file upload). The Mac becomes a client.
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
 - Boardview viewer (OpenBoardView-style) for .brd/.bdv/.fz files.
 - French app UI (the String Catalog already holds every string).
-- Credit notes, refunds, monthly sales and tax report (TPS/TVQ totals per period).
 - Customer SMS or email "your device is ready".
 - Agent CLI/MCP (`benchlog repair list --open`).
 - Warranty tracking: open a repair as "warranty of #0042".

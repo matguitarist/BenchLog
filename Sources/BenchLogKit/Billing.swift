@@ -3,24 +3,29 @@ import GRDB
 
 // MARK: - Business
 
-/// The business details printed on documents, and the rates used to price a repair.
-/// Stored as JSON in the meta table. Rates are in millionths: 5 % = 50 000.
+/// The business details printed on documents, its taxes, and the rates used to price a
+/// repair. Stored as JSON in the meta table. Rates are in millionths: 5 % = 50 000.
 public struct BusinessProfile: Codable, Equatable, Sendable {
     public var name = ""
     public var address = ""
     public var phone = ""
     public var email = ""
     public var website = ""
-    public var tpsNumber = ""
-    public var tvqNumber = ""
     public var warrantyFrench = "Garantie de 90 jours sur les pièces et la main-d’œuvre de cette réparation."
     public var warrantyEnglish = "90-day warranty on the parts and labour of this repair."
     public var termsFrench = "Les appareils non réclamés 90 jours après l’avis de fin de réparation peuvent être recyclés."
     public var termsEnglish = "Devices not picked up 90 days after we tell you the repair is done may be recycled."
     /// The logo file, relative to the library's Files folder; empty for none.
     public var logoPath = ""
-    public var tpsRate = 50_000
-    public var tvqRate = 99_750
+    /// Where the business is; `region` is a province or state code ("QC", "NY").
+    public var country = Country.canada
+    public var region = "QC"
+    /// The taxes charged, in print order, with the business's numbers.
+    public var taxes = TaxRegion.find(.canada, "QC")!.taxes
+    /// US only: the county and city rate added to the state's sales tax.
+    public var localRate = 0
+    /// False where repair labour is not taxed (some US states): only parts are taxed.
+    public var taxesLabour = true
     /// The hourly rate new labour lines start with.
     public var hourlyRateCents = 6_500
     public var estimateValidDays = 30
@@ -39,18 +44,32 @@ public struct BusinessProfile: Codable, Equatable, Sendable {
         phone = try c.decodeIfPresent(String.self, forKey: .phone) ?? d.phone
         email = try c.decodeIfPresent(String.self, forKey: .email) ?? d.email
         website = try c.decodeIfPresent(String.self, forKey: .website) ?? d.website
-        tpsNumber = try c.decodeIfPresent(String.self, forKey: .tpsNumber) ?? d.tpsNumber
-        tvqNumber = try c.decodeIfPresent(String.self, forKey: .tvqNumber) ?? d.tvqNumber
         warrantyFrench = try c.decodeIfPresent(String.self, forKey: .warrantyFrench) ?? d.warrantyFrench
         warrantyEnglish = try c.decodeIfPresent(String.self, forKey: .warrantyEnglish) ?? d.warrantyEnglish
         termsFrench = try c.decodeIfPresent(String.self, forKey: .termsFrench) ?? d.termsFrench
         termsEnglish = try c.decodeIfPresent(String.self, forKey: .termsEnglish) ?? d.termsEnglish
         logoPath = try c.decodeIfPresent(String.self, forKey: .logoPath) ?? d.logoPath
-        tpsRate = try c.decodeIfPresent(Int.self, forKey: .tpsRate) ?? d.tpsRate
-        tvqRate = try c.decodeIfPresent(Int.self, forKey: .tvqRate) ?? d.tvqRate
+        country = try c.decodeIfPresent(Country.self, forKey: .country) ?? d.country
+        region = try c.decodeIfPresent(String.self, forKey: .region) ?? d.region
+        localRate = try c.decodeIfPresent(Int.self, forKey: .localRate) ?? d.localRate
+        taxesLabour = try c.decodeIfPresent(Bool.self, forKey: .taxesLabour) ?? d.taxesLabour
+        if let taxes = try c.decodeIfPresent([TaxRate].self, forKey: .taxes) {
+            self.taxes = taxes
+        } else {
+            // A profile from before regions: Québec, with its GST and QST.
+            let old = try decoder.container(keyedBy: LegacyKeys.self)
+            taxes = [TaxRate(.gst, rate: try old.decodeIfPresent(Int.self, forKey: .tpsRate) ?? 50_000,
+                             number: try old.decodeIfPresent(String.self, forKey: .tpsNumber) ?? ""),
+                     TaxRate(.qst, rate: try old.decodeIfPresent(Int.self, forKey: .tvqRate) ?? 99_750,
+                             number: try old.decodeIfPresent(String.self, forKey: .tvqNumber) ?? "")]
+        }
         hourlyRateCents = try c.decodeIfPresent(Int.self, forKey: .hourlyRateCents) ?? d.hourlyRateCents
         estimateValidDays = try c.decodeIfPresent(Int.self, forKey: .estimateValidDays) ?? d.estimateValidDays
     }
+}
+
+private enum LegacyKeys: String, CodingKey {
+    case tpsNumber, tvqNumber, tpsRate, tvqRate
 }
 
 // MARK: - Labour
@@ -116,16 +135,69 @@ public struct BillLine: Codable, Hashable, Sendable {
     }
 }
 
+/// One tax on a bill: its kind, the rate charged, and the amount.
+public struct TaxLine: Codable, Hashable, Sendable {
+    public var kind: TaxKind
+    public var rate: Int
+    public var cents: Int
+}
+
 public struct Totals: Codable, Hashable, Sendable {
     public var labourCents: Int
     public var partsCents: Int
     public var discountCents: Int
     public var subtotalCents: Int
-    public var tpsRate: Int
-    public var tvqRate: Int
-    public var tpsCents: Int
-    public var tvqCents: Int
+    /// The part of the subtotal the taxes apply to: all of it, or the parts only where
+    /// labour is not taxed.
+    public var taxableCents: Int
+    public var taxes: [TaxLine]
     public var totalCents: Int
+
+    public init(labourCents: Int, partsCents: Int, discountCents: Int, subtotalCents: Int, taxableCents: Int,
+                taxes: [TaxLine], totalCents: Int) {
+        self.labourCents = labourCents
+        self.partsCents = partsCents
+        self.discountCents = discountCents
+        self.subtotalCents = subtotalCents
+        self.taxableCents = taxableCents
+        self.taxes = taxes
+        self.totalCents = totalCents
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case labourCents, partsCents, discountCents, subtotalCents, taxableCents, taxes, totalCents
+        // Documents issued before regions (S-038) stored TPS and TVQ.
+        case tpsRate, tvqRate, tpsCents, tvqCents
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        labourCents = try c.decode(Int.self, forKey: .labourCents)
+        partsCents = try c.decode(Int.self, forKey: .partsCents)
+        discountCents = try c.decode(Int.self, forKey: .discountCents)
+        subtotalCents = try c.decode(Int.self, forKey: .subtotalCents)
+        taxableCents = try c.decodeIfPresent(Int.self, forKey: .taxableCents) ?? subtotalCents
+        totalCents = try c.decode(Int.self, forKey: .totalCents)
+        if let taxes = try c.decodeIfPresent([TaxLine].self, forKey: .taxes) {
+            self.taxes = taxes
+        } else {
+            taxes = [TaxLine(kind: .gst, rate: try c.decode(Int.self, forKey: .tpsRate), cents: try c.decode(Int.self, forKey: .tpsCents)),
+                     TaxLine(kind: .qst, rate: try c.decode(Int.self, forKey: .tvqRate), cents: try c.decode(Int.self, forKey: .tvqCents))]
+        }
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(labourCents, forKey: .labourCents)
+        try c.encode(partsCents, forKey: .partsCents)
+        try c.encode(discountCents, forKey: .discountCents)
+        try c.encode(subtotalCents, forKey: .subtotalCents)
+        try c.encode(taxableCents, forKey: .taxableCents)
+        try c.encode(taxes, forKey: .taxes)
+        try c.encode(totalCents, forKey: .totalCents)
+    }
+
+    public var taxCents: Int { taxes.reduce(0) { $0 + $1.cents } }
 }
 
 public enum Billing {
@@ -134,17 +206,18 @@ public enum Billing {
         a >= 0 ? (a + b / 2) / b : -((-a + b / 2) / b)
     }
 
-    /// Subtotal = labour + parts − discount (never below zero). TPS and TVQ are each a
-    /// share of the subtotal, rounded half up to the cent.
-    public static func totals(_ lines: [BillLine], discountCents: Int, tpsRate: Int, tvqRate: Int) -> Totals {
+    /// Subtotal = labour + parts − discount (never below zero). Each tax is a share of the
+    /// taxable amount, rounded half up to the cent. Where labour is not taxed, the taxable
+    /// amount is the parts, less their share of the discount.
+    public static func totals(_ lines: [BillLine], discountCents: Int, taxes: [TaxRate], taxesLabour: Bool = true) -> Totals {
         let labour = lines.filter { $0.kind == .labour }.reduce(0) { $0 + $1.amountCents }
         let parts = lines.filter { $0.kind == .part }.reduce(0) { $0 + $1.amountCents }
         let discount = min(max(discountCents, 0), labour + parts)
         let subtotal = labour + parts - discount
-        let tps = roundHalfUp(subtotal * tpsRate, 1_000_000)
-        let tvq = roundHalfUp(subtotal * tvqRate, 1_000_000)
+        let taxable = taxesLabour || labour + parts == 0 ? subtotal : parts - roundHalfUp(discount * parts, labour + parts)
+        let lines = taxes.map { TaxLine(kind: $0.kind, rate: $0.rate, cents: roundHalfUp(taxable * $0.rate, 1_000_000)) }
         return Totals(labourCents: labour, partsCents: parts, discountCents: discount, subtotalCents: subtotal,
-                      tpsRate: tpsRate, tvqRate: tvqRate, tpsCents: tps, tvqCents: tvq, totalCents: subtotal + tps + tvq)
+                      taxableCents: taxable, taxes: lines, totalCents: subtotal + lines.reduce(0) { $0 + $1.cents })
     }
 }
 
@@ -289,7 +362,7 @@ extension Library {
     /// Labour lines, then priced parts, with the totals at the current rates.
     public func bill(for repairID: UUID) throws -> Bill {
         guard let repair = try repair(repairID) else {
-            return Bill(lines: [], totals: Billing.totals([], discountCents: 0, tpsRate: 0, tvqRate: 0), unpricedParts: [])
+            return Bill(lines: [], totals: Billing.totals([], discountCents: 0, taxes: []), unpricedParts: [])
         }
         let profile = try businessProfile()
         var lines = try labourLines(on: repairID).map { line in
@@ -303,7 +376,8 @@ extension Library {
                             amountCents: price * use.quantity)
         }
         return Bill(lines: lines,
-                    totals: Billing.totals(lines, discountCents: repair.discountCents, tpsRate: profile.tpsRate, tvqRate: profile.tvqRate),
+                    totals: Billing.totals(lines, discountCents: repair.discountCents, taxes: profile.chargedTaxes,
+                                          taxesLabour: profile.taxesLabour),
                     unpricedParts: uses.filter { $0.priceCents == nil }.map(\.name))
     }
 

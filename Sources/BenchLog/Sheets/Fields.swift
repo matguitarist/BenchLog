@@ -10,7 +10,10 @@ struct CustomerDraft: Equatable {
     var email = ""
     var address = ""
     var firstNote = ""
-    var language: DocumentsLanguage = .french
+    var language = CustomerDraft.defaultLanguage
+
+    /// French in Québec, English elsewhere; set from the business's region on each reload.
+    nonisolated(unsafe) static var defaultLanguage = DocumentsLanguage.french
 
     init() {}
 

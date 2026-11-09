@@ -124,11 +124,15 @@ extension PartUseStatus {
     }
 }
 
-/// Money is integer cents in the library, shown as Canadian dollars in the app's language.
+/// Money is integer cents in the library, shown in the business's currency (CAD or USD)
+/// in the app's language.
 enum Money {
+    /// Set from the business's country each time the library reloads.
+    nonisolated(unsafe) static var currencyCode = "CAD"
+
     static func text(_ cents: Int?) -> String {
         guard let cents else { return "—" }
-        return (Decimal(cents) / 100).formatted(.currency(code: "CAD"))
+        return (Decimal(cents) / 100).formatted(.currency(code: currencyCode))
     }
 
     static func decimal(_ cents: Int?) -> Decimal? { cents.map { Decimal($0) / 100 } }
@@ -141,7 +145,12 @@ enum Money {
         return NSDecimalNumber(decimal: rounded).intValue
     }
 
-    static let format = Decimal.FormatStyle.Currency(code: "CAD")
+    static var format: Decimal.FormatStyle.Currency { .init(code: currencyCode) }
+}
+
+extension TaxKind {
+    /// The tax's short name in the app's language: GST, QST, HST… or TPS, TVQ, TVH….
+    var title: String { name(Locale.current.language.languageCode?.identifier == "fr" ? .french : .english) }
 }
 
 extension DocumentsLanguage {

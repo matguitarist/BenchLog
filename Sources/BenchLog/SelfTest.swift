@@ -324,6 +324,16 @@ enum SelfTest {
                     model.undoManager = nil
                 }
 
+                // S-039 Moving the business to the United States shows US dollars and English for new customers.
+                let home = model.read(BusinessProfile()) { try $0.businessProfile() }
+                var moved = home
+                moved.setRegion(.unitedStates, "TX")
+                model.save(moved)
+                check("a US business shows US dollars", Money.currencyCode == "USD")
+                check("a US business's new customers get English documents", CustomerDraft().language == .english)
+                model.save(home)
+                check("back in Québec, Canadian dollars and French", Money.currencyCode == "CAD" && CustomerDraft().language == .french)
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)
