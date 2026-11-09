@@ -249,6 +249,7 @@ Depends: S-012, S-016
 Acceptance:
 - [unit] A guide has a `format` (pdf, markdown). Its file is stored as an attachment owned by the guide, and images a Markdown guide embeds are stored as attachments too.
 - [snap] The Guides page lists guides grouped by category and brand, with a page-1 thumbnail.
+- [unit] Merging catalog models (S-016) moves guide links to the model that remains.
 Status: todo
 
 ### S-018 Read a guide in the app

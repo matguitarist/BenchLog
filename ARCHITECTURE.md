@@ -8,7 +8,8 @@
   - `Library+<Domain>.swift`: one file per domain (Customers, Devices and catalog, Repairs, Notes and trash). Every write sets `updatedAt`; deleting sets `deletedAt`.
   - `CatalogSeed.swift`: the catalog a new library starts with.
 - **BenchLog** (the app, main-actor by default):
-  - `Models.swift`: `AppModel` holds the open `Library`, the page and selection, the sheet, history, and undo. Every change goes through it, so it is logged, and pages reload when `dataVersion` changes.
+  - `Models.swift`: `AppModel` holds the open `Library`, the page and selection, the sheet, history, and undo. Every change goes through its `write`, so it is logged, and pages reload when `dataVersion` changes.
+  - `Models+Actions.swift`: the actions by feature (customers and devices, repairs, notes, photos and files, parts, catalog). State stays in `Models.swift`; a new feature adds its actions here, or its own `Models+<Feature>.swift` once this file passes 300 lines.
   - `Pages/`: one file per sidebar page (list beside detail, in an `HSplitView`).
   - `Sheets/`: the sheets, and the customer and device fields they share.
   - `Views/`: parts used by several pages (Timeline, Passcode).
