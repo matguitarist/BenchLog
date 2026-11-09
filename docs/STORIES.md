@@ -447,7 +447,8 @@ Acceptance:
 - [unit] The shop is one owner record (`customer.isShop`), named after the business, made the first time it is needed. Its devices record what I paid for them (`purchaseCents`).
 - [snap] New Repair offers "Shop (internal)" as the owner. An internal repair shows an "Internal" badge, has no intake slip, estimate, or invoice, and its Billing shows cost: parts at cost and hours spent, no taxes.
 - [unit] Internal repairs never count as To Collect, and their last status reads "Done" instead of "Picked Up".
-Status: todo
+Built: `Shop.swift` (`shop(named:)`, `isInternal`, `internalCost`); migration v9-shop. New Repair has "For the Shop" beside the customer picker and no approval section for the shop. An internal repair shows Owner "The shop", the Internal badge, and a Cost section (Log Time, Time spent, Parts at cost, a warning for parts with no cost) in place of Billing and Documents; Print Intake Slip, Print Estimate, and Invoice are disabled for it, and `issue` refuses it. The shop is left out of Customers and search. Snapshot: repair-internal.
+Status: done
 
 ### S-036 Sell or keep a shop device
 As the user, I mark a shop device Kept, For Sale, or Sold (with the price, the date, and an optional buyer), and I see what it cost and what it made.
@@ -457,7 +458,8 @@ Acceptance:
 - [unit] Cost = purchase + parts at cost on its internal repairs. Profit = sale price − cost. Selling to a customer moves the device to that customer, and later repairs are theirs.
 - [snap] The Devices page has a Shop filter showing each device's state, cost, and sale price or profit.
 - Later: a sales invoice with taxes for a sold device.
-Status: todo
+Built: `shopDevices()` and `setDisposition` in `Shop.swift`; `ShopViews.swift`. Devices has an All Devices / Shop picker; the Shop list shows state, cost, asking price or profit, and "Profit on N sold" at the bottom; a shop device's page has a Shop section (Paid, State, Asking or Sold for, Buyer, Cost, Profit). Only work done before the sale counts in the cost; a profit shows only once sold. Snapshot: devices-shop.
+Status: done
 
 ### S-033 Delete and undo
 As the user, I delete a customer, device, repair, part, or guide, and ⌘Z brings it back. Deleting a customer that has open repairs asks first.

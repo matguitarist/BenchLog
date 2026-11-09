@@ -314,6 +314,7 @@ extension Library {
     @discardableResult
     public func issue(_ kind: DocumentKind, for repairID: UUID, now: Date = .now) throws -> Invoice {
         guard let row = try repairRow(repairID) else { throw BillingError.nothingToBill }
+        guard !row.customer.isShop else { throw ShopError.internalJob }
         let bill = try bill(for: repairID)
         guard !bill.lines.isEmpty else { throw BillingError.nothingToBill }
         let profile = try businessProfile()
@@ -387,6 +388,8 @@ extension Library {
             let ids = try String.fetchAll(db, sql: """
                 SELECT id FROM repair WHERE status = 'ready' AND deletedAt IS NULL AND id NOT IN (
                     SELECT repairId FROM invoice WHERE kind = 'invoice' AND paidAt IS NOT NULL AND deletedAt IS NULL)
+                AND deviceId NOT IN (
+                    SELECT d.id FROM device d JOIN customer c ON c.id = d.customerId WHERE c.isShop = 1)
                 """)
             return Set(ids.compactMap(UUID.init(uuidString:)))
         }

@@ -57,6 +57,8 @@ enum Snapshot {
             let switchRepair = model.read(nil) { try $0.repairRows().first { $0.device.model == "Switch" }?.id }
             let billedRepair = model.read(nil) { try $0.repairRows().first { $0.repair.status == .ready }?.id }
             let approvalRepair = model.read(nil) { try $0.repairRows().first { $0.repair.approvalRule == .ask }?.id }
+            let internalRepair = model.read(nil) { try $0.repairRows().first { $0.customer.isShop && !$0.repair.status.isClosed }?.id }
+            let shopDevice = model.read(nil) { try $0.shopDevices().first { $0.device.disposition == .forSale }?.id }
             let states: [(String, () -> Void)] = [
                 ("guide-markdown", { model.sidebar = .guides; model.selectedGuide = markdownGuide }),
                 ("guide-pdf", { model.sidebar = .guides; model.selectedGuide = pdfGuide }),
@@ -68,10 +70,13 @@ enum Snapshot {
                 ("repair-parts", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = waiting }),
                 ("search-results", { model.sidebar = .repairs; model.searchText = "mario"; model.searching = true }),
                 ("repair-approval", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = approvalRepair }),
+                ("repair-internal", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = internalRepair }),
+                ("devices-shop", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = shopDevice }),
                 ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
             ]
             for (name, setUp) in states where only == nil || only?.contains(name) == true || only?.contains("states") == true {
                 model.searching = false
+                model.deviceScope = .all
                 setUp()
                 for mode in ["light", "dark"] {
                     NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
@@ -86,6 +91,7 @@ enum Snapshot {
             }
             model.partsTab = .inventory
             model.searching = false
+            model.deviceScope = .all
             // The printed documents, page 1 of each as a PNG.
             if only == nil || only?.contains("docs") == true {
                 await snapshotDocuments(model: model, dir: dir)

@@ -5,6 +5,7 @@ import SwiftUI
 struct DevicesPage: View {
     @Environment(AppModel.self) private var model
     @State private var rows: [DeviceRow] = []
+    @State private var shopRows: [ShopDeviceRow] = []
 
     var body: some View {
         @Bindable var model = model
@@ -16,15 +17,27 @@ struct DevicesPage: View {
         }
         .navigationTitle("Devices")
         .searchable(text: $model.deviceSearch, prompt: Text("Model, serial, or customer"))
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Picker("Show", selection: $model.deviceScope) {
+                    ForEach(DeviceScope.allCases) { Text($0.title).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .help("Show every device, or the shop's own")
+            }
+        }
         .task(id: "\(model.dataVersion) \(model.deviceSearch)") {
             rows = model.read([]) { try $0.deviceRows(matching: model.deviceSearch) }
+            shopRows = model.read([]) { try $0.shopDevices() }
         }
     }
 
     @ViewBuilder
     private var list: some View {
         @Bindable var model = model
-        if rows.isEmpty {
+        if model.deviceScope == .shop {
+            shopList
+        } else if rows.isEmpty {
             if model.deviceSearch.isEmpty {
                 ContentUnavailableView("No Devices", systemImage: "laptopcomputer.and.iphone",
                                        description: Text("Devices appear here when you add them to a customer."))
@@ -54,6 +67,48 @@ struct DevicesPage: View {
                 .tag(row.id)
             }
         }
+    }
+
+    /// The shop's devices: to resell or keep, with what each cost and made.
+    @ViewBuilder
+    private var shopList: some View {
+        @Bindable var model = model
+        let search = model.deviceSearch.lowercased()
+        let shown = search.isEmpty ? shopRows : shopRows.filter { $0.device.title.lowercased().contains(search) || $0.device.serial.lowercased().contains(search) }
+        VStack(spacing: 0) {
+            if shown.isEmpty {
+                ContentUnavailableView {
+                    Label("No Shop Devices", systemImage: "building.2")
+                } description: {
+                    Text("Devices the shop buys to repair and resell, or keeps, appear here.")
+                } actions: {
+                    Button("Add Shop Device…") { addShopDevice() }
+                }
+            } else {
+                List(shown, selection: $model.selectedDevice) { row in
+                    ShopDeviceListRow(row: row).tag(row.id)
+                }
+                Divider()
+                HStack {
+                    Button("Add Shop Device…") { addShopDevice() }
+                        .controlSize(.small)
+                        .help("Add a device the shop owns")
+                    Spacer()
+                    let sold = shown.compactMap(\.profitCents)
+                    if !sold.isEmpty {
+                        Text("Profit on \(sold.count) sold: \(Money.text(sold.reduce(0, +)))")
+                            .font(.callout)
+                            .monospacedDigit()
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(Space.sm)
+            }
+        }
+    }
+
+    private func addShopDevice() {
+        if let shop = model.shopOwner() { model.sheet = .addDevice(customer: shop.id) }
     }
 
     @ViewBuilder
@@ -93,10 +148,14 @@ struct DeviceDetail: View {
                                 .help("Change this device's details")
                         }
                         if let customer {
-                            LabeledContent("Customer") {
-                                Button(customer.name) { model.open(.customer(customer.id)) }
-                                    .buttonStyle(.link)
-                                    .help("Open customer \(customer.name)")
+                            if customer.isShop {
+                                LabeledContent("Owner", value: String(localized: "The shop"))
+                            } else {
+                                LabeledContent("Customer") {
+                                    Button(customer.name) { model.open(.customer(customer.id)) }
+                                        .buttonStyle(.link)
+                                        .help("Open customer \(customer.name)")
+                                }
                             }
                         }
                         LabeledContent("Category", value: device.category.title)
@@ -134,6 +193,9 @@ struct DeviceDetail: View {
                                 .controlSize(.small)
                                 .help("Open a repair for this device (⌘N)")
                         }
+                    }
+                    if customer?.isShop == true || device.disposition == .sold {
+                        ShopSection(device: device).id("\(device.id) \(device.customerId)")
                     }
                     Section("Photos and Files") {
                         AttachmentsSection(owner: .device, ownerID: device.id)

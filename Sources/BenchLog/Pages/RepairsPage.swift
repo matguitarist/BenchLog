@@ -119,7 +119,8 @@ struct RepairListRow: View {
             }
             Spacer(minLength: Space.sm)
             VStack(alignment: .trailing, spacing: Space.xs) {
-                StatusPill(status: row.repair.status)
+                StatusPill(status: row.repair.status, isInternal: row.customer.isShop)
+                if row.customer.isShop { InternalBadge() }
                 if toCollect {
                     Label("To Collect", systemImage: "dollarsign.circle")
                         .font(.caption.weight(.medium))

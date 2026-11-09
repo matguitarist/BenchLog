@@ -260,3 +260,41 @@ struct DocumentRow: View {
         }
     }
 }
+
+/// An internal job's cost: the time logged as labour lines, and the parts at cost. No price,
+/// no taxes: the shop pays it.
+struct InternalCostView: View {
+    @Environment(AppModel.self) private var model
+    let repair: Repair
+    @State private var labour: [LabourLine] = []
+    @State private var cost: InternalCost?
+
+    var body: some View {
+        Group {
+            ForEach(labour) { line in
+                LabourRow(line: line).id(line.id)
+            }
+            Button("Log Time") { model.addLabour(to: repair.id) }
+                .controlSize(.small)
+                .help("Add a line for time spent on this job")
+            if let cost {
+                LabeledContent("Time spent") {
+                    Text("\((Decimal(cost.hundredthHours) / 100).formatted(.number.precision(.fractionLength(0...2)))) h")
+                        .monospacedDigit()
+                }
+                LabeledContent("Parts at cost") {
+                    Text(Money.text(cost.partsCents)).monospacedDigit().fontWeight(.semibold)
+                }
+                if !cost.uncostedParts.isEmpty {
+                    Label("No cost yet: \(cost.uncostedParts.joined(separator: ", ")). It is left off.", systemImage: "exclamationmark.triangle")
+                        .font(.callout)
+                        .foregroundStyle(.orange)
+                }
+            }
+        }
+        .task(id: model.dataVersion) {
+            labour = model.read([]) { try $0.labourLines(on: repair.id) }
+            cost = model.read(nil) { try $0.internalCost(of: repair.id) }
+        }
+    }
+}

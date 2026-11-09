@@ -170,6 +170,25 @@ enum SeedData {
         if let id = repairOf(jPhone) { try library.setApproval(.upTo, limitCents: 15_000, of: id) }
         if let id = repairOf(mSwitch) { try library.setApproval(.upTo, limitCents: 10_000, of: id) }
 
+        // The shop's own devices: a PS4 being refurbished to resell, and a Game Boy Color sold to Emma.
+        let shop = try library.shop(named: try library.businessProfile().name)
+        var ps4 = Device(customerId: shop.id, category: .console, brand: "Sony", model: "PS4", revision: "Slim", serial: "MB123456789",
+                         condition: "Bought at a garage sale; loud fan, dusty.")
+        ps4.purchaseCents = 6_000
+        ps4 = try library.save(ps4)
+        try repair(ps4, "Refurbish to resell: fan, thermal paste, clean.", daysAgo: 1, [.inProgress])
+        if let id = try library.repairRows().first(where: { $0.device.id == ps4.id })?.id {
+            let fan = try library.save(Part(name: "PS4 Slim fan", vendor: "AliExpress", costCents: 1_150, priceCents: 2_500, quantity: 2), fits: [])
+            _ = try library.usePart(fan.id, on: id)
+            try library.save(LabourLine(repairId: id, description: "Nettoyage et pâte thermique", hundredthHours: 75, unitCents: 6500))
+        }
+        try library.setDisposition(.forSale, priceCents: 18_000, of: ps4.id)
+        var gbc = Device(customerId: shop.id, category: .handheld, brand: "Nintendo", model: "Game Boy Color", colour: "Atomic Purple")
+        gbc.purchaseCents = 2_500
+        gbc = try library.save(gbc)
+        try repair(gbc, "New screen and shell.", daysAgo: 30, [.inProgress, .ready, .pickedUp])
+        try library.setDisposition(.sold, priceCents: 12_000, buyer: emma.id, of: gbc.id, now: now.addingTimeInterval(-10 * day))
+
         // Guides: a PDF for one revision, Markdown notes for a model, a brand, a category, and one general.
         let folder = FileManager.default.temporaryDirectory.appending(path: "BenchLog-seed-guides-\(UUID().uuidString)")
         try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)

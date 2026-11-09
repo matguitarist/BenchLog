@@ -44,6 +44,8 @@ public struct Customer: BenchRecord {
     public var email: String
     public var address: String
     public var documentsLanguage: DocumentsLanguage
+    /// The shop itself: owner of the devices it repairs to resell or keep. There is one.
+    public var isShop: Bool = false
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
@@ -90,6 +92,12 @@ public struct Device: BenchRecord {
     /// The unlock code, or a pattern as the dots in order ("1-5-9-6").
     public var passcode: String
     public var passcodeIsPattern: Bool
+    /// For a shop device: what the shop paid for it, in cents.
+    public var purchaseCents: Int?
+    /// For a shop device: whether it is kept, for sale, or sold.
+    public var disposition: Disposition?
+    public var salePriceCents: Int?
+    public var soldAt: Date?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?

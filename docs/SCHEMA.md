@@ -17,8 +17,8 @@ Migrations live in `Sources/BenchLogKit/Library.swift`. They are only ever added
 | Table | Columns |
 | --- | --- |
 | `meta` | `key` TEXT PK, `value` TEXT. Keys: `nextTicketNumber`, `nextInvoiceNumber`, `business` (the business profile, JSON). |
-| `customer` | `name`, `phone` (as typed), `phoneDigits` (digits only, for search), `email`, `address`, `documentsLanguage` (`fr` or `en`) |
-| `device` | `customerId` → customer, `category` (`computer` `phone` `tablet` `console` `handheld` `other`), `brand`, `model`, `revision`, `serial`, `colour`, `condition`, `passcode`, `passcodeIsPattern` (the pattern is stored as `1-5-9-6`) |
+| `customer` | `name`, `phone` (as typed), `phoneDigits` (digits only, for search), `email`, `address`, `documentsLanguage` (`fr` or `en`), `isShop` (v9; one row, the business as an owner, left out of lists and search) |
+| `device` | `customerId` → customer, `category` (`computer` `phone` `tablet` `console` `handheld` `other`), `brand`, `model`, `revision`, `serial`, `colour`, `condition`, `passcode`, `passcodeIsPattern` (the pattern is stored as `1-5-9-6`), `purchaseCents`, `disposition` (`forSale` `kept` `sold`, null = in stock), `salePriceCents`, `soldAt` (v9) |
 | `repair` | `deviceId` → device, `ticketNumber` INTEGER UNIQUE (shown as `#0042`), `status`, `complaint`, `diagnosis`, `receivedAt`, `promisedAt`, `completedAt`, `pickedUpAt`, `discountCents`, `approvalRule` (`go`, `ask`, `upTo`), `approvalLimitCents` (with `upTo`, before taxes) |
 | `note` | `ownerType` (`customer` `device` `repair`), `ownerId`, `kind` (`text`, or `status`, where `text` holds the new status), `text` |
 | `labourLine` | `repairId` → repair, `description`, `kind` (`hourly` or `flat`), `hundredthHours` (1.5 h = 150), `unitCents` (the rate, or the flat price) |

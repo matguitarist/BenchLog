@@ -11,6 +11,16 @@
         }
       }
     },
+    "%@ h": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ h"
+          }
+        }
+      }
+    },
     "%@ · %@ · %@": {
       "localizations": {
         "fr": {
@@ -67,6 +77,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "1 ouverte"
+          }
+        }
+      }
+    },
+    "A job on a device the shop owns, to resell or keep": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un travail sur un appareil de l’atelier, à revendre ou à garder"
           }
         }
       }
@@ -231,6 +251,16 @@
         }
       }
     },
+    "Add Shop Device…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un appareil de l’atelier…"
+          }
+        }
+      }
+    },
     "Add a customer (⌘⇧N)": {
       "localizations": {
         "fr": {
@@ -241,12 +271,32 @@
         }
       }
     },
+    "Add a device the shop owns": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un appareil qui appartient à l’atelier"
+          }
+        }
+      }
+    },
     "Add a device to this customer (⌘⇧D)": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter un appareil à ce client (⌘⇧D)"
+          }
+        }
+      }
+    },
+    "Add a line for time spent on this job": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une ligne pour le temps passé sur ce travail"
           }
         }
       }
@@ -381,6 +431,36 @@
         }
       }
     },
+    "All Devices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tous les appareils"
+          }
+        }
+      }
+    },
+    "An internal job has no estimate or invoice.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un travail interne n’a ni estimation ni facture."
+          }
+        }
+      }
+    },
+    "An internal job on a device the shop owns, to resell or keep": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un travail interne sur un appareil de l’atelier, à revendre ou à garder"
+          }
+        }
+      }
+    },
     "Any brand": {
       "localizations": {
         "fr": {
@@ -487,6 +567,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Estimation d’abord"
+          }
+        }
+      }
+    },
+    "Asking": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prix demandé"
+          }
+        }
+      }
+    },
+    "Asking %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demandé : %@"
           }
         }
       }
@@ -647,6 +747,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nom de l’entreprise"
+          }
+        }
+      }
+    },
+    "Buyer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Acheteur"
           }
         }
       }
@@ -1051,6 +1161,16 @@
         }
       }
     },
+    "Cost %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coût : %@"
+          }
+        }
+      }
+    },
     "Covers": {
       "localizations": {
         "fr": {
@@ -1227,6 +1347,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les appareils s’affichent ici quand vous les ajoutez à un client."
+          }
+        }
+      }
+    },
+    "Devices the shop buys to repair and resell, or keeps, appear here.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les appareils que l’atelier achète pour les réparer et les revendre, ou les garder, apparaissent ici."
           }
         }
       }
@@ -1631,6 +1761,26 @@
         }
       }
     },
+    "For Sale": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À vendre"
+          }
+        }
+      }
+    },
+    "For the Shop": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pour l’atelier"
+          }
+        }
+      }
+    },
     "Forward": {
       "localizations": {
         "fr": {
@@ -1921,6 +2071,16 @@
         }
       }
     },
+    "In Stock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En stock"
+          }
+        }
+      }
+    },
     "In stock": {
       "localizations": {
         "fr": {
@@ -1947,6 +2107,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reçue"
+          }
+        }
+      }
+    },
+    "Internal": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Interne"
           }
         }
       }
@@ -2021,6 +2191,16 @@
         }
       }
     },
+    "Kept": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gardé"
+          }
+        }
+      }
+    },
     "Kind": {
       "localizations": {
         "fr": {
@@ -2081,6 +2261,16 @@
         }
       }
     },
+    "Log Time": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noter le temps"
+          }
+        }
+      }
+    },
     "Logo": {
       "localizations": {
         "fr": {
@@ -2107,6 +2297,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cherche une nouvelle version sur GitHub une fois par jour. Dernière vérification : %@."
+          }
+        }
+      }
+    },
+    "Loss": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perte"
+          }
+        }
+      }
+    },
+    "Loss %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Perte : %@"
           }
         }
       }
@@ -2501,6 +2711,36 @@
         }
       }
     },
+    "No Shop Devices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun appareil de l’atelier"
+          }
+        }
+      }
+    },
+    "No buyer on file": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun acheteur inscrit"
+          }
+        }
+      }
+    },
+    "No cost yet: %@. It is left off.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas encore de coût : %@. Non compté."
+          }
+        }
+      }
+    },
     "No devices yet": {
       "localizations": {
         "fr": {
@@ -2881,6 +3121,26 @@
         }
       }
     },
+    "Owner": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Propriétaire"
+          }
+        }
+      }
+    },
+    "Paid": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Payé"
+          }
+        }
+      }
+    },
     "Paid · %@": {
       "localizations": {
         "fr": {
@@ -2927,6 +3187,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les pièces arrivent bientôt"
+          }
+        }
+      }
+    },
+    "Parts at cost": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièces au coûtant"
           }
         }
       }
@@ -3147,6 +3417,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Imprimé « %@ »"
+          }
+        }
+      }
+    },
+    "Profit": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profit"
+          }
+        }
+      }
+    },
+    "Profit %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profit : %@"
+          }
+        }
+      }
+    },
+    "Profit on %lld sold: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profit des ventes (%lld) : %@"
           }
         }
       }
@@ -3621,6 +3921,16 @@
         }
       }
     },
+    "Selling to a customer moves the device to them; later repairs are theirs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendre à un client lui transfère l’appareil ; les réparations suivantes sont les siennes"
+          }
+        }
+      }
+    },
     "Serial or IMEI": {
       "localizations": {
         "fr": {
@@ -3637,6 +3947,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Mettre en attente de pièces"
+          }
+        }
+      }
+    },
+    "Shop": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Atelier"
           }
         }
       }
@@ -3667,6 +3987,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afficher le code"
+          }
+        }
+      }
+    },
+    "Show every device, or the shop's own": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher tous les appareils, ou ceux de l’atelier"
           }
         }
       }
@@ -3751,6 +4081,26 @@
         }
       }
     },
+    "Sold": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendu"
+          }
+        }
+      }
+    },
+    "Sold for": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendu pour"
+          }
+        }
+      }
+    },
     "Start Anyway": {
       "localizations": {
         "fr": {
@@ -3767,6 +4117,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Commencer sans approbation ?"
+          }
+        }
+      }
+    },
+    "State": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "État"
           }
         }
       }
@@ -4011,6 +4371,16 @@
         }
       }
     },
+    "The shop": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’atelier"
+          }
+        }
+      }
+    },
     "The work comes to %@ before taxes, over the %@ the customer allowed.": {
       "localizations": {
         "fr": {
@@ -4057,6 +4427,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cette révision"
+          }
+        }
+      }
+    },
+    "Time spent": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Temps passé"
           }
         }
       }
@@ -4327,6 +4707,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce que le client dit qui ne va pas"
+          }
+        }
+      }
+    },
+    "What the shop paid for this device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que l’atelier a payé pour cet appareil"
+          }
+        }
+      }
+    },
+    "What the shop paid, plus the parts at cost on its internal jobs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que l’atelier a payé, plus les pièces au coûtant de ses travaux internes"
           }
         }
       }

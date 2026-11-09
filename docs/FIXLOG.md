@@ -39,3 +39,10 @@ Symptom: the self-test hung at the first invoice; no PDF was written.
 Cause: `NSPrintOperation.runModal` on an offscreen WKWebView's window never returns, and `run()` needs a visible window.
 Fix: `DocumentPrinter` captures the page with `WKWebView.pdf(configuration:)` as one tall page and cuts it into Letter pages with Core Graphics, breaking between blocks it measured in the page.
 Rule: never use NSPrintOperation for a view that is not on screen; make the PDF with `pdf(configuration:)` and paginate it yourself.
+
+## 2026-11-09 A fresh library failed to open after the shop columns
+
+Symptom: every new library failed at migration v7-search with "no such column: c.isShop".
+Cause: the search sources leave the shop out with `c.isShop = 0`, but v7 installs its triggers and fills the index from the current sources, before v9 adds the column. Editing a shared source changed what an old migration does.
+Fix: `SearchIndex.sources(version:)`; v7 installs version 1, v9 adds the columns and then calls `reinstall(db, version: 2)`.
+Rule: a migration installs the search sources of its own version; a change to a source is a new version and a new migration that calls `reinstall`. Never make an old migration depend on code that later changes.

@@ -280,7 +280,7 @@ public final class Library: Sendable {
         migrator.registerMigration("v7-search") { db in
             // Global search: an FTS5 index over customers, devices, repairs, notes, parts,
             // and guides, kept current by triggers (Search.swift).
-            try SearchIndex.install(db)
+            try SearchIndex.install(db, version: 1)
         }
         migrator.registerMigration("v8-approval") { db in
             // What the customer said at check-in: go ahead, ask first (an estimate is
@@ -289,6 +289,19 @@ public final class Library: Sendable {
                 ALTER TABLE repair ADD COLUMN approvalRule TEXT NOT NULL DEFAULT 'go';
                 ALTER TABLE repair ADD COLUMN approvalLimitCents INTEGER;
                 """)
+        }
+        migrator.registerMigration("v9-shop") { db in
+            // The shop as an owner, for internal jobs on devices it resells or keeps; a shop
+            // device's purchase price and what became of it.
+            try db.execute(sql: """
+                ALTER TABLE customer ADD COLUMN isShop BOOLEAN NOT NULL DEFAULT 0;
+                ALTER TABLE device ADD COLUMN purchaseCents INTEGER;
+                ALTER TABLE device ADD COLUMN disposition TEXT;
+                ALTER TABLE device ADD COLUMN salePriceCents INTEGER;
+                ALTER TABLE device ADD COLUMN soldAt DATETIME;
+                """)
+            // The shop stays out of search.
+            try SearchIndex.reinstall(db, version: 2)
         }
         return migrator
     }

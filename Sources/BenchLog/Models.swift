@@ -34,6 +34,7 @@ final class AppModel {
     var repairFilter: RepairFilter = .open
     var customerSearch = ""
     var deviceSearch = ""
+    var deviceScope: DeviceScope = .all
     var sheet: SheetKind?
     /// Search BenchLog (⌘F) is open over the main window.
     var searching = false

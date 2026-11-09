@@ -266,6 +266,33 @@ enum SelfTest {
                 }
                 check("tests never write to Spotlight", Store.isOverridden)
 
+                // S-035 An internal job: no documents in the Repair menu, never To Collect.
+                // S-036 Selling it records a profit and moves the device to the buyer.
+                if let shop = model.shopOwner(),
+                   let shopDevice = model.write("Self-test shop device", { library in
+                       var made = Device(customerId: shop.id, category: .console, brand: "Self-Test", model: "Shop Console")
+                       made.purchaseCents = 4_000
+                       return try library.save(made)
+                   }),
+                   let job = model.createRepair(deviceID: shopDevice.id, complaint: "Refurbish", promisedAt: nil) {
+                    check("a repair on a shop device is internal", model.read(false) { try $0.isInternal(job.id) })
+                    model.sidebar = .repairs
+                    model.selectedRepair = job.id
+                    try? await Task.sleep(for: .seconds(0.5))
+                    let documents = [String(localized: "Print Intake Slip"), String(localized: "Print Estimate"), String(localized: "Invoice")]
+                    let enabled = repairMenuItems().filter { documents.contains($0.title) && $0.isEnabled }
+                    check("an internal job has no documents in the Repair menu", enabled.isEmpty, enabled.map(\.title).joined(separator: ", "))
+                    model.setStatus(.ready, for: job.id, force: true)
+                    check("an internal job is never To Collect", !model.read([]) { try $0.toCollectRepairIDs() }.contains(job.id))
+                    let buyer = model.write("Self-test buyer") { try $0.save(Customer(name: "Shop Buyer")) }
+                    model.setDisposition(.sold, priceCents: 10_000, buyer: buyer?.id, of: shopDevice.id)
+                    let sold = model.read([]) { try $0.shopDevices() }.first { $0.id == shopDevice.id }
+                    check("a sold shop device shows its profit", sold?.profitCents == 6_000)
+                    check("a sold shop device belongs to the buyer", model.read(nil) { try $0.device(shopDevice.id) }?.customerId == buyer?.id)
+                } else {
+                    check("a repair on a shop device is internal", false)
+                }
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)

@@ -191,9 +191,11 @@ enum RepairFilter: String, CaseIterable, Identifiable {
 /// A repair's status as a colored capsule: icon, word, and color, never color alone.
 struct StatusPill: View {
     let status: RepairStatus
+    /// An internal job's last status reads "Done", not "Picked Up".
+    var isInternal = false
 
     var body: some View {
-        Label(status.title, systemImage: status.symbol)
+        Label(status.title(isInternal: isInternal), systemImage: status.symbol)
             .labelStyle(.titleAndIcon)
             .font(.caption.weight(.medium))
             .foregroundStyle(status.color)
@@ -210,19 +212,20 @@ struct StatusMenu: View {
     @Environment(AppModel.self) private var model
     let repairID: UUID
     let status: RepairStatus
+    var isInternal = false
 
     var body: some View {
         Menu {
-            StatusButtons(model: model, repairID: repairID, current: status, shortcuts: false)
+            StatusButtons(model: model, repairID: repairID, current: status, shortcuts: false, isInternal: isInternal)
         } label: {
-            StatusPill(status: status)
+            StatusPill(status: status, isInternal: isInternal)
         }
         .menuStyle(.button)
         .buttonStyle(.plain)
         .menuIndicator(.visible)
         .fixedSize()
         .help("Change the status (⌘1–⌘8)")
-        .accessibilityLabel(Text("Status: \(status.title)"))
+        .accessibilityLabel(Text("Status: \(status.title(isInternal: isInternal))"))
     }
 }
 
@@ -233,12 +236,13 @@ struct StatusButtons: View {
     let repairID: UUID?
     let current: RepairStatus?
     var shortcuts = true
+    var isInternal = false
 
     var body: some View {
         ForEach(RepairStatus.allCases) { status in
             let button = Toggle(isOn: Binding(get: { current == status },
                                               set: { if $0, let repairID { model.setStatus(status, for: repairID) } })) {
-                Label(status.title, systemImage: status.symbol)
+                Label(status.title(isInternal: isInternal), systemImage: status.symbol)
             }
             .disabled(repairID == nil)
             if shortcuts {
@@ -283,5 +287,22 @@ extension SearchKind {
         case .guide: "book.pages"
         case .note: "note.text"
         }
+    }
+}
+
+extension RepairStatus {
+    /// The title, with an internal job's Picked Up read as "Done": nobody picks it up.
+    func title(isInternal: Bool) -> String {
+        isInternal && self == .pickedUp ? String(localized: "Done") : title
+    }
+}
+
+/// "Internal": a job on a device the shop owns.
+struct InternalBadge: View {
+    var body: some View {
+        Label("Internal", systemImage: "building.2")
+            .font(.caption.weight(.medium))
+            .foregroundStyle(.purple)
+            .help("A job on a device the shop owns, to resell or keep")
     }
 }

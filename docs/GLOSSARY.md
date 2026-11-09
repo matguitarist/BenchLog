@@ -6,7 +6,13 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 
 | Term | Means | Not |
 | --- | --- | --- |
-| Customer | A person who brings in devices | client, contact, owner |
+| Customer | A person who brings in devices | client, contact |
+| Owner | Who a device belongs to: a customer, or the shop (Propriétaire) | client (for a shop device) |
+| Shop | The business itself as an owner; one record, named after the business, never listed as a customer (Atelier) | stock, inventory, me |
+| Internal job | A repair on a device the shop owns; no intake slip, estimate, or invoice, its last status reads Done (Interne) | own repair, refurb |
+| In Stock / For Sale / Kept / Sold | What became of a shop device (En stock, À vendre, Gardé, Vendu) | listed, archived |
+| Cost | For a shop device: what the shop paid, plus parts at cost on its internal jobs (Coût) | expense, spend |
+| Profit / Loss | Sale price − cost, once sold (Profit, Perte) | margin, gain |
 | Device | One physical unit owned by a customer, identified by serial or IMEI | item, unit, product, console |
 | Category | The kind of device: Computer, Phone, Tablet, Console, Handheld, Other | type, class |
 | Brand | The maker: Nintendo, Apple, Dell | manufacturer, make |

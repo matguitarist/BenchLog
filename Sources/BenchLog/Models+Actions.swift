@@ -76,6 +76,28 @@ extension AppModel {
         }
     }
 
+    /// The shop as an owner, named after the business; made the first time it is needed.
+    func shopOwner() -> Customer? {
+        let name = read("") { try $0.businessProfile().name }
+        return write("Shop owner \(name)") { try $0.shop(named: name.isEmpty ? String(localized: "Shop") : name) }
+    }
+
+    func setPurchase(_ cents: Int?, of deviceID: UUID) {
+        write("Device \(deviceID.stored) bought for \(cents.map(String.init) ?? "nothing")") { try $0.setPurchase(cents, of: deviceID) }
+    }
+
+    func setDisposition(_ disposition: Disposition?, priceCents: Int?, buyer: UUID?, of deviceID: UUID) {
+        write("Device \(deviceID.stored) → \(disposition?.rawValue ?? "in stock")") {
+            try $0.setDisposition(disposition, priceCents: priceCents, buyer: buyer, of: deviceID)
+        }
+    }
+
+    /// True when the repair shown is an internal job: it has no intake slip, estimate, or invoice.
+    var focusedRepairIsInternal: Bool {
+        guard let id = focusedRepairID else { return false }
+        return read(false) { try $0.isInternal(id) }
+    }
+
     /// The repair the Repair menu acts on: the one shown on the Repairs page.
     var focusedRepairID: UUID? { sidebar == .repairs ? selectedRepair : nil }
 

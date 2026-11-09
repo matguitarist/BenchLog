@@ -8,7 +8,8 @@ extension Library {
     /// Customers sorted by name. `search` matches the name, the email, or the phone's digits.
     public func customers(matching search: String = "") throws -> [Customer] {
         try db.read { db in
-            var request = Customer.filter(Column("deletedAt") == nil)
+            // The shop is an owner, not a customer: it has its own place on the Devices page.
+            var request = Customer.filter(Column("deletedAt") == nil).filter(Column("isShop") == false)
             let text = search.trimmingCharacters(in: .whitespaces)
             if !text.isEmpty {
                 let digits = Customer.digits(text)

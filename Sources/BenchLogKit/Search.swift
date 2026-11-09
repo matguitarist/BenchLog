@@ -43,11 +43,16 @@ enum SearchIndex {
         return "trim(\(([parts[0]] + tail).joined(separator: " || ")), ' ·')"
     }
 
-    static let sources: [Source] = [
+    /// The latest version of the sources. A migration installs the version of its own time,
+    /// so an old migration never refers to a column a later one adds.
+    static let latest = 2
+
+    /// Version 1 (v7-search) is the first; version 2 (v9-shop) leaves the shop out.
+    static func sources(version: Int = latest) -> [Source] { [
         Source(kind: .customer, table: "customer", alias: "c", select: """
             SELECT 'customer', c.id, 'customer', c.id, c.name, \(joined("c.phone", "c.email")),
                    c.phoneDigits || ' ' || substr(c.phoneDigits, -7) || ' ' || c.address
-            FROM customer c WHERE c.deletedAt IS NULL AND {where}
+            FROM customer c WHERE c.deletedAt IS NULL\(version >= 2 ? " AND c.isShop = 0" : "") AND {where}
             """,
             dependents: [(.device, "d.customerId = NEW.id"),
                          (.repair, "r.deviceId IN (SELECT id FROM device WHERE customerId = NEW.id)")]),
@@ -87,13 +92,11 @@ enum SearchIndex {
             SELECT 'guide', g.id, 'guide', g.id, g.title, g.tags, ''
             FROM guide g WHERE g.deletedAt IS NULL AND {where}
             """),
-    ]
-
-    static func source(_ kind: SearchKind) -> Source { sources.first { $0.kind == kind }! }
+    ] }
 
     /// Deletes and re-adds the rows of `kind` that `condition` picks.
-    static func refresh(_ kind: SearchKind, where condition: String) -> String {
-        let source = source(kind)
+    static func refresh(_ kind: SearchKind, where condition: String, version: Int) -> String {
+        let source = sources(version: version).first { $0.kind == kind }!
         return """
             DELETE FROM search WHERE kind = '\(kind.rawValue)'
                 AND itemId IN (SELECT \(source.alias).id FROM \(source.table) \(source.alias) WHERE \(condition));
@@ -103,7 +106,7 @@ enum SearchIndex {
     }
 
     /// Creates the index, fills it, and adds the triggers that keep it current.
-    static func install(_ db: Database) throws {
+    static func install(_ db: Database, version: Int) throws {
         try db.execute(sql: """
             CREATE VIRTUAL TABLE search USING fts5(
                 kind UNINDEXED, itemId UNINDEXED, targetKind UNINDEXED, targetId UNINDEXED,
@@ -111,11 +114,11 @@ enum SearchIndex {
                 tokenize = 'unicode61 remove_diacritics 2'
             );
             """)
-        for source in sources {
+        for source in sources(version: version) {
             try db.execute(sql: "INSERT INTO search (kind, itemId, targetKind, targetId, title, subtitle, keys) "
                 + source.select.replacingOccurrences(of: "{where}", with: "1"))
-            let changed = refresh(source.kind, where: "\(source.alias).id = NEW.id")
-                + source.dependents.map { refresh($0.kind, where: $0.condition) }.joined()
+            let changed = refresh(source.kind, where: "\(source.alias).id = NEW.id", version: version)
+                + source.dependents.map { refresh($0.kind, where: $0.condition, version: version) }.joined()
             try db.execute(sql: """
                 CREATE TRIGGER search_\(source.table)_insert AFTER INSERT ON \(source.table) BEGIN \(changed) END;
                 CREATE TRIGGER search_\(source.table)_update AFTER UPDATE ON \(source.table) BEGIN \(changed) END;
@@ -124,6 +127,18 @@ enum SearchIndex {
                 END;
                 """)
         }
+    }
+
+    /// Drops the index and its triggers and installs the current sources. A migration calls
+    /// it whenever a `Source` changes: the triggers keep the SQL from when they were made.
+    static func reinstall(_ db: Database, version: Int) throws {
+        for source in sources(version: version) {
+            for event in ["insert", "update", "delete"] {
+                try db.execute(sql: "DROP TRIGGER IF EXISTS search_\(source.table)_\(event)")
+            }
+        }
+        try db.execute(sql: "DROP TABLE IF EXISTS search")
+        try install(db, version: version)
     }
 
     /// The FTS5 query for what someone typed: every word must match the start of a word, so

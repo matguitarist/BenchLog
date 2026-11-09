@@ -73,16 +73,16 @@ struct BenchLogApp: App {
                     if let id = model.focusedRepairID { Task { await model.printIntakeSlip(for: id) } }
                 }
                 .keyboardShortcut("p")
-                .disabled(model.focusedRepairID == nil)
+                .disabled(model.focusedRepairID == nil || model.focusedRepairIsInternal)
                 Button("Print Estimate") {
                     if let id = model.focusedRepairID { Task { await model.issue(.estimate, for: id) } }
                 }
-                .disabled(model.focusedRepairID == nil)
+                .disabled(model.focusedRepairID == nil || model.focusedRepairIsInternal)
                 Button("Invoice") {
                     if let id = model.focusedRepairID { Task { await model.issue(.invoice, for: id) } }
                 }
                 .keyboardShortcut("i", modifiers: [.command, .shift])
-                .disabled(model.focusedRepairID == nil)
+                .disabled(model.focusedRepairID == nil || model.focusedRepairIsInternal)
                 Divider()
                 Button("Open Customer") {
                     if let id = model.focusedRepairID, let row = model.read(nil, { try $0.repairRow(id) }) { model.open(.customer(row.customer.id)) }

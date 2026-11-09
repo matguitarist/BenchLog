@@ -53,22 +53,29 @@ struct RepairDetail: View {
                     Text(row.repair.ticket.text)
                         .font(.title.weight(.semibold))
                         .monospacedDigit()
-                    StatusMenu(repairID: row.id, status: row.repair.status)
+                    StatusMenu(repairID: row.id, status: row.repair.status, isInternal: row.customer.isShop)
+                    if row.customer.isShop { InternalBadge() }
                     ApprovalBadge(state: approval)
                     Spacer()
                 }
-                LabeledContent("Customer") {
-                    Button(row.customer.name) { model.open(.customer(row.customer.id)) }
-                        .buttonStyle(.link)
-                        .help("Open customer \(row.customer.name)")
+                if row.customer.isShop {
+                    LabeledContent("Owner", value: String(localized: "The shop"))
+                } else {
+                    LabeledContent("Customer") {
+                        Button(row.customer.name) { model.open(.customer(row.customer.id)) }
+                            .buttonStyle(.link)
+                            .help("Open customer \(row.customer.name)")
+                    }
                 }
                 LabeledContent("Device") {
                     Button(row.device.title) { model.open(.device(row.device.id)) }
                         .buttonStyle(.link)
                         .help("Open device \(row.device.title)")
                 }
-                RepairApprovalRow(repair: row.repair)
-                    .id(row.id)
+                if !row.customer.isShop {
+                    RepairApprovalRow(repair: row.repair)
+                        .id(row.id)
+                }
             }
             Section("Complaint") {
                 TextField("Complaint", text: $complaint, prompt: Text("What the customer says is wrong"), axis: .vertical)
@@ -94,11 +101,17 @@ struct RepairDetail: View {
             Section("Parts") {
                 RepairParts(repair: row.repair, device: row.device)
             }
-            Section("Billing") {
-                RepairBilling(repair: row.repair)
-            }
-            Section("Documents") {
-                RepairDocuments(repair: row.repair)
+            if row.customer.isShop {
+                Section("Cost") {
+                    InternalCostView(repair: row.repair)
+                }
+            } else {
+                Section("Billing") {
+                    RepairBilling(repair: row.repair)
+                }
+                Section("Documents") {
+                    RepairDocuments(repair: row.repair)
+                }
             }
             Section("Dates") {
                 LabeledContent("Received", value: row.repair.receivedAt.formatted(date: .abbreviated, time: .shortened))

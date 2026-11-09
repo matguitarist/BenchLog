@@ -52,8 +52,10 @@ struct NewRepairSheet: View {
                         DatePicker("Promised for", selection: $promised, displayedComponents: .date)
                     }
                 }
-                Section("Approval") {
-                    ApprovalPicker(rule: $approval, limit: $approvalLimit)
+                if customer?.isShop != true {
+                    Section("Approval") {
+                        ApprovalPicker(rule: $approval, limit: $approvalLimit)
+                    }
                 }
             }
             .formStyle(.grouped)
@@ -76,8 +78,11 @@ struct NewRepairSheet: View {
     private var customerSection: some View {
         Section {
             if let customer {
-                LabeledContent("Customer") {
+                LabeledContent(customer.isShop ? "Owner" : "Customer") {
                     HStack(spacing: Space.sm) {
+                        if customer.isShop {
+                            InternalBadge()
+                        }
                         Text(customer.name).fontWeight(.medium)
                         if customerID == nil {
                             Button("Change") {
@@ -116,10 +121,16 @@ struct NewRepairSheet: View {
                 if showErrors {
                     Text("Choose a customer, or add a new one.").font(.callout).foregroundStyle(.red)
                 }
-                Button("New Customer…") {
-                    customerDraft.name = search
-                    addingCustomer = true
-                    addingDevice = true
+                HStack {
+                    Button("New Customer…") {
+                        customerDraft.name = search
+                        addingCustomer = true
+                        addingDevice = true
+                    }
+                    Button("For the Shop") {
+                        if let shop = model.shopOwner() { pick(shop) }
+                    }
+                    .help("An internal job on a device the shop owns, to resell or keep")
                 }
                 .controlSize(.small)
             }
@@ -199,7 +210,8 @@ struct NewRepairSheet: View {
         }
         guard let deviceID,
               let repair = model.createRepair(deviceID: deviceID, complaint: text, promisedAt: hasPromise ? promised : nil,
-                                                   approval: approval, approvalLimitCents: Money.cents(approvalLimit)) else { return }
+                                                   approval: customer?.isShop == true ? .go : approval,
+                                                   approvalLimitCents: Money.cents(approvalLimit)) else { return }
         model.open(.repair(repair.id))
         dismiss()
     }
