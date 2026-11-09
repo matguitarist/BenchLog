@@ -83,6 +83,9 @@ struct RepairDetail: View {
                     .labelsHidden()
                     .lineLimit(2...8)
             }
+            Section("Parts") {
+                RepairParts(repair: row.repair, device: row.device)
+            }
             Section("Dates") {
                 LabeledContent("Received", value: row.repair.receivedAt.formatted(date: .abbreviated, time: .shortened))
                 PromisedDate(repair: row.repair)

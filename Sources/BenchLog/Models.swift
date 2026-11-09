@@ -37,6 +37,7 @@ final class AppModel {
     /// Goes up on every change, so pages reload what they show.
     private(set) var dataVersion = 0
     private(set) var openRepairCount = 0
+    private(set) var lowStockCount = 0
 
     private var backStack: [Place] = []
     private var forwardStack: [Place] = []
@@ -95,6 +96,7 @@ final class AppModel {
     func reload() {
         dataVersion += 1
         openRepairCount = read(0) { try $0.openRepairCount() }
+        lowStockCount = read(0) { try $0.lowStockCount() }
     }
 
     // MARK: Customers and devices
@@ -226,6 +228,43 @@ final class AppModel {
         undoManager?.setActionName(String(localized: "Move to Trash"))
     }
 
+    // MARK: Parts
+
+    var partsTab: PartsTab = .inventory
+    var partSearch = ""
+    var selectedPart: UUID?
+
+    @discardableResult
+    func save(_ part: Part, fits: [PartFit]) -> Part? {
+        write("Saved part \(part.id.stored) (\(part.name))") { try $0.save(part, fits: fits) }
+    }
+
+    func adjustStock(of partID: UUID, by delta: Int) {
+        write("Stock of part \(partID.stored) \(delta > 0 ? "+" : "")\(delta)") { try $0.adjustStock(of: partID, by: delta) }
+    }
+
+    func usePart(_ partID: UUID, on repairID: UUID) {
+        write("Added part \(partID.stored) to repair \(repairID.stored)") { try $0.usePart(partID, on: repairID) }
+    }
+
+    func useFreePart(_ name: String, on repairID: UUID) {
+        let name = name.trimmingCharacters(in: .whitespaces)
+        guard !name.isEmpty else { return }
+        write("Added part “\(name)” to repair \(repairID.stored)") { try $0.useFreePart(name, on: repairID) }
+    }
+
+    func setStatus(_ status: PartUseStatus, ofUse useID: UUID) {
+        write("Part use \(useID.stored) → \(status.rawValue)") { try $0.setStatus(status, ofUse: useID) }
+    }
+
+    func update(_ use: PartUse) {
+        write("Updated part use \(use.id.stored)") { try $0.update(use) }
+    }
+
+    func removeUse(_ useID: UUID) {
+        write("Removed part use \(useID.stored)") { try $0.removeUse(useID) }
+    }
+
     // MARK: Navigation
 
     /// Where people are: a page and the record selected on it.
@@ -315,8 +354,25 @@ enum SheetKind: Identifiable, Hashable {
     case addDevice(customer: UUID)
     case editDevice(UUID)
     case newRepair(customer: UUID?, device: UUID?)
+    case newPart
+    case editPart(UUID)
 
     var id: Self { self }
+}
+
+/// The Parts page's tabs.
+enum PartsTab: String, CaseIterable, Identifiable {
+    case inventory, low, toOrder, incoming
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .inventory: String(localized: "Inventory")
+        case .low: String(localized: "Low Stock")
+        case .toOrder: String(localized: "To Order")
+        case .incoming: String(localized: "Incoming")
+        }
+    }
 }
 
 /// The sidebar pages. Snapshot mode walks through every case.

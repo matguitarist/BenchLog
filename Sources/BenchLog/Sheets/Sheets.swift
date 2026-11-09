@@ -12,6 +12,8 @@ struct SheetHost: View {
         case .addDevice(let customer): DeviceSheet(customerID: customer, deviceID: nil)
         case .editDevice(let id): DeviceSheet(customerID: nil, deviceID: id)
         case .newRepair(let customer, let device): NewRepairSheet(customerID: customer, deviceID: device)
+        case .newPart: PartSheet(partID: nil)
+        case .editPart(let id): PartSheet(partID: id)
         }
     }
 }

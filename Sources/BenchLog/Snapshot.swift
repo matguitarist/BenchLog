@@ -44,6 +44,29 @@ enum Snapshot {
                     capture(to: "\(dir)/\(page.rawValue)-\(mode).png")
                 }
             }
+            // Page states: each Parts tab, and a repair with parts on it.
+            let firstPart = model.read(nil) { try $0.parts(matching: "").first?.id }
+            let waiting = model.read(nil) { library in
+                try library.repairRows().first { try library.isWaitingOnParts($0.id) && $0.repair.status != .waitingOnParts }?.id
+            }
+            let states: [(String, () -> Void)] = [
+                ("parts-inventory", { model.sidebar = .parts; model.partsTab = .inventory; model.selectedPart = firstPart }),
+                ("parts-low", { model.sidebar = .parts; model.partsTab = .low }),
+                ("parts-toorder", { model.sidebar = .parts; model.partsTab = .toOrder }),
+                ("parts-incoming", { model.sidebar = .parts; model.partsTab = .incoming }),
+                ("repair-parts", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = waiting }),
+            ]
+            for (name, setUp) in states where only == nil || only?.contains(name) == true || only?.contains("states") == true {
+                setUp()
+                for mode in ["light", "dark"] {
+                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                    try? await Task.sleep(for: .seconds(0.8))
+                    if name == "repair-parts" { scrollDetail(toShow: 0.45) }
+                    try? await Task.sleep(for: .seconds(0.3))
+                    capture(to: "\(dir)/\(name)-\(mode).png")
+                }
+            }
+            model.partsTab = .inventory
             // The sheets, each over the page it opens from.
             let customer = model.selectedCustomer
             let sheets: [(String, SidebarItem, SheetKind)] = [
@@ -51,6 +74,7 @@ enum Snapshot {
                 ("device-new-sheet", .customers, customer.map { .addDevice(customer: $0) } ?? .newCustomer),
                 ("repair-new-sheet", .repairs, .newRepair(customer: nil, device: nil)),
                 ("repair-new-for-customer-sheet", .customers, .newRepair(customer: customer, device: nil)),
+                ("part-edit-sheet", .parts, firstPart.map { .editPart($0) } ?? .newPart),
             ]
             for (name, page, sheet) in sheets where only == nil || only?.contains(name) == true || only?.contains("sheets") == true {
                 model.sidebar = page
@@ -90,6 +114,18 @@ enum Snapshot {
     /// permission for the app that started this one (your terminal, or Claude).
     /// Without it, falls back to drawing the view hierarchy, which leaves
     /// sidebars and glass blank.
+    /// Scrolls the rightmost scroll view (the detail form) so the given fraction of its content is at the top.
+    private static func scrollDetail(toShow fraction: CGFloat) {
+        guard let root = NSApp.windows.first(where: { $0.canBecomeMain && !$0.isSheet })?.contentView else { return }
+        func scrollViews(_ view: NSView) -> [NSScrollView] {
+            (view as? NSScrollView).map { [$0] } ?? [] + view.subviews.flatMap(scrollViews)
+        }
+        guard let detail = scrollViews(root).max(by: { $0.convert($0.bounds, to: nil).minX < $1.convert($1.bounds, to: nil).minX }),
+              let document = detail.documentView else { return }
+        let y = document.bounds.height * fraction
+        document.scroll(NSPoint(x: 0, y: document.isFlipped ? y : document.bounds.height - y - detail.contentSize.height))
+    }
+
     private static func capture(to path: String, window: NSWindow? = nil) {
         // Another app can hide this one while snapshots run (computer use hides
         // apps it does not control). Hidden windows cannot be captured.

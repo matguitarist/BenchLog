@@ -24,6 +24,11 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Photo | An image attachment | picture, image |
 | File | A non-image attachment (PDF, boardview, …) | document, attachment |
 | Part | A component kept in stock or ordered for a repair | component, item, SKU |
+| Inventory | The parts kept in stock (Parts tab) | In stock, stock list |
+| Low Stock | A part at or below its low-stock threshold | out of stock, running low |
+| Fits | The catalog models a part works with (Compatible avec) | compatible, supports |
+| Needed / Ordered / Received / Installed | Where a part for a repair is (Requise, Commandée, Reçue, Installée) | missing, pending, used |
+| To Order / Incoming | Parts Needed / Ordered across open repairs (À commander, En route) | backorder, shipping |
 | Guide | A repair manual or schematic PDF linked to catalog models | manual, doc, schematic |
 | Library | BenchLog's folder of data and files on disk | vault, database, store |
 

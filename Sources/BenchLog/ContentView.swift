@@ -37,7 +37,7 @@ struct ContentView: View {
         return List(selection: $model.sidebar) {
             ForEach(SidebarItem.allCases) { item in
                 Label(item.title, systemImage: item.symbol)
-                    .badge(item == .repairs ? model.openRepairCount : 0)
+                    .badge(item == .repairs ? model.openRepairCount : item == .parts ? model.lowStockCount : 0)
                     .tag(item)
             }
         }
@@ -50,10 +50,7 @@ struct ContentView: View {
         case .repairs: RepairsPage()
         case .customers: CustomersPage()
         case .devices: DevicesPage()
-        case .parts:
-            ContentUnavailableView("Parts Are Coming", systemImage: "shippingbox",
-                                   description: Text("Parts inventory and parts per repair arrive in the next version."))
-                .navigationTitle("Parts")
+        case .parts: PartsPage()
         case .guides:
             ContentUnavailableView("Guides Are Coming", systemImage: "book.pages",
                                    description: Text("Your repair guides, linked to device models, arrive in a later version."))

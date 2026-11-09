@@ -83,6 +83,55 @@ extension AttachmentKind {
     }
 }
 
+extension PartUseStatus {
+    var title: String {
+        switch self {
+        case .needed: String(localized: "part.needed", defaultValue: "Needed", comment: "Where a part for a repair is (one part)")
+        case .ordered: String(localized: "part.ordered", defaultValue: "Ordered", comment: "Where a part for a repair is (one part)")
+        case .received: String(localized: "part.received", defaultValue: "Received", comment: "Where a part for a repair is (one part)")
+        case .installed: String(localized: "part.installed", defaultValue: "Installed", comment: "Where a part for a repair is (one part)")
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .needed: "exclamationmark.circle"
+        case .ordered: "shippingbox"
+        case .received: "tray.and.arrow.down"
+        case .installed: "checkmark.circle"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .needed: .gray
+        case .ordered: .orange
+        case .received: .teal
+        case .installed: .green
+        }
+    }
+}
+
+/// Money is integer cents in the library, shown as Canadian dollars in the app's language.
+enum Money {
+    static func text(_ cents: Int?) -> String {
+        guard let cents else { return "—" }
+        return (Decimal(cents) / 100).formatted(.currency(code: "CAD"))
+    }
+
+    static func decimal(_ cents: Int?) -> Decimal? { cents.map { Decimal($0) / 100 } }
+
+    static func cents(_ value: Decimal?) -> Int? {
+        guard let value else { return nil }
+        var scaled = value * 100
+        var rounded = Decimal()
+        NSDecimalRound(&rounded, &scaled, 0, .plain)
+        return NSDecimalNumber(decimal: rounded).intValue
+    }
+
+    static let format = Decimal.FormatStyle.Currency(code: "CAD")
+}
+
 extension DocumentsLanguage {
     /// Each language named in itself: the choice is about the printed documents.
     var title: String {

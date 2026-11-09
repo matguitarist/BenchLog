@@ -119,6 +119,31 @@ enum SelfTest {
                     }
                 }
 
+                // S-013 to S-015 Parts
+                if let device, let repair = model.read(nil, { try $0.repairs(of: device.id).last }) {
+                    let fan = model.save(Part(name: "Self-test fan", priceCents: 2000, quantity: 1, lowStockThreshold: 1),
+                                         fits: [PartFit(category: .handheld, brand: "Nintendo", model: "Game Boy")])
+                    check("a new part is saved with its fits", fan.map { id in model.read([]) { try $0.fits(of: id.id) }.count == 1 } ?? false)
+                    check("a part at its threshold is low", model.lowStockCount >= 1)
+                    check("a fitting part comes first for the device",
+                          model.read(false) { try $0.parts(for: device, matching: "").fitting.contains { $0.id == fan?.id } })
+                    if let fan {
+                        model.usePart(fan.id, on: repair.id)
+                        let use = model.read(nil) { try $0.partUses(on: repair.id).first }
+                        check("a part in stock starts as Received", use?.status == .received)
+                        if let use {
+                            model.setStatus(.installed, ofUse: use.id)
+                            check("Installed takes the part out of stock", model.read(nil) { try $0.part(fan.id) }?.quantity == 0)
+                            model.removeUse(use.id)
+                            check("removing an installed part puts it back", model.read(nil) { try $0.part(fan.id) }?.quantity == 1)
+                        }
+                    }
+                    model.useFreePart("Self-test speaker", on: repair.id)
+                    check("a typed part starts as Needed and the repair waits on it",
+                          model.read(false) { try $0.isWaitingOnParts(repair.id) })
+                    check("To Order lists it", model.read(false) { try $0.partUseRows(.needed).contains { $0.use.name == "Self-test speaker" } })
+                }
+
                 // S-001 Data survives a restart
                 let reopened = try? Library(databaseURL: Store.url)
                 check("a reopened library has the customer", (try? reopened?.customers(matching: "Self Test"))??.count == 1)

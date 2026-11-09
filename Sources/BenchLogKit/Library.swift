@@ -152,6 +152,52 @@ public final class Library: Sendable {
                 CREATE INDEX attachment_owner ON attachment(ownerType, ownerId);
                 """)
         }
+        migrator.registerMigration("v4-parts") { db in
+            // Parts kept in stock, the models they fit, and the parts each repair uses
+            // (from stock or typed in). Money is integer cents.
+            try db.execute(sql: """
+                CREATE TABLE part (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    name TEXT NOT NULL,
+                    sku TEXT NOT NULL DEFAULT '',
+                    vendor TEXT NOT NULL DEFAULT '',
+                    url TEXT NOT NULL DEFAULT '',
+                    costCents INTEGER,
+                    priceCents INTEGER,
+                    quantity INTEGER NOT NULL DEFAULT 0,
+                    lowStockThreshold INTEGER NOT NULL DEFAULT 0,
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX part_name ON part(name COLLATE NOCASE);
+
+                CREATE TABLE partFit (
+                    partId TEXT NOT NULL REFERENCES part(id),
+                    category TEXT NOT NULL,
+                    brand TEXT NOT NULL,
+                    model TEXT NOT NULL,
+                    PRIMARY KEY (partId, category, brand, model)
+                );
+
+                CREATE TABLE partUse (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    repairId TEXT NOT NULL REFERENCES repair(id),
+                    partId TEXT REFERENCES part(id),
+                    name TEXT NOT NULL,
+                    vendor TEXT NOT NULL DEFAULT '',
+                    quantity INTEGER NOT NULL DEFAULT 1,
+                    status TEXT NOT NULL,
+                    costCents INTEGER,
+                    priceCents INTEGER,
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX partUse_repair ON partUse(repairId);
+                CREATE INDEX partUse_status ON partUse(status);
+                """)
+        }
         return migrator
     }
 

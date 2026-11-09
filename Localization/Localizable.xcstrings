@@ -11,6 +11,16 @@
         }
       }
     },
+    "%@ · %@ · %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ · %2$@ · %3$@"
+          }
+        }
+      }
+    },
     "%lld d": {
       "localizations": {
         "fr": {
@@ -31,12 +41,42 @@
         }
       }
     },
+    "%lld in stock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld en stock"
+          }
+        }
+      }
+    },
     "1 open": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "1 ouverte"
+          }
+        }
+      }
+    },
+    "A part is not here yet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une pièce n’est pas encore arrivée."
+          }
+        }
+      }
+    },
+    "A part that is not in your inventory; it starts as Needed": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une pièce absente de votre inventaire; elle commence comme Requise"
           }
         }
       }
@@ -91,12 +131,42 @@
         }
       }
     },
+    "Add Model": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter le modèle"
+          }
+        }
+      }
+    },
     "Add Note": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter une note"
+          }
+        }
+      }
+    },
+    "Add Part": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter la pièce"
+          }
+        }
+      }
+    },
+    "Add Part…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une pièce…"
           }
         }
       }
@@ -141,12 +211,62 @@
         }
       }
     },
+    "Add a part from stock, or type one to order": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une pièce en stock, ou en taper une à commander"
+          }
+        }
+      }
+    },
+    "Add a part to the inventory": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une pièce à l’inventaire"
+          }
+        }
+      }
+    },
+    "Add the parts you keep on hand.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez les pièces que vous gardez sous la main."
+          }
+        }
+      }
+    },
     "Add the people who bring you devices.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ajoutez les personnes qui vous apportent des appareils."
+          }
+        }
+      }
+    },
+    "Add this model to the ones the part fits": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter ce modèle à ceux compatibles avec la pièce"
+          }
+        }
+      }
+    },
+    "Add “%@” to Order": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter « %@ » à commander"
           }
         }
       }
@@ -197,6 +317,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Apparence"
+          }
+        }
+      }
+    },
+    "At or below the low-stock threshold (%lld)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Au seuil de stock bas ou en dessous (%lld)"
           }
         }
       }
@@ -321,6 +451,16 @@
         }
       }
     },
+    "Change how many this repair needs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changer la quantité requise pour cette réparation"
+          }
+        }
+      }
+    },
     "Change the status (⌘1–⌘8)": {
       "localizations": {
         "fr": {
@@ -347,6 +487,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Modifier les détails de cet appareil"
+          }
+        }
+      }
+    },
+    "Change this part's details": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier les détails de cette pièce"
+          }
+        }
+      }
+    },
+    "Change where this part is": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changer l’état de cette pièce"
           }
         }
       }
@@ -427,6 +587,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Choisir un appareil existant"
+          }
+        }
+      }
+    },
+    "Choose which parts the page shows": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir les pièces affichées"
           }
         }
       }
@@ -517,6 +687,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Copier des photos ou des fichiers de votre Mac dans cette fiche"
+          }
+        }
+      }
+    },
+    "Cost": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Coût"
           }
         }
       }
@@ -721,6 +901,16 @@
         }
       }
     },
+    "Edit Part": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Modifier la pièce"
+          }
+        }
+      }
+    },
     "Edit…": {
       "localizations": {
         "fr": {
@@ -757,6 +947,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Entrez un nom."
+          }
+        }
+      }
+    },
+    "Fits": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compatible avec"
+          }
+        }
+      }
+    },
+    "Fits %@ %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compatibles avec %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "Fits any model": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Compatible avec tous les modèles"
           }
         }
       }
@@ -871,12 +1091,42 @@
         }
       }
     },
+    "In stock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En stock"
+          }
+        }
+      }
+    },
+    "Incoming": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En route"
+          }
+        }
+      }
+    },
     "Intake": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Reçue"
+          }
+        }
+      }
+    },
+    "Inventory": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inventaire"
           }
         }
       }
@@ -911,6 +1161,16 @@
         }
       }
     },
+    "Link": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lien"
+          }
+        }
+      }
+    },
     "Log": {
       "localizations": {
         "fr": {
@@ -937,6 +1197,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cherche une nouvelle version sur GitHub une fois par jour. Dernière vérification : %@."
+          }
+        }
+      }
+    },
+    "Low Stock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stock bas"
+          }
+        }
+      }
+    },
+    "Low-stock threshold": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Seuil de stock bas"
           }
         }
       }
@@ -991,6 +1271,16 @@
         }
       }
     },
+    "Name, SKU, or vendor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom, SKU ou fournisseur"
+          }
+        }
+      }
+    },
     "Name, phone, or email": {
       "localizations": {
         "fr": {
@@ -1017,6 +1307,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nouveau client…"
+          }
+        }
+      }
+    },
+    "New Part": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle pièce"
           }
         }
       }
@@ -1111,6 +1411,26 @@
         }
       }
     },
+    "No Part Selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune pièce sélectionnée"
+          }
+        }
+      }
+    },
+    "No Parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune pièce"
+          }
+        }
+      }
+    },
     "No Repair Selected": {
       "localizations": {
         "fr": {
@@ -1161,6 +1481,16 @@
         }
       }
     },
+    "No parts yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune pièce pour l’instant"
+          }
+        }
+      }
+    },
     "No passcode": {
       "localizations": {
         "fr": {
@@ -1181,6 +1511,16 @@
         }
       }
     },
+    "None": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun"
+          }
+        }
+      }
+    },
     "Note": {
       "localizations": {
         "fr": {
@@ -1197,6 +1537,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Notes"
+          }
+        }
+      }
+    },
+    "Nothing Is Low": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun stock bas"
+          }
+        }
+      }
+    },
+    "Nothing on the Way": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien en route"
+          }
+        }
+      }
+    },
+    "Nothing to Order": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien à commander"
           }
         }
       }
@@ -1257,6 +1627,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ouvrir l’appareil"
+          }
+        }
+      }
+    },
+    "Open Repair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir la réparation"
           }
         }
       }
@@ -1331,6 +1711,36 @@
         }
       }
     },
+    "Other Parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autres pièces"
+          }
+        }
+      }
+    },
+    "Part": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièce"
+          }
+        }
+      }
+    },
+    "Part status: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "État de la pièce : %@"
+          }
+        }
+      }
+    },
     "Parts": {
       "localizations": {
         "fr": {
@@ -1351,12 +1761,42 @@
         }
       }
     },
+    "Parts at or below their low-stock threshold show here.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les pièces au seuil de stock bas ou en dessous s’affichent ici."
+          }
+        }
+      }
+    },
     "Parts inventory and parts per repair arrive in the next version.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "L’inventaire des pièces et les pièces par réparation arrivent dans la prochaine version."
+          }
+        }
+      }
+    },
+    "Parts marked Needed on open repairs show here.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les pièces requises sur les réparations ouvertes s’affichent ici."
+          }
+        }
+      }
+    },
+    "Parts marked Ordered on open repairs show here.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les pièces commandées sur les réparations ouvertes s’affichent ici."
           }
         }
       }
@@ -1451,6 +1891,16 @@
         }
       }
     },
+    "Price": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prix"
+          }
+        }
+      }
+    },
     "Promised": {
       "localizations": {
         "fr": {
@@ -1467,6 +1917,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Promise pour le"
+          }
+        }
+      }
+    },
+    "Quantity": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quantité"
           }
         }
       }
@@ -1497,6 +1957,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Reçue le"
+          }
+        }
+      }
+    },
+    "Remove": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer"
+          }
+        }
+      }
+    },
+    "Remove %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer %@"
+          }
+        }
+      }
+    },
+    "Remove from Repair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer de la réparation"
           }
         }
       }
@@ -1551,6 +2041,16 @@
         }
       }
     },
+    "SKU": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SKU"
+          }
+        }
+      }
+    },
     "Save": {
       "localizations": {
         "fr": {
@@ -1567,6 +2067,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Égratignures, fissures, vis manquantes…"
+          }
+        }
+      }
+    },
+    "Search parts or type a new one": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chercher une pièce ou en taper une nouvelle"
           }
         }
       }
@@ -1591,6 +2101,16 @@
         }
       }
     },
+    "Select a part to see its stock and the models it fits.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez une pièce pour voir son stock et les modèles compatibles."
+          }
+        }
+      }
+    },
     "Select a repair to see its details and timeline.": {
       "localizations": {
         "fr": {
@@ -1607,6 +2127,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Numéro de série ou IMEI"
+          }
+        }
+      }
+    },
+    "Set to Waiting on Parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre en attente de pièces"
           }
         }
       }
@@ -1647,6 +2177,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afficher dans le Finder"
+          }
+        }
+      }
+    },
+    "Show in Parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher dans Pièces"
           }
         }
       }
@@ -1701,6 +2241,16 @@
         }
       }
     },
+    "Stock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stock"
+          }
+        }
+      }
+    },
     "System (%@)": {
       "localizations": {
         "fr": {
@@ -1751,6 +2301,16 @@
         }
       }
     },
+    "To Order": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À commander"
+          }
+        }
+      }
+    },
     "Unable to Open the Library": {
       "localizations": {
         "fr": {
@@ -1791,6 +2351,16 @@
         }
       }
     },
+    "Vendor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fournisseur"
+          }
+        }
+      }
+    },
     "Version %@": {
       "localizations": {
         "fr": {
@@ -1817,6 +2387,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce que BenchLog fait avec votre bibliothèque s’affiche ici."
+          }
+        }
+      }
+    },
+    "What a customer pays for one": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce qu’un client paie pour une"
           }
         }
       }
@@ -1892,6 +2472,84 @@
           }
         }
       }
+    },
+    "https://…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "https://…"
+          }
+        }
+      }
+    },
+    "part.installed": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installée"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installed"
+          }
+        }
+      },
+      "comment": "Where a part for a repair is (one part)"
+    },
+    "part.needed": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Requise"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Needed"
+          }
+        }
+      },
+      "comment": "Where a part for a repair is (one part)"
+    },
+    "part.ordered": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commandée"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ordered"
+          }
+        }
+      },
+      "comment": "Where a part for a repair is (one part)"
+    },
+    "part.received": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reçue"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Received"
+          }
+        }
+      },
+      "comment": "Where a part for a repair is (one part)"
     },
     "photo.document": {
       "localizations": {

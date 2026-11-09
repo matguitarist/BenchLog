@@ -204,7 +204,8 @@ Depends: S-003
 Acceptance:
 - [snap] The Parts page has tabs: In stock, Low stock, To order, Incoming.
 - [unit] Compatible models are links to catalog models.
-Status: todo
+Status: done
+Built: the tabs are Inventory, Low Stock, To Order, Incoming. Fits are catalog category, brand, and model (no revision). Snapshots: parts-inventory, part-edit-sheet.
 
 ### S-014 Use a part on a repair
 As the user, I add a part to a repair from inventory (or as free text) with a quantity, and track its status: Needed → Ordered → Received → Installed.
@@ -215,7 +216,8 @@ Acceptance:
 - [unit] When any part on a repair is Needed or Ordered, the app offers to set the repair to Waiting on parts.
 - [snap] The part search on a repair lists compatible parts for the device's model first.
 - [snap] To order and Incoming list the parts needed or ordered across all repairs, with the ticket each one is for (like the draft's "Parts to Order" and "Incoming").
-Status: todo
+Status: done
+Built: a part in stock starts as Received, a typed part as Needed. The Add Part… popover is checked by the `parts(for:matching:)` unit test, not a snapshot (popovers do not show in window captures). Snapshots: repair-parts, parts-toorder, parts-incoming.
 
 ### S-015 Low-stock warning
 As the user, I see which stock parts are at or below their threshold.
@@ -223,7 +225,8 @@ Screens: parts-list
 Depends: S-013
 Acceptance:
 - [snap] The Low stock tab and its sidebar badge count parts with `qty <= threshold`.
-Status: todo
+Status: done
+Built: the sidebar badge on Parts and the count on the Low Stock tab. Snapshot: parts-low.
 
 ### S-016 Manage the device catalog
 As the user, I open Settings → Catalog to rename, merge, or delete brands, models, and revisions.

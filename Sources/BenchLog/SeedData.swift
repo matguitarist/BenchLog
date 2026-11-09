@@ -97,6 +97,46 @@ enum SeedData {
                    diagnosis: "Dirty 72-pin connector; cleaned and re-tensioned.")
         try repair(maPixel, "Battery swollen.", daysAgo: 30, [.diagnosing, .cancelled],
                    notes: ["Customer bought a new phone instead."])
+
+        // Parts: stock, low stock, and parts on repairs in every status.
+        func part(_ name: String, sku: String = "", vendor: String = "", cost: Int?, price: Int?, quantity: Int, low: Int = 0,
+                  fits: [PartFit] = []) throws -> Part {
+            try library.save(Part(name: name, sku: sku, vendor: vendor, costCents: cost, priceCents: price,
+                                  quantity: quantity, lowStockThreshold: low), fits: fits)
+        }
+        let switchFan = try part("Switch OLED cooling fan", sku: "HAC-FAN-01", vendor: "AliExpress", cost: 899, price: 2499, quantity: 3, low: 1,
+                                 fits: [PartFit(category: .console, brand: "Nintendo", model: "Switch")])
+        let joyStick = try part("Joy-Con analog stick", sku: "JC-STICK", vendor: "AliExpress", cost: 299, price: 1499, quantity: 1, low: 4,
+                                fits: [PartFit(category: .console, brand: "Nintendo", model: "Switch")])
+        let gbaSpeaker = try part("GBA SP speaker", vendor: "Retro Modding", cost: 350, price: 1500, quantity: 2, low: 2,
+                                  fits: [PartFit(category: .handheld, brand: "Nintendo", model: "Game Boy Advance")])
+        let deckStick = try part("Steam Deck thumbstick module", sku: "SD-TS-R", vendor: "iFixit", cost: 2295, price: 3995, quantity: 2, low: 1,
+                                 fits: [PartFit(category: .handheld, brand: "Valve", model: "Steam Deck")])
+        _ = try part("NES 72-pin connector", sku: "NES-72", vendor: "Retro Modding", cost: 600, price: 1800, quantity: 5, low: 2,
+                     fits: [PartFit(category: .console, brand: "Nintendo", model: "NES")])
+        _ = try part("Thermal paste (1 g)", vendor: "Amazon", cost: 150, price: 500, quantity: 12, low: 3)
+        _ = try part("USB-C port (generic)", sku: "USBC-16P", vendor: "DigiKey", cost: 120, price: 1500, quantity: 0, low: 5)
+        let rows = try library.repairRows()
+        func repairOf(_ device: Device) -> UUID? { rows.first { $0.device.id == device.id }?.id }
+        if let id = repairOf(mSwitch) {
+            try library.usePart(switchFan.id, on: id)
+            try library.usePart(joyStick.id, on: id, quantity: 2)
+        }
+        if let id = repairOf(jPhone) {
+            try library.useFreePart("iPhone 13 Pro display assembly", on: id, vendor: "MobileSentrix", priceCents: 28999)
+        }
+        if let id = repairOf(maPS) {
+            let use = try library.useFreePart("PS5 HDMI port", on: id, vendor: "AliExpress", priceCents: 2999)
+            try library.setStatus(.ordered, ofUse: use.id)
+        }
+        if let id = repairOf(cGBA) {
+            let use = try library.usePart(gbaSpeaker.id, on: id)
+            try library.setStatus(.installed, ofUse: use.id)
+        }
+        if let id = repairOf(eDeck) {
+            let use = try library.usePart(deckStick.id, on: id)
+            try library.setStatus(.installed, ofUse: use.id)
+        }
     }
 
     /// A flat colored square with a symbol, standing in for a photo of the device.
