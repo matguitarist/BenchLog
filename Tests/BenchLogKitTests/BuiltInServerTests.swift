@@ -77,17 +77,8 @@ struct ServerStoreTests {
     }
 }
 
-/// The HTTP API, over a real socket.
+/// The HTTP API over a real socket, against both servers, so they cannot drift apart.
 @Suite(.serialized) struct BuiltInServerHTTPTests {
-    private func withServer(_ body: (URL) async throws -> Void) async throws {
-        let dir = FileManager.default.temporaryDirectory.appending(path: "benchlog-swift-server-\(UUID().uuidString)")
-        defer { try? FileManager.default.removeItem(at: dir) }
-        let server = try BenchLogServer(dataDirectory: dir, inMemory: true, token: "test-token")
-        let port = try await server.start(port: 0, localOnly: true)
-        defer { server.stop() }
-        try await body(URL(string: "http://127.0.0.1:\(port)")!)
-    }
-
     private func send(_ base: URL, _ method: String, _ path: String, token: String? = "test-token", json: Any? = nil,
                       data: Data? = nil, headers: [String: String] = [:]) async throws -> (Int, Data, HTTPURLResponse) {
         var request = URLRequest(url: URL(string: base.absoluteString + path)!)
@@ -106,8 +97,8 @@ struct ServerStoreTests {
         try await send(base, method, path, token: token, json: json, data: data, headers: headers).0
     }
 
-    @Test func healthNeedsNoToken() async throws {
-        try await withServer { base in
+    @Test(arguments: TestServer.allCases) func healthNeedsNoToken(_ server: TestServer) async throws {
+        try await server.run { base in
             let r1 = try await code(base, "GET", "/v1/health", token: nil)
             #expect(r1 == 200)
             let r2 = try await code(base, "GET", "/v1/library", token: nil)
@@ -121,8 +112,8 @@ struct ServerStoreTests {
         }
     }
 
-    @Test func pushPullAndNumbers() async throws {
-        try await withServer { base in
+    @Test(arguments: TestServer.allCases) func pushPullAndNumbers(_ server: TestServer) async throws {
+        try await server.run { base in
             let rows: [[String: Any]] = [["table": "repair", "id": "r1", "updatedAt": "2026-11-09 12:00:00.000", "data": ["ticketNumber": 1, "note": "Écran"]]]
             let (status, body, _) = try await send(base, "POST", "/v1/push", json: ["rows": rows])
             #expect(status == 200)
@@ -142,8 +133,8 @@ struct ServerStoreTests {
         }
     }
 
-    @Test func filesAreCheckedBySHA256() async throws {
-        try await withServer { base in
+    @Test(arguments: TestServer.allCases) func filesAreCheckedBySHA256(_ server: TestServer) async throws {
+        try await server.run { base in
             let bytes = Data(repeating: 9, count: 6 * 1024 * 1024)   // over the spool size: goes through a temporary file
             let sha = SHA256.hash(data: bytes).map { String(format: "%02x", $0) }.joined()
             let r9 = try await code(base, "PUT", "/v1/files/f1", data: bytes, headers: ["X-Sha256": String(repeating: "0", count: 64)])
