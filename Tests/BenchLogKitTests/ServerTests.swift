@@ -1,13 +1,26 @@
 import Foundation
 import Testing
 @testable import BenchLogKit
+import BenchLogServerKit
 
-/// The engine against the real server in `server/` (S-049 to S-052), when Node is installed.
+/// The engine against both real servers: the Node one in `server/` (when Node is installed,
+/// S-049 to S-052) and the one built into the app (S-058).
 @Suite(.serialized) struct ServerTests {
     static let node = ["/opt/homebrew/bin/node", "/usr/local/bin/node", "/usr/bin/node"].first { FileManager.default.isExecutableFile(atPath: $0) }
 
+    enum Kind: String, CaseIterable { case node, swift }
+
     /// Starts the server on a free port with a fresh data folder; stops it after `body`.
-    private func withServer(_ body: (HTTPSyncTransport) async throws -> Void) async throws {
+    private func withServer(_ kind: Kind, _ body: (HTTPSyncTransport) async throws -> Void) async throws {
+        if kind == .swift {
+            let data = FileManager.default.temporaryDirectory.appending(path: "benchlog-server-\(UUID().uuidString)")
+            defer { try? FileManager.default.removeItem(at: data) }
+            let server = try BenchLogServer(dataDirectory: data, token: "test-token")
+            let port = try await server.start(port: 0, localOnly: true)
+            defer { server.stop() }
+            try await body(HTTPSyncTransport(baseURL: URL(string: "http://127.0.0.1:\(port)")!, token: "test-token"))
+            return
+        }
         guard let node = Self.node else { return }
         let root = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
         let data = FileManager.default.temporaryDirectory.appending(path: "benchlog-server-\(UUID().uuidString)")
@@ -27,8 +40,8 @@ import Testing
         try await body(HTTPSyncTransport(baseURL: base, token: "test-token"))
     }
 
-    @Test func twoLibrariesShareOneServer() async throws {
-        try await withServer { transport in
+    @Test(arguments: Kind.allCases) func twoLibrariesShareOneServer(_ kind: Kind) async throws {
+        try await withServer(kind) { transport in
             let key = LibraryKey()
             let mac = try Library()
             let customer = try mac.save(Customer(name: "Léa Martin"))
@@ -51,8 +64,8 @@ import Testing
         }
     }
 
-    @Test func aWrongTokenIsRefused() async throws {
-        try await withServer { transport in
+    @Test(arguments: Kind.allCases) func aWrongTokenIsRefused(_ kind: Kind) async throws {
+        try await withServer(kind) { transport in
             let wrong = HTTPSyncTransport(baseURL: transport.baseURL, token: "nope")
             await #expect(throws: SyncError.unauthorized) { try await wrong.library() }
         }

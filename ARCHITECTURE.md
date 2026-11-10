@@ -66,5 +66,10 @@ A zero-dependency Node service (Node 24, `node:sqlite`) that the apps sync with.
 know the schema: `src/store.js` keeps rows by table and id (last writer wins by `updatedAt`),
 the number sequences, and file records; `src/server.js` is the HTTP API behind one bearer
 token; `src/main.js` reads the environment and starts it. Tests: `cd server && npm test`.
+The server exists twice, with one API and one data folder: `server/` (Node, for Docker and a NAS) and
+`Sources/BenchLogServerKit` (Swift, built into the app as `Contents/MacOS/BenchLogServer`, run by the
+"Use This Mac as the Server" login item). `ServerTests` run the sync engine against both; a change to the API
+changes both, with a test.
+
 In the app, `SyncController` runs the engine at launch, three seconds after each change
 (`AppModel.write` calls it), and every minute, and keeps the token in the Keychain.

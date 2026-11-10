@@ -4,7 +4,11 @@ One shared library for every BenchLog device in the shop. The Mac keeps its own 
 and works offline; the server holds the copy everyone syncs with, hands out ticket and
 invoice numbers, and stores photos and files.
 
-It needs Node 24 or later and nothing else (no `npm install`: SQLite is built into Node).
+A Mac can also be the server without any of this: BenchLog > Settings > Sync > Use This Mac as the
+Server runs the same server, built into the app (`BenchLog.app/Contents/MacOS/BenchLogServer`, with
+the same `PORT`, `DATA_DIR`, and `BENCHLOG_TOKEN` from Terminal). Both open the same data folder.
+
+This one needs Node 24 or later and nothing else (no `npm install`: SQLite is built into Node).
 
 ## Run it with Docker (a NAS or an always-on Mac)
 

@@ -38,6 +38,10 @@ mkdir -p "$HOME/Applications"
 rm -rf "$app"
 mkdir -p "$app/Contents/MacOS" "$app/Contents/Resources"
 cp "$bin" "$app/Contents/MacOS/$name"
+# The server built into the app, and the login item that runs it (Settings > Sync > Use This Mac as the Server).
+cp "$scratch/$config/${name}Server" "$app/Contents/MacOS/${name}Server"
+mkdir -p "$app/Contents/Library/LaunchAgents"
+cp "$here"/LaunchAgents/*.plist "$app/Contents/Library/LaunchAgents/"
 sed -e "s/__BUILD__/$(date +%Y%m%d%H%M)/" "$here/Info.plist.in" > "$app/Contents/Info.plist"
 # Package resources (LogKit's viewer strings): Bundle.module finds them in Contents/Resources.
 for bundle in "$scratch/$config"/*.bundle(N); do cp -R "$bundle" "$app/Contents/Resources/"; done
@@ -62,6 +66,7 @@ if [[ -d "$framework" ]]; then
 fi
 xattr -cr "$app"
 [[ -d "$app/Contents/Frameworks/Sparkle.framework" ]] && codesign --force --deep --sign "$identity" "$app/Contents/Frameworks/Sparkle.framework" 2>&1 | grep -v "replacing existing signature" || true
+codesign --force --sign "$identity" --identifier com.mathieuares.benchlog.server "$app/Contents/MacOS/${name}Server" 2>&1 | grep -v "replacing existing signature" || true
 codesign --force --sign "$identity" "$app" 2>&1 | grep -v "replacing existing signature" || true
 echo "installed $app (signed: ${identity})"
 

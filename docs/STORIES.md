@@ -708,6 +708,40 @@ UX:
 Built: `Help/HelpWindow.swift` (HelpTopic, HelpCenter, HelpWindow, HelpCommands, HelpLinks) and eleven topics as Markdown in `Help/en` and `Help/fr`, package resources read through Bundle.module and rendered like a Markdown guide; `[[topic|…]]` links open another topic. The Help menu replaces the system's (Load Sample Data stays there in debug builds). Self-test: every topic in both languages, the menu, the issue link's version. Snapshots: help-getting-started, help-sync.
 Status: done
 
+## M11 Built-in server — this Mac can be the shop server
+
+### S-058 A server built into BenchLog
+As the owner, BenchLog carries its own server, so a Mac can hold the shop's library without Docker or Node.
+Acceptance:
+- [unit] A Swift server (`BenchLogServerKit`) answers the same API as `server/` (health, library, push, pull, numbers, files) with the same rules: last writer wins, numbers without gaps, files checked by SHA-256, the token on every route but health.
+- [unit] The sync tests run against both servers: two libraries share one server, a wrong token is refused.
+- [unit] Its data folder is the same as the Node server's (library.sqlite, files/, token), so either can open it.
+- [manual] `BenchLogServer` inside the app runs it from Terminal with PORT, DATA_DIR, and BENCHLOG_TOKEN, like `npm start`.
+Built: `Sources/BenchLogServerKit`: `ServerStore` (GRDB, the same tables as store.js), `HTTPServer` (Network.framework, one request per connection, bodies over 4 MB spooled to a file, files streamed back), `BenchLogServer` (the routes, the token check on SHA-256 digests, the token file). `Sources/BenchLogServer/main.swift` is the helper, built into Contents/MacOS with its login item plist (`LaunchAgents/`). BuiltInServerTests port the Node tests; ServerTests run the engine against both servers. Checked by hand: Node and the helper open each other's data folder (rows, files, numbers).
+Status: done
+
+### S-059 Use this Mac as the server
+As the owner, I turn this Mac into the shop server from Settings > Sync, and the other Macs connect to it.
+Depends: S-058
+Acceptance:
+- [snap] Settings > Sync, not connected: a "This Mac as the Server" section with "Use This Mac as the Server".
+- [self] The button starts the server, connects this library to it, and shows what other Macs enter: the address and the token, each with Copy.
+- [manual] The server runs as a login item: after a restart, with BenchLog closed, the other Macs still sync. macOS may ask to allow it in System Settings > General > Login Items; Settings says so with a button that opens it.
+- [manual] While it serves, the Mac does not go to sleep on its own.
+- [snap] "Stop Using This Mac as the Server…" asks first and says the server's data stays.
+UX:
+- Flow: Settings > Sync -> Use This Mac as the Server -> (allow in Login Items if asked) -> connected; the address and token for other Macs show with Copy
+- Surface: a section in Settings > Sync (changes how this library syncs; Settings is where the server is chosen)
+- States: starting "Starting the server…"; needs approval "Allow BenchLog in System Settings > General > Login Items, then try again." with "Open Login Items"; failed: the reason under the button
+- Words: "This Mac as the Server", "Use This Mac as the Server", "Other Macs connect with", "Stop Using This Mac as the Server…", confirmation "Stop the Server on This Mac?" with "Stop Server" and "Cancel"
+Status: todo
+
+### S-060 Release 2.2.0
+Depends: S-059
+Acceptance:
+- [manual] `tools/release.sh 2.2.0 --check` passes; release notes in French and English; the published release waits for the owner's go-ahead.
+Status: todo
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
