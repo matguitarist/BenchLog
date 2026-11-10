@@ -121,6 +121,16 @@
         }
       }
     },
+    "A file from the server was damaged on the way (%@).": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un fichier du serveur a été abîmé en route (%@)."
+          }
+        }
+      }
+    },
     "A job on a device the shop owns, to resell or keep": {
       "localizations": {
         "fr": {
@@ -1101,6 +1111,16 @@
         }
       }
     },
+    "Check the address and token, and see what the server holds": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifier l’adresse et le jeton, et voir ce que contient le serveur"
+          }
+        }
+      }
+    },
     "Choose All to see every repair.": {
       "localizations": {
         "fr": {
@@ -1257,6 +1277,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "État"
+          }
+        }
+      }
+    },
+    "Connect": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecter"
+          }
+        }
+      }
+    },
+    "Connected. The server holds another library (%lld items): Connect replaces this Mac’s.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté. Le serveur contient une autre bibliothèque (%lld éléments) : Connecter remplace celle de ce Mac."
+          }
+        }
+      }
+    },
+    "Connected. The server holds this library.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté. Le serveur contient cette bibliothèque."
+          }
+        }
+      }
+    },
+    "Connected. The server is empty: Connect uploads this library.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté. Le serveur est vide : Connecter y envoie cette bibliothèque."
           }
         }
       }
@@ -1691,6 +1751,16 @@
         }
       }
     },
+    "Disconnect": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Déconnecter"
+          }
+        }
+      }
+    },
     "Discount": {
       "localizations": {
         "fr": {
@@ -2107,6 +2177,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Suivant"
+          }
+        }
+      }
+    },
+    "From the server’s first start": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Affiché au premier démarrage du serveur"
           }
         }
       }
@@ -3471,6 +3551,16 @@
         }
       }
     },
+    "Not connected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non connecté"
+          }
+        }
+      }
+    },
     "Not found": {
       "localizations": {
         "fr": {
@@ -3587,6 +3677,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "OK"
+          }
+        }
+      }
+    },
+    "Offline": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hors ligne"
+          }
+        }
+      }
+    },
+    "Offline, %lld waiting": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hors ligne, %lld en attente"
           }
         }
       }
@@ -4771,6 +4881,26 @@
         }
       }
     },
+    "Replace This Mac’s Library": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remplacer la bibliothèque de ce Mac"
+          }
+        }
+      }
+    },
+    "Replace This Mac’s Library?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remplacer la bibliothèque de ce Mac ?"
+          }
+        }
+      }
+    },
     "Replace the library with a backup; it is backed up first": {
       "localizations": {
         "fr": {
@@ -4887,6 +5017,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cliquez avec le bouton droit sur un nom pour le renommer, le fusionner avec un autre ou le supprimer. Les appareils gardent leur nom quand vous en supprimez un."
+          }
+        }
+      }
+    },
+    "Run the BenchLog server on a Mac or a NAS in the shop, then share one library between your devices. Away from the shop, reach it with Tailscale.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faites tourner le serveur BenchLog sur un Mac ou un NAS à l’atelier, puis partagez une bibliothèque entre vos appareils. Hors de l’atelier, joignez-le avec Tailscale."
           }
         }
       }
@@ -5111,12 +5251,32 @@
         }
       }
     },
+    "Send this Mac’s changes and get the others’ now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer les changements de ce Mac et recevoir ceux des autres maintenant"
+          }
+        }
+      }
+    },
     "Serial or IMEI": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Numéro de série ou IMEI"
+          }
+        }
+      }
+    },
+    "Server": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serveur"
           }
         }
       }
@@ -5431,12 +5591,72 @@
         }
       }
     },
+    "Stop syncing; this Mac keeps its copy of the library": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter la synchronisation ; ce Mac garde sa copie de la bibliothèque"
+          }
+        }
+      }
+    },
     "Subtotal": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Sous-total"
+          }
+        }
+      }
+    },
+    "Sync": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchro"
+          }
+        }
+      }
+    },
+    "Sync Now": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchroniser"
+          }
+        }
+      }
+    },
+    "Sync failed": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Échec de la synchronisation"
+          }
+        }
+      }
+    },
+    "Synced %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisé %@"
+          }
+        }
+      }
+    },
+    "Syncing…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchronisation…"
           }
         }
       }
@@ -5547,6 +5767,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Conditions, en français"
+          }
+        }
+      }
+    },
+    "Test Connection": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tester la connexion"
           }
         }
       }
@@ -5691,6 +5921,36 @@
         }
       }
     },
+    "The server already holds another library (%lld items). This Mac’s library is backed up, then replaced by the server’s.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le serveur contient déjà une autre bibliothèque (%lld éléments). La bibliothèque de ce Mac est sauvegardée, puis remplacée par celle du serveur."
+          }
+        }
+      }
+    },
+    "The server answered %lld: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le serveur a répondu %1$lld : %2$@"
+          }
+        }
+      }
+    },
+    "The server refused the token. Check it in Settings > Sync.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le serveur a refusé le jeton. Vérifiez-le dans Réglages > Synchro."
+          }
+        }
+      }
+    },
     "The shop": {
       "localizations": {
         "fr": {
@@ -5727,6 +5987,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Le taux de base de l’État est inscrit. Vérifiez vos taux auprès de votre État."
+          }
+        }
+      }
+    },
+    "The token is missing. Connect again in Settings > Sync.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le jeton est absent. Reconnectez-vous dans Réglages > Synchro."
           }
         }
       }
@@ -5781,6 +6051,16 @@
         }
       }
     },
+    "This library is not connected to a server.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette bibliothèque n’est pas connectée à un serveur."
+          }
+        }
+      }
+    },
     "This model": {
       "localizations": {
         "fr": {
@@ -5807,6 +6087,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Cette vente est déjà facturée sur %@. Créditez d’abord cette facture."
+          }
+        }
+      }
+    },
+    "This server already holds another library.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce serveur contient déjà une autre bibliothèque."
           }
         }
       }
@@ -5887,6 +6177,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Pour facturer une vente, marquez l’appareil comme vendu, avec un prix et un acheteur."
+          }
+        }
+      }
+    },
+    "Token": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeton"
           }
         }
       }
@@ -6001,6 +6301,16 @@
         }
       }
     },
+    "Unable to reach the server: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de joindre le serveur : %@"
+          }
+        }
+      }
+    },
     "Unable to restore the backup: %@": {
       "localizations": {
         "fr": {
@@ -6081,6 +6391,16 @@
         }
       }
     },
+    "Upload this library to an empty server, or keep it in step with its copy there": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Envoyer cette bibliothèque à un serveur vide, ou la garder synchronisée avec sa copie là-bas"
+          }
+        }
+      }
+    },
     "Use Standard Rates": {
       "localizations": {
         "fr": {
@@ -6117,6 +6437,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "En attente de pièces"
+          }
+        }
+      }
+    },
+    "Waiting to sync": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En attente de synchro"
           }
         }
       }

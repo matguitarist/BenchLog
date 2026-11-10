@@ -292,3 +292,25 @@ extension Library {
         }
     }
 }
+
+extension Library {
+    /// The server this library syncs with, or nil when it is not connected. Kept on this
+    /// device only; the token lives in the Keychain.
+    public func syncServer() throws -> URL? {
+        try metaValue("syncServer").flatMap(URL.init(string:))
+    }
+
+    public func setSyncServer(_ url: URL?) throws {
+        try setLocalMeta("syncServer", url?.absoluteString)
+        if url == nil { try setLocalMeta("syncedAt", nil) }
+    }
+
+    /// When the last sync finished.
+    public func syncedAt() throws -> Date? {
+        try metaValue("syncedAt").flatMap(Double.init).map(Date.init(timeIntervalSince1970:))
+    }
+
+    public func setSyncedAt(_ date: Date) throws {
+        try setLocalMeta("syncedAt", String(date.timeIntervalSince1970))
+    }
+}

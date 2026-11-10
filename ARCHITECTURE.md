@@ -18,6 +18,8 @@
   - `Restock.swift`: restock orders for the shelf, one vendor each, from draft to received.
   - `CounterSale.swift`: sales over the counter, with no repair, to a customer or a walk-in; stocked parts leave as Sold.
   - `Inventory.swift`: what the stock is worth, now or at the end of a period.
+  - `Sync.swift`: what syncs (tables, the `business` meta key), exporting queued rows, and applying pulled ones.
+  - `SyncEngine.swift`: `SyncTransport` (the seam: `HTTPSyncTransport` for `server/`, an in-memory server in tests) and the `SyncEngine` actor that connects, pushes, pulls, and moves files.
   - `Report.swift`: report periods and the sales and tax report over invoices and credit notes, with its CSV.
   - `Trash.swift`: Move to Trash and Put Back, cascading to children with one shared `deletedAt`, and Empty Trash, which deletes rows and files older than 30 days in dependency order.
   - `Shop.swift`: the shop as an owner (`customer.isShop`), internal jobs and their cost, and shop devices: what they cost, what became of them, and the profit once sold.
@@ -60,3 +62,5 @@ A zero-dependency Node service (Node 24, `node:sqlite`) that the apps sync with.
 know the schema: `src/store.js` keeps rows by table and id (last writer wins by `updatedAt`),
 the number sequences, and file records; `src/server.js` is the HTTP API behind one bearer
 token; `src/main.js` reads the environment and starts it. Tests: `cd server && npm test`.
+In the app, `SyncController` runs the engine at launch, three seconds after each change
+(`AppModel.write` calls it), and every minute, and keeps the token in the Keychain.

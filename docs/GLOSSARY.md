@@ -66,6 +66,10 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Counter Sale | Parts or items sold without a repair, invoiced to a customer or a walk-in | retail sale, POS, quick sale |
 | Walk-in | A buyer with no customer record; the invoice prints "Walk-in customer" | anonymous, guest, cash customer |
 | Stock value / Inventory at cost | Parts on the shelf × their cost, plus shop devices in stock or for sale at what they cost | asset value, valuation |
+| Server | The BenchLog server on the shop network that holds the shared library | cloud, backend, host |
+| Sync / Sync Now | Send this device's changes to the server and get the others' | upload, refresh, backup |
+| Token | The secret the server prints on its first start; every device needs it to connect | password, API key |
+| Connect / Replace This Mac's Library | Link this library to the server; when the server holds another library, back this one up and take the server's | join, merge, link |
 | Refund | Paying a credit note back to the customer, with the method; « Remboursement » | reimbursement, payback |
 | Invoice Sale | Invoice a sold shop device to its buyer, with taxes; « Facturer la vente » | bill of sale, receipt |
 | Reports | The sidebar page with what was invoiced and the tax collected in a month, quarter, or year (Rapports) | dashboard, analytics, accounting |
@@ -129,3 +133,5 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Mark Ordered / Receive | Marquer commandée / Recevoir |
 | Counter Sale / Walk-in | Vente au comptoir / Client de passage |
 | Stock value / Inventory at cost | Valeur du stock / Inventaire au coût |
+| Server / Sync / Token | Serveur / Synchro / Jeton |
+| Connect / Disconnect | Connecter / Déconnecter |

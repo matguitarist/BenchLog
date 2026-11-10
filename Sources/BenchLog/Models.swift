@@ -105,6 +105,7 @@ final class AppModel {
             let result = try body(library)
             log.post(.info, what, source: "Library")
             reload()
+            SyncController.shared.changed(self)
             return result
         } catch {
             log.post(.error, "\(what) failed: \(error.localizedDescription)", source: "Library")
@@ -124,6 +125,7 @@ final class AppModel {
         backStack.removeAll()
         forwardStack.removeAll()
         reload()
+        SyncController.shared.load(self)
     }
 
     /// Tells every page to reload, and recounts the open repairs.

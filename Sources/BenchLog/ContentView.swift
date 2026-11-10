@@ -76,6 +76,7 @@ struct ContentView: View {
             Snapshot.runIfRequested(model: model, openSettings: openSettings)
         }
         .task { await Backups.shared.runDaily(model) }
+        .task { await SyncController.shared.run(model) }
     }
 
     private var sidebar: some View {
@@ -87,6 +88,7 @@ struct ContentView: View {
                     .tag(item)
             }
         }
+        .safeAreaInset(edge: .bottom, spacing: 0) { SyncFooter() }
         .navigationSplitViewColumnWidth(min: 180, ideal: 200)
     }
 

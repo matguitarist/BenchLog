@@ -332,6 +332,12 @@ enum SelfTest {
                     check("a repair on a shop device is internal", false)
                 }
 
+                // S-051 A library starts unconnected; its changes still queue for the day it connects.
+                SyncController.shared.load(model)
+                check("a library starts with no server and Settings has a Sync tab",
+                      !SyncController.shared.isConnected && SettingsTab.allCases.contains(.sync))
+                check("local changes queue for sync", model.read(0) { try $0.pendingSyncCount() } > 0)
+
                 // S-046 A walk-in counter sale: an invoice filed with the shop; the part leaves stock as Sold.
                 if let cable = model.write("Self-test counter part", { try $0.save(Part(name: "Self-test cable", priceCents: 1_500, quantity: 3), fits: []) }) {
                     await model.issueCounterSale(to: nil, items: [CounterSaleItem(partId: cable.id, description: cable.name, unitCents: 1_500)])

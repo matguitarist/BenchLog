@@ -627,7 +627,8 @@ Depends: S-049
 Acceptance:
 - [unit] The server hands out the next ticket, invoice, and credit note number; the first Mac to connect sets where each sequence starts.
 - [unit] A client may reserve a block of ticket numbers so check-in works offline; invoice and credit numbers always come from the server, one at a time.
-Status: todo
+Built: in S-049's server (`take`, `startAt`, blocks for tickets only); `SyncEngine.connect` starts each sequence after the library's own numbers. The Mac uses them in S-053.
+Status: done
 
 ### S-051 Connect the Mac to the server
 As the user, I connect BenchLog to my server once, and my library uploads.
@@ -637,7 +638,8 @@ Acceptance:
 - [snap] Settings > Sync: server address and token, Test Connection, and Connect. A connected library shows the server, the last sync, and Disconnect.
 - [unit] Connecting an empty server uploads every row and file; the server's numbers start after the library's.
 - [unit] Connecting to a server that already holds a library asks first, then replaces this Mac's library with the server's (the old one is kept as a backup).
-Status: todo
+Built: `SyncEngine.connect(join:)` (claims an empty server, starts its sequences, queues everything; joins another library after `clearForJoin`). `SyncController` (app) keeps the server in the library's meta and the token in the Keychain. `Views/SyncViews.swift`: Settings > Sync with Test Connection, Connect, the Replace This Mac's Library confirmation (after a backup named "BenchLog Before Joining …"), and the connected view. Snapshots: settings-sync, settings-sync-connected.
+Status: done
 
 ### S-052 Changes sync both ways
 As the user, what I change on one device shows on the others within a minute, and I can keep working when the server is away.
@@ -648,7 +650,8 @@ Acceptance:
 - [unit] Files upload after their row and download when a pulled attachment has no file yet.
 - [snap] The sidebar shows the sync state: Synced (with the time), Syncing, Offline (with what is waiting), or the error, with Sync Now.
 - [self] Sync runs at launch, a few seconds after each change, and every minute.
-Status: todo
+Built: migration v15-sync (`syncQueue` with versions, `syncFlag`, triggers on every synced table, fits and links touching their part or guide, `meta.business` with `updatedAt`). `Sync.swift` exports rows (parts carry `_fits`, guides `_links`) and applies pulled ones in one transaction with deferred foreign keys; devices, fits, and links refill the catalog. `SyncEngine.sync()` uploads files before their rows, pushes the queue, pulls every page, and downloads missing files. The sidebar footer shows the state with Sync Now. SyncTests (in-memory server) and ServerTests (the real `server/` under Node). Snapshot: sync-status.
+Status: done
 
 ### S-053 Invoices and tickets use the server's numbers
 As the user, the invoice and ticket numbers I issue come from the server when I am connected.

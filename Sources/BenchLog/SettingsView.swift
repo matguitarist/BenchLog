@@ -40,6 +40,7 @@ struct SettingsView: View {
             case .backup:
                 BackupSettings()
                 TrashSettings()
+            case .sync: SyncSettings()
             }
         }
         .formStyle(.grouped)
@@ -50,7 +51,7 @@ struct SettingsView: View {
 
 /// The Settings tabs. Snapshot mode walks through every case.
 enum SettingsTab: String, CaseIterable, Identifiable {
-    case general, business, catalog, backup, appearance, updates
+    case general, business, catalog, backup, sync, appearance, updates
 
     var id: String { rawValue }
 
@@ -60,6 +61,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .business: String(localized: "Business")
         case .catalog: String(localized: "Catalog")
         case .backup: String(localized: "Backup")
+        case .sync: String(localized: "Sync")
         case .appearance: String(localized: "Appearance")
         case .updates: String(localized: "Updates")
         }
@@ -71,6 +73,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .business: "building.2"
         case .catalog: "list.bullet.indent"
         case .backup: "externaldrive.badge.timemachine"
+        case .sync: "arrow.triangle.2.circlepath"
         case .appearance: "paintpalette"
         case .updates: "arrow.triangle.2.circlepath"
         }
