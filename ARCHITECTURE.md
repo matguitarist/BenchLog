@@ -3,7 +3,7 @@
 ## Targets (dependency direction: App → Kit → GRDB)
 
 - **BenchLogKit**: data and rules, no SwiftUI or AppKit, so a future iOS app reuses it as is.
-  - `Library.swift` opens `benchlog.sqlite` and `Files/`, and runs the migrations (added, never edited).
+  - `Library.swift` opens `benchlog.sqlite` and `Files/` and runs the migrations in `Migrations.swift` (added, never edited).
   - `Records.swift`: the row types (`Customer`, `Device`, `Repair`, `Note`) and the joined rows (`RepairRow`, `DeviceRow`).
   - `Library+<Domain>.swift`: one file per domain (Customers, Devices and catalog, Repairs, Notes and trash). Every write sets `updatedAt`; deleting sets `deletedAt`.
   - `CatalogSeed.swift`: the catalog a new library starts with.

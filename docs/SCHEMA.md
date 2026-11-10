@@ -2,7 +2,7 @@
 
 The library is one SQLite file (`benchlog.sqlite`) plus a `Files/` folder next to it.
 Any client (the Mac app, a future iOS app, an Android app, or a sync server) can read it.
-Migrations live in `Sources/BenchLogKit/Library.swift`. They are only ever added, never edited.
+Migrations live in `Sources/BenchLogKit/Migrations.swift`. They are only ever added, never edited.
 
 ## Conventions
 
