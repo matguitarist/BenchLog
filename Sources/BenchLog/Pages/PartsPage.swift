@@ -7,6 +7,7 @@ struct PartsPage: View {
     @Environment(AppModel.self) private var model
     @State private var parts: [Part] = []
     @State private var uses: [PartUseRow] = []
+    @State private var value = InventoryValue()
 
     var body: some View {
         @Bindable var model = model
@@ -51,7 +52,9 @@ struct PartsPage: View {
         }
         .task(id: "\(model.dataVersion) \(model.partsTab.rawValue) \(model.partSearch)") {
             switch model.partsTab {
-            case .inventory: parts = model.read([]) { try $0.parts(matching: model.partSearch) }
+            case .inventory:
+                parts = model.read([]) { try $0.parts(matching: model.partSearch) }
+                value = model.read(InventoryValue()) { try $0.inventoryValue() }
             case .low: parts = model.read([]) { try $0.parts(matching: model.partSearch, lowOnly: true) }
             case .toOrder: uses = model.read([]) { try $0.partUseRows(.needed) }
             case .incoming: uses = model.read([]) { try $0.partUseRows(.ordered) }
@@ -95,6 +98,9 @@ struct PartsPage: View {
                 .contextMenu { Button("Move to Trash", role: .destructive) { model.moveToTrash(.part(part.id)) } }
             }
             .onDeleteCommand { model.trashFocused() }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                if model.partsTab == .inventory, model.partSearch.isEmpty { StockValueFooter(value: value) }
+            }
         }
     }
 
@@ -231,5 +237,36 @@ struct PartUseStatusMenu: View {
         .fixedSize()
         .help("Change where this part is")
         .accessibilityLabel(Text("Part status: \(use.status.title)"))
+    }
+}
+
+/// Under the inventory: what the parts on the shelf are worth at cost and at price.
+private struct StockValueFooter: View {
+    let value: InventoryValue
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                Text("Stock value")
+                Spacer()
+                Text(Money.text(value.partsCostCents)).monospacedDigit().fontWeight(.semibold)
+            }
+            HStack {
+                Text("Units: \(value.units) · at price \(Money.text(value.partsPriceCents))")
+                if value.partsWithoutCost > 0 {
+                    Spacer()
+                    Label("Without cost: \(value.partsWithoutCost)", systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(.orange)
+                        .help("Parts in stock with no cost count as zero; add their cost in Edit Part")
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
+        }
+        .padding(.horizontal, Space.lg)
+        .padding(.vertical, Space.sm)
+        .background(.bar)
+        .overlay(alignment: .top) { Divider() }
+        .accessibilityElement(children: .combine)
     }
 }

@@ -17,6 +17,7 @@
   - `Stock.swift`: stock moves (why a part's quantity changed), counts, damaged units, and a part's stock history.
   - `Restock.swift`: restock orders for the shelf, one vendor each, from draft to received.
   - `CounterSale.swift`: sales over the counter, with no repair, to a customer or a walk-in; stocked parts leave as Sold.
+  - `Inventory.swift`: what the stock is worth, now or at the end of a period.
   - `Report.swift`: report periods and the sales and tax report over invoices and credit notes, with its CSV.
   - `Trash.swift`: Move to Trash and Put Back, cascading to children with one shared `deletedAt`, and Empty Trash, which deletes rows and files older than 30 days in dependency order.
   - `Shop.swift`: the shop as an owner (`customer.isShop`), internal jobs and their cost, and shop devices: what they cost, what became of them, and the profit once sold.

@@ -2471,6 +2471,26 @@
         }
       }
     },
+    "Inventory at cost on %@: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inventaire au coût le %1$@ : %2$@"
+          }
+        }
+      }
+    },
+    "Inventory at cost today: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inventaire au coût aujourd’hui : %@"
+          }
+        }
+      }
+    },
     "Invoice": {
       "localizations": {
         "fr": {
@@ -3971,6 +3991,16 @@
         }
       }
     },
+    "Parts %@ · shop devices %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièces %1$@ · appareils de l’atelier %2$@"
+          }
+        }
+      }
+    },
     "Parts Are Coming": {
       "localizations": {
         "fr": {
@@ -3997,6 +4027,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Les pièces au seuil de stock bas ou en dessous s’affichent ici."
+          }
+        }
+      }
+    },
+    "Parts in stock with no cost count as zero": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les pièces en stock sans coût comptent pour zéro"
+          }
+        }
+      }
+    },
+    "Parts in stock with no cost count as zero; add their cost in Edit Part": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les pièces en stock sans coût comptent pour zéro ; ajoutez leur coût dans Modifier la pièce"
           }
         }
       }
@@ -4031,6 +4081,16 @@
         }
       }
     },
+    "Parts without cost: %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièces sans coût : %lld"
+          }
+        }
+      }
+    },
     "Passcode": {
       "localizations": {
         "fr": {
@@ -4047,6 +4107,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Code, masqué"
+          }
+        }
+      }
+    },
+    "Past quantities come from each part's stock history; costs are today's": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les quantités passées viennent de l’historique du stock de chaque pièce ; les coûts sont ceux d’aujourd’hui"
           }
         }
       }
@@ -5351,6 +5421,16 @@
         }
       }
     },
+    "Stock value": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valeur du stock"
+          }
+        }
+      }
+    },
     "Subtotal": {
       "localizations": {
         "fr": {
@@ -5951,6 +6031,16 @@
         }
       }
     },
+    "Units: %lld · at price %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unités : %1$lld · au prix %2$@"
+          }
+        }
+      }
+    },
     "Unpaid": {
       "localizations": {
         "fr": {
@@ -6177,6 +6267,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Qui achète ; une vente à un client de passage est facturée sans nom et classée avec l’atelier"
+          }
+        }
+      }
+    },
+    "Without cost: %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sans coût : %lld"
           }
         }
       }

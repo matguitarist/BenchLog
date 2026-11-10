@@ -593,7 +593,8 @@ Depends: S-044
 Acceptance:
 - [unit] Value = quantity × cost for each part, plus the cost of shop devices in stock or for sale; at a past date, quantities come from the stock moves.
 - [snap] The Parts list shows the stock value at cost and at price; Reports shows the inventory value at the end of the period, and how many parts have no cost.
-Status: todo
+Built: `Inventory.swift` (`InventoryValue`, `inventoryValue(at:)`: parts at cost and at price, shop devices in stock or for sale at their cost; at a past date, quantities from the last stock move before it and devices held then; costs are today's). Parts > Inventory has a Stock Value footer; Reports shows the inventory at the end of the period (today for the current one) with parts without cost. Snapshots: parts-inventory, reports.
+Status: done
 
 ### S-048 Release 1.0.0
 As the user, I install BenchLog 1.0.0 from a notarized download, and it updates itself.

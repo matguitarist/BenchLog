@@ -29,6 +29,7 @@ extension ReportPeriod {
 struct ReportsPage: View {
     @Environment(AppModel.self) private var model
     @State private var report: SalesReport?
+    @State private var inventory: InventoryValue?
     @State private var selection: UUID?
     @State private var exporting = false
 
@@ -37,6 +38,7 @@ struct ReportsPage: View {
         VStack(spacing: 0) {
             if let report, !report.rows.isEmpty {
                 summary(report)
+                if let inventory { inventoryLine(inventory) }
                 Divider()
                 documents(report)
             } else {
@@ -80,6 +82,8 @@ struct ReportsPage: View {
                       defaultFilename: "BenchLog \(model.reportPeriod.title).csv") { _ in }
         .task(id: "\(model.dataVersion) \(model.reportPeriod.start) \(model.reportPeriod.length)") {
             report = model.read(nil) { try $0.salesReport(model.reportPeriod) }
+            let end = model.reportPeriod.end()
+            inventory = model.read(nil) { try $0.inventoryValue(at: end > .now ? nil : end) }
         }
     }
 
@@ -96,6 +100,35 @@ struct ReportsPage: View {
             figure("Owed", report.owedCents, color: report.owedCents > 0 ? .orange : nil)
         }
         .padding(Space.margin)
+    }
+
+    /// The stock's value at the end of the period (now, for the current one).
+    private func inventoryLine(_ value: InventoryValue) -> some View {
+        let end = model.reportPeriod.end()
+        return HStack(spacing: Space.sm) {
+            Image(systemName: "shippingbox").foregroundStyle(.secondary)
+            Group {
+                if end > .now {
+                    Text("Inventory at cost today: \(Money.text(value.totalCents))")
+                } else {
+                    Text("Inventory at cost on \((end - 1).formatted(date: .abbreviated, time: .omitted)): \(Money.text(value.totalCents))")
+                }
+            }
+            .monospacedDigit()
+            Text("Parts \(Money.text(value.partsCostCents)) · shop devices \(Money.text(value.devicesCostCents))")
+                .foregroundStyle(.secondary)
+                .monospacedDigit()
+            Spacer()
+            if value.partsWithoutCost > 0 {
+                Label("Parts without cost: \(value.partsWithoutCost)", systemImage: "exclamationmark.triangle")
+                    .foregroundStyle(.orange)
+                    .help("Parts in stock with no cost count as zero")
+            }
+        }
+        .font(.callout)
+        .padding(.horizontal, Space.margin)
+        .padding(.bottom, Space.md)
+        .help("Past quantities come from each part's stock history; costs are today's")
     }
 
     private func figure(_ title: LocalizedStringKey, _ cents: Int, bold: Bool = false, color: Color? = nil) -> some View {

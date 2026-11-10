@@ -65,6 +65,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Restock | An order of stock for the shelf from one vendor: Draft, Ordered, Received | purchase order, PO, supplier order |
 | Counter Sale | Parts or items sold without a repair, invoiced to a customer or a walk-in | retail sale, POS, quick sale |
 | Walk-in | A buyer with no customer record; the invoice prints "Walk-in customer" | anonymous, guest, cash customer |
+| Stock value / Inventory at cost | Parts on the shelf × their cost, plus shop devices in stock or for sale at what they cost | asset value, valuation |
 | Refund | Paying a credit note back to the customer, with the method; « Remboursement » | reimbursement, payback |
 | Invoice Sale | Invoice a sold shop device to its buyer, with taxes; « Facturer la vente » | bill of sale, receipt |
 | Reports | The sidebar page with what was invoiced and the tax collected in a month, quarter, or year (Rapports) | dashboard, analytics, accounting |
@@ -127,3 +128,4 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Order More / Add Low Parts | Commander plus / Ajouter les pièces en stock bas |
 | Mark Ordered / Receive | Marquer commandée / Recevoir |
 | Counter Sale / Walk-in | Vente au comptoir / Client de passage |
+| Stock value / Inventory at cost | Valeur du stock / Inventaire au coût |
