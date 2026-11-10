@@ -443,6 +443,48 @@ public final class Library: Sendable {
                 CREATE UNIQUE INDEX invoice_creditsInvoiceId ON invoice(creditsInvoiceId);
                 """)
         }
+        migrator.registerMigration("v15-sync") { db in
+            // Every local change queues its row for the server (S-052). Rows applied from the
+            // server set syncFlag.applying, so they are never queued again.
+            try db.execute(sql: """
+                CREATE TABLE syncQueue (
+                    tbl TEXT NOT NULL,
+                    id TEXT NOT NULL,
+                    version INTEGER NOT NULL DEFAULT 1,
+                    PRIMARY KEY (tbl, id)
+                );
+                CREATE TABLE syncFlag (applying INTEGER NOT NULL);
+                INSERT INTO syncFlag VALUES (0);
+                ALTER TABLE meta ADD COLUMN updatedAt DATETIME;
+                UPDATE meta SET updatedAt = strftime('%Y-%m-%d %H:%M:%f', 'now') WHERE key = 'business';
+                INSERT OR IGNORE INTO meta (key, value) VALUES ('libraryId', lower(hex(randomblob(16))));
+                """)
+            // A frozen copy of the tables of the time; later tables add their own triggers.
+            for table in ["attachment", "customer", "device", "guide", "invoice", "labourLine", "note", "part",
+                          "partUse", "repair", "restock", "restockLine", "stockMove"] {
+                try db.execute(sql: Library.queueTriggers(table))
+            }
+            // Fits and guide links travel inside their part or guide: a change touches the parent.
+            for (child, parent, key) in [("partFit", "part", "partId"), ("guideLink", "guide", "guideId")] {
+                for (event, row) in [("INSERT", "NEW"), ("DELETE", "OLD")] {
+                    try db.execute(sql: """
+                        CREATE TRIGGER sync_\(child)_\(event.lowercased()) AFTER \(event) ON \(child)
+                        WHEN (SELECT applying FROM syncFlag) = 0 BEGIN
+                            UPDATE \(parent) SET updatedAt = strftime('%Y-%m-%d %H:%M:%f', 'now') WHERE id = \(row).\(key);
+                        END
+                        """)
+                }
+            }
+            for event in ["INSERT", "UPDATE OF value"] {
+                try db.execute(sql: """
+                    CREATE TRIGGER sync_meta_\(event.prefix(6).lowercased()) AFTER \(event) ON meta
+                    WHEN NEW.key = 'business' AND (SELECT applying FROM syncFlag) = 0 BEGIN
+                        UPDATE meta SET updatedAt = strftime('%Y-%m-%d %H:%M:%f', 'now') WHERE key = NEW.key;
+                        INSERT INTO syncQueue (tbl, id) VALUES ('meta', NEW.key) ON CONFLICT DO UPDATE SET version = version + 1;
+                    END
+                    """)
+            }
+        }
         return migrator
     }
 
