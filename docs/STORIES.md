@@ -679,6 +679,34 @@ Acceptance:
 Status: done
 Built: published by tools/release.sh 2.0.0 on 2026-11-09 after the owner's go-ahead; https://github.com/matguitarist/BenchLog/releases/tag/v2.0.0, feed offers 2.0.0.
 
+## M10 Help — find Settings and learn the app
+
+### S-056 Settings from the sidebar
+As the user, I open Settings from a button at the bottom of the sidebar, without knowing ⌘,.
+Acceptance:
+- [snap] A gear button sits at the bottom left of the sidebar, always; when the library is connected, the sync status and Sync Now sit beside it.
+- [manual] The button opens the Settings window.
+UX:
+- Flow: click the gear (or ⌘,) -> Settings opens on the last tab -> close it with ⌘W
+- Surface: icon-only button in the sidebar's bottom bar (a place people come back to, like Finder and Mail)
+- Words: tooltip "Open Settings (⌘,)"; VoiceOver "Settings"
+Built: `Views/SidebarFooter.swift` replaces SyncFooter: the gear (openSettings) always, then, when connected, the cloud with the time since the last sync ("2 min ago", the full "Synced 2 min ago" as its tooltip) and Sync Now. Snapshots: every page (bottom left), sync-status.
+Status: done
+
+### S-057 BenchLog Help
+As the user, I learn how to do each job in BenchLog from the Help menu, in English or French.
+Acceptance:
+- [snap] Help > BenchLog Help (⌘?) opens a Help window: topics in a sidebar, the topic beside it, and a search field that narrows the topics.
+- [snap] Topics: Getting Started, Repairs, Estimates and Invoices, Counter Sales, Parts and Inventory, Shop Devices, Guides, Reports, Backups and Trash, Sync and the Shop Server, Keyboard Shortcuts.
+- [self] The Help menu has BenchLog Help, Keyboard Shortcuts, Set Up the Shop Server (each opens its topic), What's New in BenchLog (this version's release page), and Report a Problem (a new GitHub issue with the version filled in).
+- [manual] The topics read in French when the Mac is in French.
+UX:
+- Flow: Help menu or ⌘? -> Help window on the topic -> pick another topic or search -> ⌘W closes it
+- Surface: a window (people keep it open beside the main window)
+- States: a search with no match shows the system's "No Results for “…”"
+- Words: "BenchLog Help", "Keyboard Shortcuts", "Set Up the Shop Server", "What's New in BenchLog", "Report a Problem"
+Status: todo
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

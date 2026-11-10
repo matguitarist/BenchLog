@@ -88,7 +88,7 @@ struct ContentView: View {
                     .tag(item)
             }
         }
-        .safeAreaInset(edge: .bottom, spacing: 0) { SyncFooter() }
+        .safeAreaInset(edge: .bottom, spacing: 0) { SidebarFooter() }
         .navigationSplitViewColumnWidth(min: 180, ideal: 200)
     }
 

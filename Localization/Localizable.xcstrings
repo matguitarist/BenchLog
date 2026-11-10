@@ -7071,6 +7071,26 @@
           }
         }
       }
+    },
+    "Open Settings (⌘,)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les réglages (⌘,)"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réglages"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

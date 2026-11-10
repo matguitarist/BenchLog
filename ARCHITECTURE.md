@@ -37,6 +37,7 @@
   - `Models+Actions.swift`: the actions by feature (customers and devices, repairs, notes, photos and files, parts, catalog). State stays in `Models.swift`; a new feature adds its actions here, or its own `Models+<Feature>.swift` once this file passes 300 lines.
   - `Views/SearchPanel.swift`: Search BenchLog (⌘F) over the main window, and `FindCommands`, which gives ⌘F to a PDF guide's find bar when one is in front.
   - `Views/ShopViews.swift`: the Devices page's Shop scope, its rows, and the Shop section on a shop device. `Views/RepairApproval.swift`: the approval picker, badge, and the Start Without Approval dialog's words.
+  - `Views/SidebarFooter.swift`: the bar under the sidebar: Settings, and when connected the sync state and Sync Now.
   - `Views/TaxSection.swift`: Settings → Business → Taxes (country, region, a row per tax, US local rate and Tax labour). `Money.currencyCode` follows the business's country.
   - `Pages/ReportsPage.swift`: the Reports page and `CSVFile` for Export CSV….
   - `Models+Trash.swift`: Edit > Move to Trash, its Undo, and the confirmation for a customer with open repairs (`pendingTrash`).

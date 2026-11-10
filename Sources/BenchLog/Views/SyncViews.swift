@@ -139,6 +139,8 @@ struct SyncSettings: View {
 
 /// Synced 2 min ago, Syncing…, Offline, or the error, with a symbol.
 struct SyncStatusLabel: View {
+    /// Under the sidebar: "2 min ago" beside the cloud, with "Synced 2 min ago" as the tooltip.
+    var compact = false
     private var sync: SyncController { .shared }
 
     var body: some View {
@@ -149,38 +151,16 @@ struct SyncStatusLabel: View {
             Label("Syncing…", systemImage: "arrow.triangle.2.circlepath").foregroundStyle(.secondary)
         case .synced(let date):
             TimelineView(.periodic(from: .now, by: 30)) { _ in
-                Label("Synced \(date.formatted(.relative(presentation: .named)))", systemImage: "checkmark.icloud")
+                let ago = date.formatted(.relative(presentation: .named, unitsStyle: .abbreviated))
+                Label(compact ? ago : String(localized: "Synced \(ago)"), systemImage: "checkmark.icloud")
                     .foregroundStyle(.secondary)
+                    .help(String(localized: "Synced \(ago)"))
             }
         case .offline:
             Label(sync.pending > 0 ? "Offline, \(sync.pending) waiting" : "Offline", systemImage: "icloud.slash")
                 .foregroundStyle(.orange)
         case .failed(let message):
             Label("Sync failed", systemImage: "exclamationmark.icloud").foregroundStyle(.red).help(message)
-        }
-    }
-}
-
-/// Under the sidebar, when the library is connected: the sync state and Sync Now.
-struct SyncFooter: View {
-    @Environment(AppModel.self) private var model
-    private var sync: SyncController { .shared }
-
-    var body: some View {
-        if sync.isConnected {
-            HStack(spacing: Space.sm) {
-                SyncStatusLabel()
-                    .font(.caption)
-                    .lineLimit(1)
-                Spacer(minLength: 0)
-                Button("Sync Now", systemImage: "arrow.clockwise") { Task { await sync.syncNow(model) } }
-                    .labelStyle(.iconOnly)
-                    .buttonStyle(.borderless)
-                    .disabled(sync.status == .syncing)
-                    .help("Send this Mac’s changes and get the others’ now")
-            }
-            .padding(.horizontal, Space.lg)
-            .padding(.vertical, Space.sm)
         }
     }
 }
