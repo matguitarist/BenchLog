@@ -604,8 +604,75 @@ Acceptance:
 Built: `release-notes/1.0.0.md` (English and French). `tools/release.sh 1.0.0 --check` passes; the script sets 1.0.0 in `Info.plist.in` when it publishes. Published 2026-11-09: https://github.com/matguitarist/BenchLog/releases/tag/v1.0.0
 Status: done
 
+## M9 Sync — one library on the shop server, shared by every device
+
+The server runs on the shop network (Docker on a NAS or a Mac, Tailscale from away) and
+stores rows it does not need to understand: any table in `docs/SCHEMA.md`, keyed by table
+and id, last writer wins by `updatedAt`. The Mac keeps its own full copy and works offline.
+
+### S-049 Sync server
+As the user, I run one small BenchLog server on my shop network that holds the shared library.
+Screens: none (server)
+Acceptance:
+- [unit] `server/` is a zero-dependency Node service on `node:sqlite`. Push takes rows (table, id, updatedAt, deletedAt, data) and keeps the newer by `updatedAt`; pull returns every row changed after a cursor, in order, in pages.
+- [unit] Every request needs the library token (`Authorization: Bearer`); the token is made on first start, saved in the data folder, and printed once.
+- [unit] Files: an attachment's bytes are uploaded and downloaded by attachment id, checked by SHA-256.
+- [manual] `docker build` and `docker run` with a data volume; README says how to reach it with Tailscale.
+Status: todo
+
+### S-050 Numbers from the server
+As the user, I never get two repairs with the same ticket number, or a gap or a duplicate in my invoice numbers, when two devices work at once.
+Depends: S-049
+Acceptance:
+- [unit] The server hands out the next ticket, invoice, and credit note number; the first Mac to connect sets where each sequence starts.
+- [unit] A client may reserve a block of ticket numbers so check-in works offline; invoice and credit numbers always come from the server, one at a time.
+Status: todo
+
+### S-051 Connect the Mac to the server
+As the user, I connect BenchLog to my server once, and my library uploads.
+Screens: settings-sync
+Depends: S-049, S-050
+Acceptance:
+- [snap] Settings > Sync: server address and token, Test Connection, and Connect. A connected library shows the server, the last sync, and Disconnect.
+- [unit] Connecting an empty server uploads every row and file; the server's numbers start after the library's.
+- [unit] Connecting to a server that already holds a library asks first, then replaces this Mac's library with the server's (the old one is kept as a backup).
+Status: todo
+
+### S-052 Changes sync both ways
+As the user, what I change on one device shows on the others within a minute, and I can keep working when the server is away.
+Screens: sync-status
+Depends: S-051
+Acceptance:
+- [unit] Every local change is queued (triggers record table and id) and pushed; pulled rows apply when newer and are never queued again; a row changed on both sides keeps the later `updatedAt`.
+- [unit] Files upload after their row and download when a pulled attachment has no file yet.
+- [snap] The sidebar shows the sync state: Synced (with the time), Syncing, Offline (with what is waiting), or the error, with Sync Now.
+- [self] Sync runs at launch, a few seconds after each change, and every minute.
+Status: todo
+
+### S-053 Invoices and tickets use the server's numbers
+As the user, the invoice and ticket numbers I issue come from the server when I am connected.
+Depends: S-050, S-052
+Acceptance:
+- [unit] A connected library issues invoices and credit notes with a number from the server; offline, issuing says to reconnect, and nothing is numbered.
+- [unit] A connected library opens repairs with ticket numbers from its reserved block, and tops the block up when it syncs.
+Status: todo
+
+### S-054 Passcodes stay private on the server
+As the user, device passcodes never reach the server in clear text.
+Depends: S-052
+Acceptance:
+- [unit] Passcodes are sealed with the library key (AES-GCM) before they are pushed, and opened when pulled; the server stores only sealed text.
+- [snap] Settings > Sync shows the library key as a recovery code to copy, needed to join another device.
+Status: todo
+
+### S-055 Release 2.0.0
+As the user, I install BenchLog 2.0 and its server, and both devices share one library.
+Depends: S-049, S-050, S-051, S-052, S-053, S-054
+Acceptance:
+- [manual] `tools/release.sh 2.0.0 --check` passes; release notes in French and English explain the server; the published release waits for the owner's go-ahead.
+Status: todo
+
 ## Later
-- **v2 Sync**: the Node server becomes a REST and SQLite sync service (pull and push by `updatedAt`, last-writer-wins per row, file upload). The Mac becomes a client.
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
 - Boardview viewer (OpenBoardView-style) for .brd/.bdv/.fz files.
