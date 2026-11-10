@@ -28,11 +28,14 @@ struct BenchLogApp: App {
         .defaultSize(width: 1080, height: 720)
         .windowToolbarStyle(.unified)
         .commands {
-            SidebarCommands()
-            // File > Import from iPhone: Take Photo, Scan Documents (Continuity Camera).
-            ImportFromDevicesCommands()
-            ToolbarCommands()
-            FindCommands(model: model)
+            // Grouped: older SDKs take at most ten commands per builder (CI builds on one).
+            Group {
+                SidebarCommands()
+                // File > Import from iPhone: Take Photo, Scan Documents (Continuity Camera).
+                ImportFromDevicesCommands()
+                ToolbarCommands()
+                FindCommands(model: model)
+            }
             CommandGroup(replacing: .newItem) {
                 Button("New Repair…") { model.newRepair() }
                     .keyboardShortcut("n")

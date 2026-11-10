@@ -60,3 +60,10 @@ Symptom: the invoice for a sold Game Boy Color read "90-day warranty on the part
 Cause: the footer printed the warranty on every invoice; until sales, every invoice was for a repair.
 Fix: the warranty prints only on invoices with a repair.
 Rule: when a document kind gains a new use (a sale, not a repair), reread every line it prints for wording that assumes the old use.
+
+## CI failed since S-031: "extra argument in call" in App.swift
+
+- Symptom: `swift test` on the GitHub macOS runner failed at `.commands { … }` with "extra argument in call", while local builds passed. Unnoticed for six milestones.
+- Cause: the scene's `.commands` builder had eleven children; the runner's older SDK builds at most ten per builder.
+- Fix: the four standard command sets (Sidebar, Import from iPhone, Toolbar, Find) sit in one `Group`.
+- Rule: keep any result builder at ten children or fewer, and check CI (`gh run list`) after each push, not only at release.
