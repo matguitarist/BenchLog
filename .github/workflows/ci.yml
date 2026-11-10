@@ -16,3 +16,14 @@ jobs:
         run: swift test
       - name: Build the app
         run: swift build -c release
+
+  server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - name: Server tests
+        working-directory: server
+        run: npm test

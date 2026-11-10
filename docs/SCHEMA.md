@@ -32,7 +32,25 @@ Migrations live in `Sources/BenchLogKit/Library.swift`. They are only ever added
 Repair `status` values, in workflow order: `intake`, `diagnosing`, `awaitingApproval`, `waitingOnParts`,
 `inProgress`, `ready`, `pickedUp`, `cancelled`. The last two close a repair.
 
-## Sync notes (v2)
+## Sync (v2)
+
+The server (`server/`) stores rows without knowing their columns: each is `table`, `id`,
+`updatedAt`, `deletedAt`, and `data` (the row's columns as JSON, the same names as here).
+
+- Push: a row is stored when its `updatedAt` is later than the server's copy (last writer
+  wins). Equal or older is kept out. Each stored row gets the next server sequence number.
+- Pull: every row with a sequence number after the client's cursor, oldest first, in pages.
+  A client applies a pulled row when it is newer than its own and never queues it again.
+- Deleting is a row with `deletedAt` set; Empty Trash on one device does not delete rows
+  on the server.
+- Numbers: the server keeps `ticket`, `invoice`, and `credit` sequences. Tickets come in
+  blocks a client keeps for offline check-in; invoice and credit numbers one at a time.
+  `start` moves a sequence forward, never back.
+- Files: an attachment's bytes go to `/v1/files/<attachment id>` with their SHA-256.
+- The first client claims the server with its `libraryId`; a server holds one library.
+- Search (`search`) is derived on each device and never synced.
+
+## Sync notes
 
 - Ticket numbers come from one counter. With more than one device creating repairs, the server should hand out numbers, or each client should take a block of them.
 - Invoice numbers have the same problem as ticket numbers, and the law wants them without gaps: let the server hand them out.

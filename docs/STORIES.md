@@ -618,7 +618,8 @@ Acceptance:
 - [unit] Every request needs the library token (`Authorization: Bearer`); the token is made on first start, saved in the data folder, and printed once.
 - [unit] Files: an attachment's bytes are uploaded and downloaded by attachment id, checked by SHA-256.
 - [manual] `docker build` and `docker run` with a data volume; README says how to reach it with Tailscale.
-Status: todo
+Built: `server/` (`src/store.js` rows, sequences, files; `src/server.js` the API; `src/main.js`; `Dockerfile` on node:24-alpine; README with Docker, plain Node, Tailscale, backups). 10 tests under `node --test`, in CI. The sequences (S-050's server side) are in too. `docker build` not yet tried: Docker was not running on this Mac.
+Status: done
 
 ### S-050 Numbers from the server
 As the user, I never get two repairs with the same ticket number, or a gap or a duplicate in my invoice numbers, when two devices work at once.

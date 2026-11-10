@@ -53,3 +53,10 @@
 ## Data
 
 See `docs/SCHEMA.md`. Ids are lowercase UUID text, dates are UTC text, and money is integer cents, so other clients and a sync server can read the file.
+
+## Server (`server/`)
+
+A zero-dependency Node service (Node 24, `node:sqlite`) that the apps sync with. It does not
+know the schema: `src/store.js` keeps rows by table and id (last writer wins by `updatedAt`),
+the number sequences, and file records; `src/server.js` is the HTTP API behind one bearer
+token; `src/main.js` reads the environment and starts it. Tests: `cd server && npm test`.
