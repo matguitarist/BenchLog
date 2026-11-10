@@ -21,7 +21,7 @@ struct PartsPage: View {
                     detail
                         .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .searchable(text: $model.partSearch, prompt: Text("Name, SKU, vendor, or location"))
+                .searchable(text: $model.partSearch, prompt: Text("Name, SKU, barcode, vendor, or location"))
             case .toOrder, .incoming:
                 orders
             case .restock:
@@ -56,6 +56,10 @@ struct PartsPage: View {
                         .disabled(model.lowStockCount == 0)
                         .help("Put every low part on its vendor’s draft, enough to reach twice its threshold")
                 }
+            }
+            ToolbarItem {
+                Button("Add by Barcode", systemImage: "barcode.viewfinder") { model.sheet = .addByBarcode() }
+                    .help("Scan boxes to add them to the inventory (⇧⌘B)")
             }
             ToolbarItem {
                 Button("New Part", systemImage: "plus") { model.sheet = .newPart }
@@ -210,6 +214,7 @@ extension PartKind {
         case .accessory: String(localized: "Accessories")
         case .cable: String(localized: "Cables")
         case .controller: String(localized: "Controllers")
+        case .game: String(localized: "Games")
         case .supply: String(localized: "Supplies")
         }
     }
@@ -223,32 +228,19 @@ struct PartDetail: View {
     @State private var part: Part?
     @State private var fits: [PartFit] = []
     @State private var repairs: [PartRepairRow] = []
-    @State private var wide = false
-
-    /// From this width the details split into two columns.
-    private nonisolated static let wideWidth: CGFloat = 880
 
     var body: some View {
         Group {
             if let part {
-                if wide {
-                    HStack(spacing: 0) {
-                        Form { main(part, header: Text("Details")) }.formStyle(.grouped)
-                        Form { side(part) }.formStyle(.grouped)
-                    }
-                } else {
-                    Form {
-                        main(part, header: nil)
-                        side(part)
-                    }
-                    .formStyle(.grouped)
+                TwoColumnForm { wide in
+                    main(part, header: wide ? Text("Details") : nil)
+                } side: {
+                    side(part)
                 }
             } else {
                 ContentUnavailableView("No Part Selected", systemImage: "shippingbox")
             }
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onGeometryChange(for: Bool.self) { $0.size.width >= Self.wideWidth } action: { wide = $0 }
         .task(id: model.dataVersion) {
             part = model.read(nil) { try $0.part(partID) }
             fits = model.read([]) { try $0.fits(of: partID) }
@@ -273,6 +265,7 @@ struct PartDetail: View {
             LabeledContent("Kind", value: part.kind.title)
             if let condition = part.condition { LabeledContent("Condition", value: condition.title) }
             if !part.sku.isEmpty { LabeledContent("SKU") { Text(part.sku).monospaced().textSelection(.enabled) } }
+            if !part.barcode.isEmpty { LabeledContent("Barcode") { Text(part.barcode).monospaced().textSelection(.enabled) } }
             if !part.vendor.isEmpty { LabeledContent("Vendor", value: part.vendor) }
             if let url = URL(string: part.url), !part.url.isEmpty {
                 LabeledContent("Link") { Link(url.host() ?? part.url, destination: url) }

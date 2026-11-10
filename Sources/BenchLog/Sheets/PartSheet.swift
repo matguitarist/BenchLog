@@ -20,6 +20,7 @@ struct PartSheet: View {
     @State private var condition: PartCondition?
     @State private var location = ""
     @State private var notes = ""
+    @State private var barcode = ""
     @State private var fits: [PartFit] = []
     @State private var fitDraft = DeviceDraft()
     @State private var showErrors = false
@@ -46,6 +47,10 @@ struct PartSheet: View {
                         ForEach(PartCondition.allCases) { Text($0.title).tag(PartCondition?.some($0)) }
                     }
                     TextField("SKU", text: $sku)
+                    TextField("Barcode", text: $barcode, prompt: Text("UPC or EAN"))
+                    if showErrors, !barcodeIsValid {
+                        Text("That is not a barcode. Check the digits, or leave it empty.").font(.callout).foregroundStyle(.red)
+                    }
                     TextField("Vendor", text: $vendor)
                     TextField("Link", text: $url, prompt: Text("https://…"))
                     TextField("Location", text: $location, prompt: Text("Shelf, bin, or drawer"))
@@ -97,6 +102,10 @@ struct PartSheet: View {
         .onAppear(perform: load)
     }
 
+    private var barcodeIsValid: Bool {
+        barcode.trimmingCharacters(in: .whitespaces).isEmpty || BarcodeLookup.normalized(barcode) != nil
+    }
+
     private func load() {
         if let partID, let part = model.read(nil, { try $0.part(partID) }) {
             existing = part
@@ -112,6 +121,7 @@ struct PartSheet: View {
             condition = part.condition
             location = part.location
             notes = part.notes
+            barcode = part.barcode
             fits = model.read([]) { try $0.fits(of: partID) }
             if let last = fits.last {
                 fitDraft.category = last.category
@@ -123,7 +133,7 @@ struct PartSheet: View {
 
     private func save() {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
-        guard !trimmed.isEmpty else {
+        guard !trimmed.isEmpty, barcodeIsValid else {
             showErrors = true
             return
         }
@@ -137,6 +147,7 @@ struct PartSheet: View {
         part.quantity = quantity
         part.lowStockThreshold = threshold
         part.kind = kind
+        part.barcode = barcode
         part.condition = condition
         part.location = location.trimmingCharacters(in: .whitespaces)
         part.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines)

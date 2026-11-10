@@ -30,11 +30,13 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Photo | An image attachment | picture, image |
 | File | A non-image attachment (PDF, boardview, …) | document, attachment |
 | Part | A component kept in stock or ordered for a repair | component, item, SKU |
-| Kind | What a part is: Part, Accessory, Cable, Controller, Supply (Type : Pièce, Accessoire, Câble, Manette, Fourniture) | type, category, class |
+| Kind | What a part is: Part, Accessory, Cable, Controller, Game, Supply (Type : Pièce, Accessoire, Câble, Manette, Jeu, Fourniture) | type, category, class |
 | Condition (part) | The state a part is sold in: New, Used, Refurbished (Neuf, Usagé, Remis à neuf) | state, grade |
 | Location | Where a part sits in the shop: a shelf, a bin, a drawer (Emplacement) | bin, place, storage |
 | Price | What a customer pays for one part (Prix); Cost is what the shop paid | selling price, vending price, retail |
 | Margin | A part's price less its cost, with the share of the price (Marge) | profit, markup |
+| Barcode | The UPC or EAN printed on a part's box (Code-barres); the SKU is the shop's or vendor's own code | UPC field, scan code |
+| Add by Barcode | Scan boxes to put them in the inventory, one unit per scan; a new barcode is looked up online (Ajouter par code-barres) | scan, import, quick add |
 | Starter Parts | The usual parts, accessories, cables, and controllers of a console, added at zero stock with a suggested price (Pièces de départ) | template, preset, sample parts |
 | Catalog | The brands, models, and revisions the device fields suggest (Catalogue) | list, database |
 | Merge Into | Rename a catalog name to one that exists, so the two become one | combine, join |

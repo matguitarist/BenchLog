@@ -3,7 +3,7 @@ import GRDB
 
 /// What a part is, for the inventory's icons and filter.
 public enum PartKind: String, Codable, CaseIterable, Sendable, Identifiable {
-    case part, accessory, cable, controller, supply
+    case part, accessory, cable, controller, game, supply
     public var id: String { rawValue }
 }
 
@@ -35,11 +35,14 @@ public struct Part: BenchRecord {
     /// Where it sits in the shop: a shelf, a bin, a drawer.
     public var location: String = ""
     public var notes: String = ""
+    /// The UPC or EAN on the box, digits only; '' when it has none.
+    public var barcode: String = ""
 
     public init(id: UUID = UUID(), name: String, sku: String = "", vendor: String = "", url: String = "",
                 costCents: Int? = nil, priceCents: Int? = nil, quantity: Int = 0, lowStockThreshold: Int = 0,
                 kind: PartKind = .part, condition: PartCondition? = nil, location: String = "", notes: String = "",
-                now: Date = .now) {
+                barcode: String = "", now: Date = .now) {
+        self.barcode = barcode
         self.kind = kind
         self.condition = condition
         self.location = location
@@ -138,7 +141,7 @@ extension Library {
             let text = search.trimmingCharacters(in: .whitespaces)
             if !text.isEmpty {
                 request = request.filter(Column("name").like("%\(text)%") || Column("sku").like("%\(text)%") || Column("vendor").like("%\(text)%")
-                                         || Column("location").like("%\(text)%"))
+                                         || Column("location").like("%\(text)%") || Column("barcode").like("%\(text)%"))
             }
             if let kind { request = request.filter(Column("kind") == kind.rawValue) }
             if lowOnly {
@@ -152,6 +155,22 @@ extension Library {
         try db.read { try Part.fetchOne($0, key: id.stored) }
     }
 
+    /// The part with this barcode (a 12-digit UPC and its 13-digit EAN are the same code).
+    public func part(barcode: String) throws -> Part? {
+        guard let code = BarcodeLookup.normalized(barcode) else { return nil }
+        return try db.read { db in
+            try Part.filter(Column("deletedAt") == nil && [code, "0" + code].contains(Column("barcode")))
+                .order(Column("createdAt")).fetchOne(db)
+        }
+    }
+
+    /// One more unit of a scanned part goes on the shelf, recorded as received.
+    public func receiveScanned(_ partID: UUID, now: Date = .now) throws {
+        try db.write { db in
+            _ = try Self.moveStock(db, partID: partID, by: 1, reason: .received, from: StockSource(note: "Barcode"), now: now)
+        }
+    }
+
     public func lowStockCount() throws -> Int {
         try parts(lowOnly: true).count
     }
@@ -160,6 +179,7 @@ extension Library {
     @discardableResult
     public func save(_ part: Part, fits: [PartFit], now: Date = .now) throws -> Part {
         var part = part
+        part.barcode = BarcodeLookup.normalized(part.barcode) ?? ""
         part.quantity = max(0, part.quantity)
         part.updatedAt = now
         try db.write { db in

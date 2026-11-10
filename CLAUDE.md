@@ -24,7 +24,7 @@ photos, notes, and invoices printed in Québec French. Mac first; an iPhone/iPad
 - Unit tests: `swift test --scratch-path ~/Library/Developer/BenchLog/test-build`.
 - Self-test (the app's real functions on a /tmp store): `tools/selftest.sh`. Exit 0 when every check passes. Add a check for every story with logic in `SelfTest.swift`.
 - After every UI change, take snapshots with sample data and look at them: `tools/snap.sh`.
-  It writes `/tmp/BenchLog-shots/<page>-light.png` and `-dark.png` for every sidebar page, and `settings-<tab>-light.png` and `-dark.png` for every Settings tab, then quits. `APP_SNAPSHOT_PAGES=all,settings tools/snap.sh` limits the pages. `APP_SNAPSHOT_MIN=1` shoots the window at its smallest size.
+  It writes `/tmp/BenchLog-shots/<page>-light.png` and `-dark.png` for every sidebar page, and `settings-<tab>-light.png` and `-dark.png` for every Settings tab, then quits. `APP_SNAPSHOT_PAGES=all,settings tools/snap.sh` limits the pages. `APP_SNAPSHOT_MIN=1` shoots the window at its smallest size. `APP_SNAPSHOT_SIZE=1600x1000` shoots a wide window (detail pages go to two columns from 880 pt).
   For a panel, sheet, or popover, add a capture to `Snapshot.swift` like the Settings loop.
 - Snapshots, seed data, and the self-test refuse to run without `APP_STORE` in /tmp.
 - Never test against the real library in `~/Library/Application Support/BenchLog/`.

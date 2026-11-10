@@ -142,7 +142,7 @@ struct DeviceDetail: View {
     var body: some View {
         Group {
             if let device {
-                Form {
+                TwoColumnForm { wide in
                     Section {
                         HStack(alignment: .firstTextBaseline, spacing: Space.sm) {
                             Image(systemName: device.category.symbol)
@@ -172,6 +172,8 @@ struct DeviceDetail: View {
                         if !device.colour.isEmpty { LabeledContent("Colour", value: device.colour) }
                         if !device.condition.isEmpty { LabeledContent("Condition") { Text(device.condition).textSelection(.enabled) } }
                         PasscodeView(passcode: device.passcode, isPattern: device.passcodeIsPattern)
+                    } header: {
+                        if wide { Text("Details") }
                     }
                     Section {
                         if repairs.isEmpty {
@@ -206,6 +208,7 @@ struct DeviceDetail: View {
                     if customer?.isShop == true || device.disposition == .sold {
                         ShopSection(device: device).id("\(device.id) \(device.customerId)")
                     }
+                } side: {
                     Section("Photos and Files") {
                         AttachmentsSection(owner: .device, ownerID: device.id)
                     }
@@ -213,7 +216,6 @@ struct DeviceDetail: View {
                         Timeline(owner: .device, ownerID: device.id)
                     }
                 }
-                .formStyle(.grouped)
                 .acceptsAttachments(owner: .device, id: device.id, model: model)
             } else {
                 ContentUnavailableView("No Device Selected", systemImage: "laptopcomputer.and.iphone")

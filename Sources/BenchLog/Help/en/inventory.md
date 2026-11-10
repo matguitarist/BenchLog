@@ -9,6 +9,16 @@ The **Parts** page lists what you keep on the shelf, with the quantity, the cost
 - **Cost** is what you paid for one, **Price** what a customer pays. **Margin** is the difference.
 - **On Repairs** lists the repairs the part is on.
 
+## Add by Barcode
+
+**File > Add by Barcode…** (⇧⌘B) adds boxed games, controllers, and accessories by the UPC or EAN on the box. Scan with a USB or Bluetooth scanner, or type the digits and press Return.
+
+- A barcode the inventory knows adds one to that part's stock.
+- A new barcode is looked up at upcitemdb.com and becomes a part with one in stock. Only the barcode is sent. Use **Edit…** to set its kind, cost, and price.
+- If nothing is found, type its name. The free lookup allows 100 barcodes a day.
+
+A loose cartridge or disc has no barcode: add it with **New Part** and the kind **Game**.
+
 ## Starter parts
 
 **File > Add Starter Parts** adds the usual parts, accessories, cables, and controllers of a console (Sony PS1, Sony PS2, Microsoft Xbox) at zero stock, with a suggested price. Parts you already have are left as they are. Then use **Count…** for what is on the shelf, and set your own cost and price.

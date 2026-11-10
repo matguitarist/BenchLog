@@ -9,6 +9,16 @@ La page **Pièces** liste ce que vous gardez sur l’étagère, avec la quantit�
 - Le **coût** est ce que vous avez payé pour une unité, le **prix** ce que paie le client. La **marge** est la différence.
 - **Sur des réparations** liste les réparations qui utilisent la pièce.
 
+## Ajouter par code-barres
+
+**Fichier > Ajouter par code-barres…** (⇧⌘B) ajoute les jeux, manettes et accessoires en boîte à partir du CUP ou de l’EAN sur la boîte. Utilisez un lecteur USB ou Bluetooth, ou tapez les chiffres et appuyez sur Retour.
+
+- Un code-barres que l’inventaire connaît ajoute une unité au stock de cette pièce.
+- Un nouveau code-barres est recherché sur upcitemdb.com et devient une pièce avec une unité en stock. Seul le code-barres est envoyé. Utilisez **Modifier…** pour régler son type, son coût et son prix.
+- Si rien n’est trouvé, tapez son nom. La recherche gratuite permet 100 codes-barres par jour.
+
+Une cartouche ou un disque sans boîte n’a pas de code-barres : ajoutez-le avec **Nouvelle pièce** et le type **Jeu**.
+
 ## Pièces de départ
 
 **Fichier > Ajouter des pièces de départ** ajoute les pièces, accessoires, câbles et manettes habituels d’une console (Sony PS1, Sony PS2, Microsoft Xbox) avec un stock à zéro et un prix suggéré. Les pièces que vous avez déjà ne changent pas. Utilisez ensuite **Compter…** pour ce qui est sur l’étagère, et mettez votre coût et votre prix.

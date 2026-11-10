@@ -198,6 +198,28 @@ extension AppModel {
         sidebar = .parts
     }
 
+    /// One scan of Add by Barcode: a part the inventory knows gets one more in stock; a new
+    /// barcode is looked up and becomes a part with one in stock.
+    func addScanned(_ text: String) async -> ScanResult {
+        guard let barcode = BarcodeLookup.normalized(text) else { return .invalid }
+        if let part = read(nil, { try $0.part(barcode: barcode) }) {
+            write("Scanned part \(part.id.stored): +1") { try $0.receiveScanned(part.id) }
+            return .added(read(nil) { try $0.part(part.id) } ?? part, isNew: false)
+        }
+        do {
+            guard let product = try await productLookup(barcode) else { return .unknown(barcode: barcode, problem: nil) }
+            guard let part = save(Part(name: product.title, quantity: 1, kind: product.suggestedKind, barcode: barcode), fits: []) else {
+                return .unknown(barcode: barcode, problem: nil)
+            }
+            return .added(part, isNew: true)
+        } catch BarcodeLookupError.limitReached {
+            return .unknown(barcode: barcode, problem: String(localized: "The lookup service’s daily limit is reached. Type the name instead."))
+        } catch {
+            log.post(.error, "Barcode lookup failed: \(error.localizedDescription)", source: "Barcode")
+            return .unknown(barcode: barcode, problem: String(localized: "The lookup did not answer. Type the name instead."))
+        }
+    }
+
     func count(_ partID: UUID, counted: Int, note: String) {
         write("Counted part \(partID.stored): \(counted)") { try $0.count(partID, counted: counted, note: note) }
     }

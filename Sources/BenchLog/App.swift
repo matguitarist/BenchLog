@@ -23,7 +23,8 @@ struct BenchLogApp: App {
                 .environment(model)
                 .themed()
                 .overlay { if GridOverlay.enabled { GridOverlay() } }
-                .frame(minWidth: 820, minHeight: 520)
+                // Wide enough for the sidebar, a list, and a detail at their smallest.
+                .frame(minWidth: 944, minHeight: 520)
         }
         .defaultSize(width: 1080, height: 720)
         .windowToolbarStyle(.unified)
@@ -62,6 +63,9 @@ struct BenchLogApp: App {
             CommandGroup(after: .newItem) {
                 Button("New Part…") { model.sheet = .newPart }
                     .keyboardShortcut("n", modifiers: [.command, .control])
+                    .disabled(model.library == nil || model.sheet != nil)
+                Button("Add by Barcode…") { model.sheet = .addByBarcode() }
+                    .keyboardShortcut("b", modifiers: [.command, .shift])
                     .disabled(model.library == nil || model.sheet != nil)
                 Menu("Add Starter Parts") { StarterPartsButtons(model: model) }
                     .disabled(model.library == nil || model.sheet != nil)

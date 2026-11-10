@@ -201,6 +201,26 @@
         }
       }
     },
+    "Add by Barcode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter par code-barres"
+          }
+        }
+      }
+    },
+    "Add by Barcode…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter par code-barres…"
+          }
+        }
+      }
+    },
     "Add Caption…": {
       "localizations": {
         "fr": {
@@ -541,6 +561,16 @@
         }
       }
     },
+    "Added": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutées"
+          }
+        }
+      }
+    },
     "Address": {
       "localizations": {
         "fr": {
@@ -857,6 +887,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sauvegardes"
+          }
+        }
+      }
+    },
+    "Barcode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Code-barres"
           }
         }
       }
@@ -2043,6 +2083,16 @@
         }
       }
     },
+    "Each scan adds one to stock. A new barcode is looked up at upcitemdb.com; only the barcode is sent.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chaque lecture ajoute une unité au stock. Un nouveau code-barres est recherché sur upcitemdb.com; seul le code-barres est envoyé."
+          }
+        }
+      }
+    },
     "Edit > Undo brings back what you just moved to the Trash.": {
       "localizations": {
         "fr": {
@@ -2379,6 +2429,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Affiché au premier démarrage du serveur"
+          }
+        }
+      }
+    },
+    "Game": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeu"
+          }
+        }
+      }
+    },
+    "Games": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeux"
           }
         }
       }
@@ -2995,6 +3065,16 @@
         }
       }
     },
+    "Leave this barcode out": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laisser ce code-barres de côté"
+          }
+        }
+      }
+    },
     "Library Key": {
       "localizations": {
         "fr": {
@@ -3325,6 +3405,16 @@
         }
       }
     },
+    "Name, SKU, barcode, vendor, or location": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom, SKU, code-barres, fournisseur ou emplacement"
+          }
+        }
+      }
+    },
     "Name, SKU, or vendor": {
       "localizations": {
         "fr": {
@@ -3341,16 +3431,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nom, téléphone ou courriel"
-          }
-        }
-      }
-    },
-    "Name, SKU, vendor, or location": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nom, SKU, fournisseur ou emplacement"
           }
         }
       }
@@ -3421,6 +3501,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nouvelle pièce"
+          }
+        }
+      }
+    },
+    "New part · %lld in stock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle pièce · %lld en stock"
           }
         }
       }
@@ -3621,6 +3711,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucune pièce"
+          }
+        }
+      }
+    },
+    "No product found for %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun produit trouvé pour %@"
           }
         }
       }
@@ -5415,6 +5515,36 @@
         }
       }
     },
+    "Scan boxes to add them to the inventory (⇧⌘B)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lire le code-barres des boîtes pour les ajouter à l’inventaire (⇧⌘B)"
+          }
+        }
+      }
+    },
+    "Scan or type a UPC or EAN": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lisez ou tapez un CUP ou un EAN"
+          }
+        }
+      }
+    },
+    "Set its kind, cost, and price": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Régler son type, son coût et son prix"
+          }
+        }
+      }
+    },
     "Shelf, bin, or drawer": {
       "localizations": {
         "fr": {
@@ -5441,6 +5571,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Afficher un seul type de pièce"
+          }
+        }
+      }
+    },
+    "Skip": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Passer"
           }
         }
       }
@@ -6215,6 +6355,26 @@
         }
       }
     },
+    "That is not a barcode. Check the digits, or leave it empty.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce n’est pas un code-barres. Vérifiez les chiffres, ou laissez le champ vide."
+          }
+        }
+      }
+    },
+    "That is not a barcode. Check the digits.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce n’est pas un code-barres. Vérifiez les chiffres."
+          }
+        }
+      }
+    },
     "The customer accepts: the repair moves on and a note records it": {
       "localizations": {
         "fr": {
@@ -6341,6 +6501,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "La clé de bibliothèque ne correspond pas à la bibliothèque de ce serveur. Copiez-la depuis Réglages > Synchro sur un appareil déjà connecté."
+          }
+        }
+      }
+    },
+    "The lookup did not answer. Type the name instead.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La recherche n’a pas répondu. Tapez plutôt le nom."
+          }
+        }
+      }
+    },
+    "The lookup service’s daily limit is reached. Type the name instead.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La limite quotidienne du service de recherche est atteinte. Tapez plutôt le nom."
           }
         }
       }
@@ -6835,6 +7015,16 @@
         }
       }
     },
+    "UPC or EAN": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CUP ou EAN"
+          }
+        }
+      }
+    },
     "Updates": {
       "localizations": {
         "fr": {
@@ -6971,6 +7161,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce qu’un client paie pour une"
+          }
+        }
+      }
+    },
+    "What is it?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qu’est-ce que c’est?"
           }
         }
       }

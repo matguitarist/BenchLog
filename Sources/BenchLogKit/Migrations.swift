@@ -459,6 +459,13 @@ extension Library {
                 ALTER TABLE part ADD COLUMN notes TEXT NOT NULL DEFAULT '';
                 """)
         }
+        migrator.registerMigration("v17-part-barcode") { db in
+            // The UPC or EAN on a part's box, for Add by Barcode.
+            try db.execute(sql: """
+                ALTER TABLE part ADD COLUMN barcode TEXT NOT NULL DEFAULT '';
+                CREATE INDEX part_barcode ON part(barcode) WHERE barcode <> '';
+                """)
+        }
         return migrator
     }
 }

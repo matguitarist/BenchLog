@@ -144,6 +144,11 @@ enum SeedData {
             try library.save(stocked, fits: library.fits(of: stocked.id))
         }
 
+        // A game added by its barcode.
+        try library.save(Part(name: "The Legend of Zelda: Breath of the Wild - Nintendo Switch", costCents: 2500, priceCents: 4999,
+                              quantity: 2, kind: .game, condition: .used, location: "Shelf A1", barcode: "045496590420"),
+                         fits: [PartFit(category: .console, brand: "Nintendo", model: "Switch")])
+
         // Restock: one received, one on its way, and drafts for every low part.
         if let received = try library.orderMore(paste.id, quantity: 10) {
             try library.markOrdered(received)

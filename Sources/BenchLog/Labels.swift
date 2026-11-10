@@ -102,6 +102,7 @@ extension PartKind {
         case .accessory: String(localized: "Accessory")
         case .cable: String(localized: "Cable")
         case .controller: String(localized: "Controller")
+        case .game: String(localized: "Game")
         case .supply: String(localized: "Supply")
         }
     }
@@ -112,6 +113,7 @@ extension PartKind {
         case .accessory: "memorychip"
         case .cable: "cable.connector"
         case .controller: "gamecontroller"
+        case .game: "opticaldisc"
         case .supply: "drop"
         }
     }

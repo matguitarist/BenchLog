@@ -85,7 +85,7 @@ struct CustomerDetail: View {
     var body: some View {
         Group {
             if let customer {
-                Form {
+                TwoColumnForm { wide in
                     Section {
                         HStack(alignment: .firstTextBaseline) {
                             Text(customer.name)
@@ -99,6 +99,8 @@ struct CustomerDetail: View {
                         if !customer.email.isEmpty { LabeledContent("Email") { Text(customer.email).textSelection(.enabled) } }
                         if !customer.address.isEmpty { LabeledContent("Address") { Text(customer.address).textSelection(.enabled) } }
                         LabeledContent("Documents language", value: customer.documentsLanguage.title)
+                    } header: {
+                        if wide { Text("Details") }
                     }
                     Section {
                         if devices.isEmpty {
@@ -138,6 +140,7 @@ struct CustomerDetail: View {
                                 .help("Sell parts or items to this customer without a repair (⌥⌘N)")
                         }
                     }
+                } side: {
                     Section("Photos and Files") {
                         AttachmentsSection(owner: .customer, ownerID: customer.id)
                     }
@@ -145,7 +148,6 @@ struct CustomerDetail: View {
                         Timeline(owner: .customer, ownerID: customer.id)
                     }
                 }
-                .formStyle(.grouped)
                 .acceptsAttachments(owner: .customer, id: customer.id, model: model)
             } else {
                 ContentUnavailableView("No Customer Selected", systemImage: "person.2")

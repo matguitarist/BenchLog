@@ -774,12 +774,40 @@ Acceptance:
 Built: `PartDetail` measures its width (`onGeometryChange`) and lays out one or two grouped forms. Snapshots: parts-inventory (wide), parts-inventory with APP_SNAPSHOT_MIN=1 (one column).
 Status: done
 
+### S-064 Add by Barcode
+As the user, I scan the barcode on a game or accessory box and it goes into the inventory.
+Depends: S-061
+Acceptance:
+- [unit] A part has a barcode: a UPC or EAN, digits only, refused when its check digit is wrong; a 12-digit UPC and its 13-digit EAN find the same part. Search in Parts matches it.
+- [unit] A lookup answer from the barcode service becomes a product (title, brand, category) with a guessed kind; Game is a kind.
+- [self] Add by Barcode (File menu ⇧⌘B, Parts toolbar): a barcode the inventory knows adds one to its stock, recorded as Received; a new one is looked up and becomes a part with one in stock; one the service does not know asks for a name; a wrong code is refused.
+- [snap] The sheet lists what was added, newest first, each with Edit….
+- [manual] A USB or Bluetooth scanner (it types the digits and Return) adds box after box without touching the keyboard; a real lookup at upcitemdb.com answers.
+UX:
+- Flow: Parts -> Add by Barcode -> scan, scan, scan -> Edit… on a new part for its cost and price -> Done
+- Surface: a sheet (a short task that keeps the field focused for the scanner)
+- States: looking up (a spinner); "That is not a barcode. Check the digits."; "No product found for …" with Name, Skip, Add Part; the service's daily limit or no network: the same, with why
+- Words: "Add by Barcode", "Barcode", "Added", "Skip", "Add Part", "Done"
+Built: `BarcodeLookup.swift` (`normalized`, `request`, `parse`, `find` at UPCitemdb's free endpoint: no account, 100 lookups a day, only the barcode leaves the Mac; `ProductInfo.suggestedKind`). Migration v17-part-barcode. `Library.part(barcode:)`, `receiveScanned`. `Sheets/BarcodeSheet.swift`, `AppModel.addScanned` (the lookup is `productLookup`, replaced in the self-test so it never uses the network). Edit Part has Barcode. Checked by hand with curl: the service answers for a Switch game. Not yet tried: a hardware scanner. Not built: scanning with a camera.
+Status: done
+
+### S-065 Customers and Devices use a wide window; the smallest window hides nothing
+As the user, every detail page fills a wide window, and at its smallest the window still shows the whole sidebar.
+Depends: S-063
+Acceptance:
+- [snap] From 880 pt wide, a customer's and a device's page have two columns that start level: details and lists, beside Photos and Files and Notes.
+- [snap] At its smallest (944 pt wide) the window shows the sidebar, the list, and the detail whole on every page.
+Built: `UI/TwoColumnForm.swift`, used by PartDetail, CustomerDetail, and DeviceDetail. The window's minimum width goes from 820 to 944 (sidebar 180 + list + detail at their minimums). Snapshots: `APP_SNAPSHOT_SIZE=1600x1000` for the wide pages, `APP_SNAPSHOT_MIN=1` for the smallest.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
 - Boardview viewer (OpenBoardView-style) for .brd/.bdv/.fz files.
 - French app UI (the String Catalog already holds every string).
 - Customer SMS or email "your device is ready".
+- Scan a barcode with the Mac's or iPhone's camera (Add by Barcode takes a scanner or typing today).
+- Game prices from PriceCharting (a paid API) when adding by barcode.
 - Agent CLI/MCP (`benchlog repair list --open`).
 - Warranty tracking: open a repair as "warranty of #0042".
 

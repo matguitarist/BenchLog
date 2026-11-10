@@ -11,7 +11,8 @@ import SwiftUI
 /// Each PNG gets a <page>-<mode>-layout.json with the grid probes (tools/check-layout.swift).
 /// APP_SNAPSHOT_PAGES=overview,log limits the pages. Add "settings" to include Settings.
 /// Add APP_ACCENT=<id> to see the pages in another accent.
-/// Add APP_SNAPSHOT_MIN=1 to shrink the main window to its smallest size first.
+/// Add APP_SNAPSHOT_MIN=1 to shrink the main window to its smallest size first,
+/// or APP_SNAPSHOT_SIZE=1600x1000 for a wide window.
 enum Snapshot {
     static func runIfRequested(model: AppModel, openSettings: OpenSettingsAction, openWindow: OpenWindowAction) {
         let env = ProcessInfo.processInfo.environment
@@ -38,6 +39,13 @@ enum Snapshot {
                 main.setContentSize(NSSize(width: 1, height: 1))
                 try? await Task.sleep(for: .seconds(0.5))
             }
+            // APP_SNAPSHOT_SIZE=1600x1000 shoots the window at that size (a wide window, full screen).
+            if let size = env["APP_SNAPSHOT_SIZE"]?.split(separator: "x").compactMap({ Double($0) }), size.count == 2,
+               let main = NSApp.windows.first(where: { $0.canBecomeMain && !$0.isSheet }) {
+                main.setContentSize(NSSize(width: size[0], height: size[1]))
+                main.center()
+                try? await Task.sleep(for: .seconds(0.5))
+            }
             for mode in ["light", "dark"] {
                 NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
                 for page in SidebarItem.allCases where only?.contains(page.rawValue) ?? true {
@@ -51,6 +59,7 @@ enum Snapshot {
             let waiting = model.read(nil) { library in
                 try library.repairRows().first { try library.isWaitingOnParts($0.id) && $0.repair.status != .waitingOnParts }?.id
             }
+            let scannedGame = model.read(nil) { try $0.parts(kind: .game).first?.id }
             let guides = model.read([]) { try $0.guideRows() }
             let markdownGuide = guides.first { $0.guide.title == "Blinking Red Light" }?.id
             let pdfGuide = guides.first { $0.guide.format == .pdf }?.id
@@ -110,6 +119,7 @@ enum Snapshot {
                 ("repair-new-sheet", .repairs, .newRepair(customer: nil, device: nil)),
                 ("repair-new-for-customer-sheet", .customers, .newRepair(customer: customer, device: nil)),
                 ("part-edit-sheet", .parts, firstPart.map { .editPart($0) } ?? .newPart),
+                ("part-barcode-sheet", .parts, .addByBarcode(scanned: [scannedGame, firstPart].compactMap { $0 })),
                 ("counter-sale-sheet", .customers, .newCounterSale(customer: customer, items: Self.sampleSale(model))),
                 ("guide-edit-sheet", .guides, markdownGuide.map { .editGuide($0) } ?? .newPart),
                 ("guides-import-sheet", .guides, .importGuides(Self.sampleVault())),

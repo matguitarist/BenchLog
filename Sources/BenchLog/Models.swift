@@ -22,6 +22,8 @@ final class AppModel {
     var partSearch = ""
     /// The Inventory's kind filter; nil shows every kind.
     var partKind: PartKind?
+    /// Finds a product by its barcode; the self-test puts its own in place of the network.
+    var productLookup: @Sendable (String) async throws -> ProductInfo? = { try await BarcodeLookup.find($0) }
     var selectedPart: UUID?
     var guideSearch = ""
     /// Ready repairs with no paid invoice.
@@ -258,6 +260,8 @@ enum SheetKind: Identifiable, Hashable {
     case newRepair(customer: UUID?, device: UUID?)
     case newPart
     case editPart(UUID)
+    /// `scanned` parts show as already added (snapshots).
+    case addByBarcode(scanned: [UUID] = [])
     case editGuide(UUID)
     case importGuides(URL)
     /// `items` start the sale filled in (snapshots).

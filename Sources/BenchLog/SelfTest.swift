@@ -192,6 +192,23 @@ enum SelfTest {
                       model.read(0) { try $0.parts().count } == partsBefore + StarterSet.ps1.parts.count
                       && model.read(-1) { try $0.missingStarterParts([.ps1]) } == 0 && model.partKind == nil)
 
+                // S-064 Add by Barcode
+                model.productLookup = { barcode in
+                    barcode == "045496590420" ? ProductInfo(barcode: barcode, title: "Self-test game", category: "Video Games") : nil
+                }
+                let firstScan = await model.addScanned("0 45496 59042 0")
+                let secondScan = await model.addScanned("0045496590420")
+                if case .added(let game, true) = firstScan, case .added(let again, false) = secondScan {
+                    check("a new barcode is looked up and becomes a part with one in stock",
+                          game.kind == .game && game.quantity == 1 && game.barcode == "045496590420")
+                    check("scanning it again adds one to stock", again.id == game.id && again.quantity == 2)
+                } else {
+                    check("a scanned barcode adds a part, then one more", false)
+                }
+                let badScan = await model.addScanned("12345"), unknownScan = await model.addScanned("5030917181771")
+                check("a wrong code is refused and an unknown one asks for a name",
+                      badScan == .invalid && unknownScan == .unknown(barcode: "5030917181771", problem: nil))
+
                 // S-016 Catalog
                 model.renameCatalog(CatalogPath(category: .handheld, brand: "Nintendo", model: "Game Boy", revision: "Self-Test Edition"),
                                     to: "Self-Test Edition 2")
