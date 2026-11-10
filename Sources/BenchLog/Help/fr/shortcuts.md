@@ -9,7 +9,7 @@
 | ⌥⌘N | Nouvelle vente au comptoir |
 | ⇧⌘D | Ajouter un appareil au client |
 | ⌘F | Rechercher dans BenchLog |
-| ⌥⌘1 à ⌥⌘7 | Aller à une page de la barre latérale |
+| ⌥⌘1 à ⌥⌘8 | Aller à une page de la barre latérale |
 | ⌘[ et ⌘] | Précédent et Suivant |
 | ⌘, | Réglages |
 | ⌘? | Aide BenchLog |

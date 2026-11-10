@@ -14,7 +14,7 @@ struct ContentView: View {
         NavigationSplitView {
             sidebar
         } detail: {
-            page(model.sidebar ?? .repairs)
+            page(model.sidebar ?? .dashboard)
         }
         .overlay(alignment: .top) {
             if model.searching {
@@ -96,6 +96,7 @@ struct ContentView: View {
     @ViewBuilder
     private func page(_ item: SidebarItem) -> some View {
         switch item {
+        case .dashboard: DashboardPage()
         case .repairs: RepairsPage()
         case .customers: CustomersPage()
         case .devices: DevicesPage()

@@ -462,6 +462,7 @@ enum SelfTest {
             // S-051 to S-054 end to end: the real server, when Node and the source are here.
             await syncEndToEnd(model)
             await serverOnThisMac(model)
+            dashboard(model)
 
             for tab in SettingsTab.allCases {
                 model.settingsTab = tab
@@ -579,6 +580,37 @@ enum SelfTest {
         }
         host.stop(model)
         check("Stop disconnects and stops the server", !sync.isConnected && host.state == .off)
+    }
+
+    /// S-067: the Dashboard counts what the library holds, and its tiles open the lists behind them.
+    private static func dashboard(_ model: AppModel) {
+        guard let library = model.library, let before = try? library.dashboard() else {
+            check("the Dashboard reads the library", false)
+            return
+        }
+        check("the Dashboard counts the open repairs", before.openCount == model.openRepairCount && before.toCollectCount == model.toCollect.count,
+              "\(before.openCount) open, \(before.toCollectCount) to collect")
+        if let device = (try? library.deviceRows(matching: ""))?.first?.device,
+           let late = model.createRepair(deviceID: device.id, complaint: "Dashboard check",
+                                         promisedAt: Calendar.current.date(byAdding: .day, value: -3, to: .now)) {
+            let after = try? library.dashboard()
+            check("a repair past its promised date is Overdue on the Dashboard",
+                  after?.overdueCount == before.overdueCount + 1 && after?.attention.first { $0.id == late.id }?.reason == .overdue(days: 3))
+            model.setStatus(.ready, for: late.id, force: true)
+            check("once Ready it is To Collect, not Overdue",
+                  (try? library.dashboard())?.attention.first { $0.id == late.id }?.reason == .toCollect)
+        } else {
+            check("the Dashboard check opens a repair", false)
+        }
+        model.sidebar = .dashboard
+        model.show(.repairs, repairs: .ready)
+        check("a Dashboard tile opens its list", model.sidebar == .repairs && model.repairFilter == .ready)
+        model.goBack()
+        check("Back returns to the Dashboard", model.sidebar == .dashboard)
+        model.show(.parts, parts: .toOrder)
+        check("a Dashboard parts row opens its Parts tab", model.sidebar == .parts && model.partsTab == .toOrder)
+        model.partsTab = .inventory
+        model.repairFilter = .open
     }
 
     static func finish(code: Int32) {

@@ -276,7 +276,7 @@ extension Library {
         try db.read { db in
             let ids = try String.fetchAll(db, sql: """
                 SELECT id FROM repair WHERE status = 'ready' AND deletedAt IS NULL AND id NOT IN (
-                    SELECT repairId FROM invoice WHERE kind = 'invoice' AND paidAt IS NOT NULL AND deletedAt IS NULL
+                    SELECT repairId FROM invoice WHERE repairId IS NOT NULL AND kind = 'invoice' AND paidAt IS NOT NULL AND deletedAt IS NULL
                     AND id NOT IN (SELECT creditsInvoiceId FROM invoice WHERE creditsInvoiceId IS NOT NULL AND deletedAt IS NULL))
                 AND deviceId NOT IN (
                     SELECT d.id FROM device d JOIN customer c ON c.id = d.customerId WHERE c.isShop = 1)

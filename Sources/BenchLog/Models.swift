@@ -30,7 +30,7 @@ final class AppModel {
     var toCollect: Set<UUID> = []
     var selectedGuide: UUID?
 
-    var sidebar: SidebarItem? = .repairs
+    var sidebar: SidebarItem? = .dashboard
     var settingsTab: SettingsTab = .general
     var selectedRepair: UUID?
     var selectedCustomer: UUID?
@@ -205,6 +205,16 @@ final class AppModel {
         }
     }
 
+    /// Opens a page from the Dashboard, on the list asked for; Go > Back returns.
+    func show(_ page: SidebarItem, repairs filter: RepairFilter? = nil, parts tab: PartsTab? = nil) {
+        backStack.append(here)
+        forwardStack.removeAll()
+        if let filter { repairFilter = filter }
+        if let tab { partsTab = tab }
+        if page == .reports { reportPeriod = ReportPeriod(.month, containing: .now) }
+        sidebar = page
+    }
+
     /// Opens what a search result points at, and closes the search.
     func open(_ hit: SearchHit) {
         searching = false
@@ -288,12 +298,13 @@ enum PartsTab: String, CaseIterable, Identifiable {
 
 /// The sidebar pages. Snapshot mode walks through every case.
 enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
-    case repairs, customers, devices, parts, guides, reports, log
+    case dashboard, repairs, customers, devices, parts, guides, reports, log
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
+        case .dashboard: String(localized: "Dashboard")
         case .repairs: String(localized: "Repairs")
         case .customers: String(localized: "Customers")
         case .devices: String(localized: "Devices")
@@ -306,6 +317,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
 
     var symbol: String {
         switch self {
+        case .dashboard: "square.grid.2x2"
         case .repairs: "wrench.and.screwdriver"
         case .customers: "person.2"
         case .devices: "laptopcomputer.and.iphone"

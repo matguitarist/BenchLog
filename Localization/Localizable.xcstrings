@@ -8015,6 +8015,196 @@
           }
         }
       }
+    },
+    "%lld d on the bench": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld j sur l’établi"
+          }
+        }
+      }
+    },
+    "%lld more in Repairs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld de plus dans Réparations"
+          }
+        }
+      }
+    },
+    "By Status": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Par statut"
+          }
+        }
+      }
+    },
+    "Dashboard": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tableau de bord"
+          }
+        }
+      }
+    },
+    "Needs Attention": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À surveiller"
+          }
+        }
+      }
+    },
+    "Nothing needs attention": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien à surveiller"
+          }
+        }
+      }
+    },
+    "Nothing on the Bench": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien sur l’établi"
+          }
+        }
+      }
+    },
+    "Open %@ in Parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir %@ dans Pièces"
+          }
+        }
+      }
+    },
+    "Open Repairs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réparations en cours"
+          }
+        }
+      }
+    },
+    "Open repairs whose promised date has passed. Show the open repairs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réparations en cours dont la date promise est passée. Afficher les réparations en cours"
+          }
+        }
+      }
+    },
+    "Open this month in Reports": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir ce mois dans Rapports"
+          }
+        }
+      }
+    },
+    "Overdue": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En retard"
+          }
+        }
+      }
+    },
+    "Overdue %lld d": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En retard de %lld j"
+          }
+        }
+      }
+    },
+    "Promised Today": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Promise aujourd’hui"
+          }
+        }
+      }
+    },
+    "Show Repairs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les réparations"
+          }
+        }
+      }
+    },
+    "Show Reports": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les rapports"
+          }
+        }
+      }
+    },
+    "Show the open repairs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les réparations en cours"
+          }
+        }
+      }
+    },
+    "Show the repairs ready for pickup": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les réparations prêtes à ramasser"
+          }
+        }
+      }
+    },
+    "Show the repairs ready for pickup; To Collect marks the ones with no paid invoice": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher les réparations prêtes à ramasser ; À encaisser marque celles sans facture payée"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

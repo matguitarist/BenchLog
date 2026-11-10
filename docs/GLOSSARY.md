@@ -82,7 +82,10 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Connect / Replace This Mac's Library | Link this library to the server; when the server holds another library, back this one up and take the server's | join, merge, link |
 | Refund | Paying a credit note back to the customer, with the method; « Remboursement » | reimbursement, payback |
 | Invoice Sale | Invoice a sold shop device to its buyer, with taxes; « Facturer la vente » | bill of sale, receipt |
-| Reports | The sidebar page with what was invoiced and the tax collected in a month, quarter, or year (Rapports) | dashboard, analytics, accounting |
+| Reports | The sidebar page with what was invoiced and the tax collected in a month, quarter, or year (Rapports) | analytics, accounting |
+| Dashboard | The first sidebar page: the open repairs, the ones that need attention, the parts to deal with, and the month's sales (Tableau de bord) | home, overview, summary |
+| Needs Attention | Open repairs that ask for something: Overdue, Promised Today, To Collect, Awaiting Approval, or over 14 days on the bench (À surveiller) | alerts, to do, urgent |
+| Overdue | An open repair, not Ready, whose promised date has passed (En retard) | late, past due |
 | Collected / Owed | Invoices paid less credit notes refunded / invoices neither paid nor credited (Encaissé / À recevoir) | revenue, receivables |
 
 ## Statuses (in order)

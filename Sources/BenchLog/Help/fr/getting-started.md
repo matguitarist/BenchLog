@@ -4,6 +4,7 @@ BenchLog suit chaque travail de votre établi, de l’arrivée d’un appareil a
 
 ## La barre latérale
 
+- **Tableau de bord** :la journée en un coup d’œil :les réparations en cours, celles à surveiller (en retard, promises aujourd’hui, à encaisser, en attente d’approbation, depuis longtemps sur l’établi), les pièces à commander et les ventes du mois. Cliquez sur un élément pour l’ouvrir.
 - **Réparations** : chaque travail, par statut. Le badge compte celles qui sont ouvertes.
 - **Clients** : les personnes qui vous apportent des appareils, avec leurs appareils, réparations et factures.
 - **Appareils** : tous les appareils, ceux des clients et ceux de l’atelier.

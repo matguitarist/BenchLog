@@ -815,6 +815,31 @@ UX:
 Built: `ScanResult.found`, `AppModel.addReviewed`; `addScanned` no longer saves a new part. Snapshot `part-barcode-review-sheet`.
 Status: done
 
+## M13 Dashboard — the day at a glance
+
+### S-067 Dashboard
+As the user, I open BenchLog on a Dashboard that shows what is going on, and click anything on it to get there.
+Acceptance:
+- [unit] The dashboard counts open repairs per status and lists the ones that need attention, one reason each, in this order: Overdue (promised date passed, not Ready), Promised Today, To Collect, Awaiting Approval, over 14 days on the bench. Closed repairs never show. It counts Low Stock, To Order, and Incoming, and holds the month's sales.
+- [unit] A paid counter sale does not hide To Collect (it did: the invoice has no repair).
+- [self] A repair past its promised date is Overdue; once Ready it is To Collect. A tile opens its list, Back returns to the Dashboard, a Parts row opens its tab.
+- [snap] Dashboard is the first sidebar page and the one the app opens on: four tiles (Open Repairs, Ready, To Collect, Overdue), Needs Attention beside By Status, Parts, and the month.
+UX:
+- Flow: open the app -> Dashboard -> click a repair, a tile, a Parts row, or Show Reports -> Go > Back
+- Surface: a sidebar page (⌥⌘1)
+- States: an empty library: "Nothing on the Bench" with New Repair; nothing to flag: "Nothing needs attention"; more than 12: "N more in Repairs"
+- Words: "Dashboard", "Needs Attention", "Overdue", "Promised Today", "By Status"
+Built: `BenchLogKit/Dashboard.swift` (`Library.dashboard(now:)`), `Pages/DashboardPage.swift`, `AppModel.show(_:repairs:parts:)`. `toCollectRepairIDs` skips invoices with no repair. Not built: a To Collect or Overdue filter in Repairs (those tiles open Ready and Open).
+Status: done
+
+### S-068 A repair's page uses a wide window
+As the user, a repair fills a wide window instead of one narrow column.
+Depends: S-065
+Acceptance:
+- [snap] From 820 pt wide, a repair has two columns that start level: Details, Complaint, Diagnosis, Parts, and Billing or Cost and Documents; beside them Photos and Files, Guides, Dates, and Timeline. Narrower, it is one column in the order it had.
+Built: `RepairDetail` uses `TwoColumnForm`, whose `side` now also learns whether the page is wide. Two columns start at 820 pt, not 880, on every detail page: at 1600 pt the repair pane is 860 pt.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

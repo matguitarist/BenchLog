@@ -4,6 +4,7 @@ BenchLog follows every job on your bench, from the moment a device comes in to t
 
 ## The sidebar
 
+- **Dashboard**: today at a glance: the open repairs, the ones that need attention (late, promised today, to collect, awaiting approval, long on the bench), the parts to order, and the month's sales. Click anything to open it.
 - **Repairs**: every job, by status. The badge counts the open ones.
 - **Customers**: the people who bring you devices, with their devices, repairs, and invoices.
 - **Devices**: every device, the customers' and the shop's own.

@@ -46,8 +46,10 @@ struct RepairDetail: View {
         }
     }
 
+    /// In a wide pane the work (complaint, diagnosis, parts, billing) sits beside what
+    /// supports it (photos, guides, dates, timeline).
     private func form(_ row: RepairRow) -> some View {
-        Form {
+        TwoColumnForm { wide in
             Section {
                 HStack(alignment: .firstTextBaseline, spacing: Space.md) {
                     Text(row.repair.ticket.text)
@@ -76,6 +78,8 @@ struct RepairDetail: View {
                     RepairApprovalRow(repair: row.repair)
                         .id(row.id)
                 }
+            } header: {
+                if wide { Text("Details") }
             }
             Section("Complaint") {
                 TextField("Complaint", text: $complaint, prompt: Text("What the customer says is wrong"), axis: .vertical)
@@ -87,17 +91,13 @@ struct RepairDetail: View {
                         .foregroundStyle(.red)
                 }
             }
-            Section("Photos and Files") {
-                AttachmentsSection(owner: .repair, ownerID: row.id)
-            }
+            if !wide { photos(row) }
             Section("Diagnosis") {
                 TextField("Diagnosis", text: $diagnosis, prompt: Text("What you found"), axis: .vertical)
                     .labelsHidden()
                     .lineLimit(2...8)
             }
-            Section("Guides") {
-                RepairGuides(device: row.device)
-            }
+            if !wide { guides(row) }
             Section("Parts") {
                 RepairParts(repair: row.repair, device: row.device)
             }
@@ -112,6 +112,11 @@ struct RepairDetail: View {
                 Section("Documents") {
                     RepairDocuments(repair: row.repair)
                 }
+            }
+        } side: { wide in
+            if wide {
+                photos(row)
+                guides(row)
             }
             Section("Dates") {
                 LabeledContent("Received", value: row.repair.receivedAt.formatted(date: .abbreviated, time: .shortened))
@@ -130,8 +135,19 @@ struct RepairDetail: View {
                 Timeline(owner: .repair, ownerID: row.id)
             }
         }
-        .formStyle(.grouped)
         .acceptsAttachments(owner: .repair, id: row.id, model: model)
+    }
+
+    private func photos(_ row: RepairRow) -> some View {
+        Section("Photos and Files") {
+            AttachmentsSection(owner: .repair, ownerID: row.id)
+        }
+    }
+
+    private func guides(_ row: RepairRow) -> some View {
+        Section("Guides") {
+            RepairGuides(device: row.device)
+        }
     }
 }
 
