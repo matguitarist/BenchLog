@@ -69,6 +69,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Server | The BenchLog server on the shop network that holds the shared library | cloud, backend, host |
 | Sync / Sync Now | Send this device's changes to the server and get the others' | upload, refresh, backup |
 | Token | The secret the server prints on its first start; every device needs it to connect | password, API key |
+| Library Key | The secret that seals passcodes before they reach the server, shown as a recovery code; another device needs it to join | password, encryption key, PIN |
 | Connect / Replace This Mac's Library | Link this library to the server; when the server holds another library, back this one up and take the server's | join, merge, link |
 | Refund | Paying a credit note back to the customer, with the method; « Remboursement » | reimbursement, payback |
 | Invoice Sale | Invoice a sold shop device to its buyer, with taxes; « Facturer la vente » | bill of sale, receipt |
@@ -135,3 +136,4 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Stock value / Inventory at cost | Valeur du stock / Inventaire au coût |
 | Server / Sync / Token | Serveur / Synchro / Jeton |
 | Connect / Disconnect | Connecter / Déconnecter |
+| Library Key | Clé de bibliothèque |

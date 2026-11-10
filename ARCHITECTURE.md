@@ -20,6 +20,8 @@
   - `Inventory.swift`: what the stock is worth, now or at the end of a period.
   - `Sync.swift`: what syncs (tables, the `business` meta key), exporting queued rows, and applying pulled ones.
   - `SyncEngine.swift`: `SyncTransport` (the seam: `HTTPSyncTransport` for `server/`, an in-memory server in tests) and the `SyncEngine` actor that connects, pushes, pulls, and moves files.
+  - `LibraryKey.swift`: the key that seals passcodes for the server, and its recovery code.
+  - `Numbering.swift`: ticket blocks and the rule that a connected library never numbers invoices on its own.
   - `Report.swift`: report periods and the sales and tax report over invoices and credit notes, with its CSV.
   - `Trash.swift`: Move to Trash and Put Back, cascading to children with one shared `deletedAt`, and Empty Trash, which deletes rows and files older than 30 days in dependency order.
   - `Shop.swift`: the shop as an owner (`customer.isShop`), internal jobs and their cost, and shop devices: what they cost, what became of them, and the profit once sold.

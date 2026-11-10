@@ -47,17 +47,41 @@ final class SyncController {
         try await transport(server, token).library()
     }
 
-    /// Connects the open library. `join` replaces it with the server's library, after a backup.
-    func connect(_ model: AppModel, server: URL, token: String, join: Bool) async throws {
+    /// The engine for the open library, with its server, token, and key; nil when it is not
+    /// connected or a secret is missing.
+    private func engine(_ model: AppModel) -> SyncEngine? {
+        guard let library = model.library, let server, let id = try? library.libraryID(),
+              let token = Self.secret("token", id), let key = Self.secret("key", id).flatMap({ LibraryKey(recoveryCode: $0) }) else { return nil }
+        return SyncEngine(library: library, transport: transport(server, token), key: key)
+    }
+
+    /// The library key as a recovery code, for another device to join.
+    func recoveryCode(_ model: AppModel) -> String? {
+        guard let id = model.read(nil, { try $0.libraryID() }) else { return nil }
+        return Self.secret("key", id)
+    }
+
+    /// Connects the open library. `join` replaces it with the server's library, after a backup;
+    /// it needs that library's key as a recovery code.
+    func connect(_ model: AppModel, server: URL, token: String, join: Bool, recoveryCode: String = "") async throws {
         guard let library = model.library else { return }
+        let key: LibraryKey
+        if join {
+            guard let given = LibraryKey(recoveryCode: recoveryCode) else { throw SyncError.wrongKey }
+            key = given
+        } else {
+            key = Self.secret("key", try library.libraryID()).flatMap { LibraryKey(recoveryCode: $0) } ?? LibraryKey()
+        }
         if join {
             guard await Backups.shared.backUp(model, name: "BenchLog Before Joining \(Backups.stamp(.now, time: true))") != nil else { return }
         }
         status = .syncing
-        let engine = SyncEngine(library: library, transport: transport(server, token))
+        let engine = SyncEngine(library: library, transport: transport(server, token), key: key)
         do {
             let report = try await engine.connect(join: join)
-            Self.saveToken(token, for: try library.libraryID())
+            let id = try library.libraryID()
+            Self.saveSecret(token, "token", id)
+            Self.saveSecret(key.recoveryCode, "key", id)
             try library.setSyncServer(server)
             try library.setSyncedAt(.now)
             model.log.post(.info, "Connected to \(server.absoluteString): pushed \(report.pushed), pulled \(report.pulled), "
@@ -74,7 +98,7 @@ final class SyncController {
     func disconnect(_ model: AppModel) {
         guard let library = model.library else { return }
         try? library.setSyncServer(nil)
-        if let id = try? library.libraryID() { Self.deleteToken(for: id) }
+        if let id = try? library.libraryID() { Self.deleteSecret("token", id) }   // the key stays: data is sealed with it
         model.log.post(.info, "Disconnected from the server", source: "Sync")
         load(model)
     }
@@ -101,7 +125,7 @@ final class SyncController {
     }
 
     func syncNow(_ model: AppModel) async {
-        guard let library = model.library, let server, let token = Self.token(for: (try? library.libraryID()) ?? "") else {
+        guard let library = model.library, let engine = engine(model) else {
             if isConnected { status = .failed(String(localized: "The token is missing. Connect again in Settings > Sync.")) }
             return
         }
@@ -112,7 +136,7 @@ final class SyncController {
             again = false
             status = .syncing
             do {
-                let report = try await SyncEngine(library: library, transport: transport(server, token)).sync()
+                let report = try await engine.sync()
                 try library.setSyncedAt(.now)
                 if report.pulled > 0 || report.downloaded > 0 {
                     model.log.post(.info, "Synced: pushed \(report.pushed), pulled \(report.pulled)", source: "Sync")
@@ -133,10 +157,10 @@ final class SyncController {
     /// A number for an invoice or credit note from the server; nil when not connected.
     /// Throws when connected and the server is out of reach.
     func number(_ sequence: String, _ model: AppModel) async throws -> Int? {
-        guard let library = model.library, let server else { return nil }
-        guard let token = Self.token(for: (try? library.libraryID()) ?? "") else { throw NumberingError.needsServer }
+        guard isConnected else { return nil }
+        guard let engine = engine(model) else { throw NumberingError.needsServer }
         do {
-            return try await SyncEngine(library: library, transport: transport(server, token)).number(sequence)
+            return try await engine.number(sequence)
         } catch {
             model.log.post(.warning, "No \(sequence) number from the server: \(error.localizedDescription)", source: "Sync")
             throw NumberingError.needsServer
@@ -145,44 +169,47 @@ final class SyncController {
 
     /// Returns a number the document never used, so the sequence keeps no gap.
     func giveBack(_ sequence: String, number: Int, _ model: AppModel) async {
-        guard let library = model.library, let server, let token = Self.token(for: (try? library.libraryID()) ?? "") else { return }
-        try? await SyncEngine(library: library, transport: transport(server, token)).giveBack(sequence, number: number)
+        try? await engine(model)?.giveBack(sequence, number: number)
     }
 
     /// Snapshots: a library connected to a server, synced two minutes ago, two changes waiting.
-    func showConnectedForSnapshot() {
+    func showConnectedForSnapshot(_ model: AppModel) {
+        if let id = model.read(nil, { try $0.libraryID() }) { Self.saveSecret(LibraryKey().recoveryCode, "key", id) }
         server = URL(string: "http://bench-mac.local:8420")
         status = .synced(.now.addingTimeInterval(-120))
         pending = 2
     }
 
-    // MARK: Token
+    // MARK: Secrets: the token and the library key, in the Keychain under the library's id
 
-    private static var memoryTokens: [String: String] = [:]
+    private static var memorySecrets: [String: String] = [:]
     private static let service = "com.mathieuares.benchlog.sync"
 
-    static func token(for libraryID: String) -> String? {
-        if Store.isOverridden { return memoryTokens[libraryID] }
+    static func secret(_ kind: String, _ libraryID: String) -> String? {
+        let account = "\(kind)-\(libraryID)"
+        if Store.isOverridden { return memorySecrets[account] }
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
-                                    kSecAttrAccount as String: libraryID, kSecReturnData as String: true]
+                                    kSecAttrAccount as String: account, kSecReturnData as String: true]
         var result: CFTypeRef?
         guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess, let data = result as? Data else { return nil }
         return String(decoding: data, as: UTF8.self)
     }
 
-    static func saveToken(_ token: String, for libraryID: String) {
-        if Store.isOverridden { memoryTokens[libraryID] = token; return }
-        deleteToken(for: libraryID)
+    static func saveSecret(_ value: String, _ kind: String, _ libraryID: String) {
+        let account = "\(kind)-\(libraryID)"
+        if Store.isOverridden { memorySecrets[account] = value; return }
+        deleteSecret(kind, libraryID)
         let item: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
-                                   kSecAttrAccount as String: libraryID, kSecValueData as String: Data(token.utf8),
+                                   kSecAttrAccount as String: account, kSecValueData as String: Data(value.utf8),
                                    kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock]
         SecItemAdd(item as CFDictionary, nil)
     }
 
-    static func deleteToken(for libraryID: String) {
-        if Store.isOverridden { memoryTokens[libraryID] = nil; return }
+    static func deleteSecret(_ kind: String, _ libraryID: String) {
+        let account = "\(kind)-\(libraryID)"
+        if Store.isOverridden { memorySecrets[account] = nil; return }
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
-                                    kSecAttrAccount as String: libraryID]
+                                    kSecAttrAccount as String: account]
         SecItemDelete(query as CFDictionary)
     }
 }

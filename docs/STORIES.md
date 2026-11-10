@@ -668,7 +668,8 @@ Depends: S-052
 Acceptance:
 - [unit] Passcodes are sealed with the library key (AES-GCM) before they are pushed, and opened when pulled; the server stores only sealed text.
 - [snap] Settings > Sync shows the library key as a recovery code to copy, needed to join another device.
-Status: todo
+Built: `LibraryKey.swift` (256-bit key, AES-GCM `sealed:v1:` text, a 52-character recovery code in groups of four without I, O, 0, 1). The engine seals device passcodes on push and opens them on pull; the first upload pushes `meta/keyCheck`, so joining with a wrong key fails before anything is replaced. The app keeps token and key in the Keychain under the library id; Disconnect keeps the key. Settings > Sync shows the key with Copy, and joining asks for it. LibraryKeyTests. Snapshot: settings-sync-connected.
+Status: done
 
 ### S-055 Release 2.0.0
 As the user, I install BenchLog 2.0 and its server, and both devices share one library.

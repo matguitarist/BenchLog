@@ -29,22 +29,23 @@ import Testing
 
     @Test func twoLibrariesShareOneServer() async throws {
         try await withServer { transport in
+            let key = LibraryKey()
             let mac = try Library()
             let customer = try mac.save(Customer(name: "Léa Martin"))
             let device = try mac.save(Device(customerId: customer.id, category: .phone, brand: "Apple", model: "iPhone 13"))
             let repair = try mac.createRepair(deviceID: device.id, complaint: "Écran fissuré")
             _ = try mac.addAttachment(data: Data(repeating: 7, count: 100_000), originalName: "screen.jpg", to: .repair, id: repair.id)
-            try await SyncEngine(library: mac, transport: transport).connect()
+            try await SyncEngine(library: mac, transport: transport, key: key).connect()
 
             let other = try Library()
-            try await SyncEngine(library: other, transport: transport).connect(join: true)
+            try await SyncEngine(library: other, transport: transport, key: key).connect(join: true)
             #expect(try other.repairRows().first?.repair.complaint == "Écran fissuré")
             let photo = try #require(try other.attachments(for: .repair, id: repair.id).first)
             #expect(try Data(contentsOf: other.fileURL(for: photo)).count == 100_000)
 
             try other.setStatus(.diagnosing, of: repair.id)
-            try await SyncEngine(library: other, transport: transport).sync()
-            try await SyncEngine(library: mac, transport: transport).sync()
+            try await SyncEngine(library: other, transport: transport, key: key).sync()
+            try await SyncEngine(library: mac, transport: transport, key: key).sync()
             #expect(try mac.repairRows().first?.repair.status == .diagnosing)
             #expect(try await transport.take("ticket", count: 1) == 2 + 2 * Library.ticketBlockSize)   // after both blocks
         }

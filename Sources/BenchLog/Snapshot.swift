@@ -140,7 +140,7 @@ enum Snapshot {
                     }
                 }
                 // Sync once connected: the server, its status, and the sidebar footer.
-                SyncController.shared.showConnectedForSnapshot()
+                SyncController.shared.showConnectedForSnapshot(model)
                 model.settingsTab = .sync
                 for mode in ["light", "dark"] {
                     NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)

@@ -761,6 +761,16 @@
         }
       }
     },
+    "Back up this Mac’s library, then take the server’s": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sauvegarder la bibliothèque de ce Mac, puis prendre celle du serveur"
+          }
+        }
+      }
+    },
     "Backup": {
       "localizations": {
         "fr": {
@@ -1291,6 +1301,16 @@
         }
       }
     },
+    "Connected. The server holds another library (%lld items). To join it, enter its library key.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecté. Le serveur contient une autre bibliothèque (%lld éléments). Pour la rejoindre, entrez sa clé de bibliothèque."
+          }
+        }
+      }
+    },
     "Connected. The server holds another library (%lld items): Connect replaces this Mac’s.": {
       "localizations": {
         "fr": {
@@ -1351,12 +1371,32 @@
         }
       }
     },
+    "Copy": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier"
+          }
+        }
+      }
+    },
     "Copy photos or files from your Mac into this record": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Copier des photos ou des fichiers de votre Mac dans cette fiche"
+          }
+        }
+      }
+    },
+    "Copy the library key, to join another device to this library": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier la clé de bibliothèque, pour joindre un autre appareil à cette bibliothèque"
           }
         }
       }
@@ -2767,6 +2807,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dernière sauvegarde"
+          }
+        }
+      }
+    },
+    "Library Key": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clé de bibliothèque"
+          }
+        }
+      }
+    },
+    "Library key": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clé de bibliothèque"
           }
         }
       }
@@ -4231,6 +4291,16 @@
         }
       }
     },
+    "Passcodes are sealed with this key before they reach the server. Another device needs it to join; keep a copy somewhere safe.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les codes d’accès sont scellés avec cette clé avant d’atteindre le serveur. Un autre appareil en a besoin pour se joindre ; gardez-en une copie en lieu sûr."
+          }
+        }
+      }
+    },
     "Past quantities come from each part's stock history; costs are today's": {
       "localizations": {
         "fr": {
@@ -4907,6 +4977,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Remplacer la bibliothèque de ce Mac ?"
+          }
+        }
+      }
+    },
+    "Replace This Mac’s Library…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remplacer la bibliothèque de ce Mac…"
           }
         }
       }
@@ -5871,6 +5951,16 @@
         }
       }
     },
+    "The key shown in Settings > Sync on a device already connected to this server": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La clé affichée dans Réglages > Synchro sur un appareil déjà connecté à ce serveur"
+          }
+        }
+      }
+    },
     "The language of this customer's intake slips, estimates, and invoices": {
       "localizations": {
         "fr": {
@@ -5897,6 +5987,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "La bibliothèque est trop volumineuse pour un seul fichier de sauvegarde (plus de 4 Go)."
+          }
+        }
+      }
+    },
+    "The library key does not match this server’s library. Copy it from Settings > Sync on a device already connected.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "La clé de bibliothèque ne correspond pas à la bibliothèque de ce serveur. Copiez-la depuis Réglages > Synchro sur un appareil déjà connecté."
           }
         }
       }

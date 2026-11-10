@@ -46,6 +46,8 @@ public enum SyncError: LocalizedError, Equatable {
     case otherLibrary(rows: Int)
     case notConnected
     case fileMismatch(String)
+    /// The library key does not open what the server holds.
+    case wrongKey
 
     public var errorDescription: String? {
         switch self {
@@ -55,6 +57,7 @@ public enum SyncError: LocalizedError, Equatable {
         case .otherLibrary: String(localized: "This server already holds another library.")
         case .notConnected: String(localized: "This library is not connected to a server.")
         case .fileMismatch(let id): String(localized: "A file from the server was damaged on the way (\(id)).")
+        case .wrongKey: String(localized: "The library key does not match this server’s library. Copy it from Settings > Sync on a device already connected.")
         }
     }
 }
@@ -161,12 +164,20 @@ public struct SyncReport: Hashable, Sendable {
 public actor SyncEngine {
     public let library: Library
     let transport: any SyncTransport
+    let key: LibraryKey
     private let pageSize: Int
 
-    public init(library: Library, transport: any SyncTransport, pageSize: Int = 500) {
+    public init(library: Library, transport: any SyncTransport, key: LibraryKey, pageSize: Int = 500) {
         self.library = library
         self.transport = transport
+        self.key = key
         self.pageSize = pageSize
+    }
+
+    /// The row that lets a joining device check its key: `meta/keyCheck`, sealed.
+    private func keyCheckRow() throws -> SyncRow {
+        SyncRow(table: "meta", id: "keyCheck", updatedAt: "1970-01-01 00:00:00.000", deletedAt: nil,
+                data: ["value": .string(try key.seal(LibraryKey.checkText))])
     }
 
     /// Connects this library to the server. An empty server takes this library (every row
@@ -178,6 +189,7 @@ public actor SyncEngine {
         let mine = try library.libraryID()
         if server.libraryId == nil, server.rows == 0 {
             try await transport.claim(mine)
+            _ = try await transport.push([try keyCheckRow()])
             for (sequence, next) in try library.localNextNumbers() {
                 try await transport.start(sequence, atLeast: next)
             }
@@ -185,6 +197,10 @@ public actor SyncEngine {
             try library.setLocalMeta("syncCursor", "0")
         } else if server.libraryId != mine {
             guard join, let theirs = server.libraryId else { throw SyncError.otherLibrary(rows: server.rows) }
+            // Check the key before anything here is replaced.
+            let first = try await transport.pull(after: 0, limit: 5)
+            guard let check = first.rows.first(where: { $0.table == "meta" && $0.id == "keyCheck" })?.data["value"]?.string,
+                  (try? key.open(check)) == LibraryKey.checkText else { throw SyncError.wrongKey }
             try library.clearForJoin(libraryID: theirs)
         }
         return try await sync()
@@ -210,7 +226,7 @@ public actor SyncEngine {
             for case (let change, let row?) in batch where change.table == "attachment" && row.deletedAt == nil {
                 if try await upload(attachmentID: change.id) { report.uploaded += 1 }
             }
-            let rows = batch.compactMap(\.1)
+            let rows = try key.sealed(batch.compactMap(\.1))
             if !rows.isEmpty { report.pushed += try await transport.push(rows).applied }
             try library.dequeue(batch.map(\.0))
             if batch.count < pageSize { break }
@@ -225,7 +241,7 @@ public actor SyncEngine {
             if !page.more { break }
         }
         if !rows.isEmpty {
-            report.pulled = try library.apply(rows).applied
+            report.pulled = try library.apply(try key.opened(rows)).applied
         }
         try library.setLocalMeta("syncCursor", "\(cursor)")
         // Keep enough ticket numbers to open repairs while the server is away.

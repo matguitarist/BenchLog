@@ -1,3 +1,4 @@
+import AppKit
 import BenchLogKit
 import SwiftUI
 
@@ -9,7 +10,10 @@ struct SyncSettings: View {
     @State private var token = ""
     @State private var testResult: String?
     @State private var working = false
-    @State private var joinRows: Int?
+    /// Set once the server turns out to hold another library: joining it needs its key.
+    @State private var otherLibraryRows: Int?
+    @State private var recoveryCode = ""
+    @State private var confirmJoin = false
 
     var body: some View {
         if let server = sync.server {
@@ -26,6 +30,23 @@ struct SyncSettings: View {
                         .help("Send this Mac’s changes and get the others’ now")
                 }
             }
+            if let code = sync.recoveryCode(model) {
+                Section {
+                    HStack {
+                        Text(code).font(.body.monospaced()).textSelection(.enabled)
+                        Spacer()
+                        Button("Copy") {
+                            NSPasteboard.general.clearContents()
+                            NSPasteboard.general.setString(code, forType: .string)
+                        }
+                        .help("Copy the library key, to join another device to this library")
+                    }
+                } header: {
+                    Text("Library Key")
+                } footer: {
+                    Text("Passcodes are sealed with this key before they reach the server. Another device needs it to join; keep a copy somewhere safe.")
+                }
+            }
         } else {
             Section {
                 TextField("Address", text: $address, prompt: Text(verbatim: "http://192.168.1.20:8420"))
@@ -33,26 +54,38 @@ struct SyncSettings: View {
                 if let testResult {
                     Text(testResult).font(.callout).foregroundStyle(.secondary)
                 }
+                if otherLibraryRows != nil {
+                    TextField("Library key", text: $recoveryCode, prompt: Text(verbatim: "ABCD-EFGH-…"))
+                        .font(.body.monospaced())
+                        .help("The key shown in Settings > Sync on a device already connected to this server")
+                }
                 HStack {
                     Button("Test Connection") { Task { await test() } }
                         .disabled(!ready || working)
                         .help("Check the address and token, and see what the server holds")
                     Spacer()
                     if working { ProgressView().controlSize(.small) }
-                    Button("Connect") { Task { await connect(join: false) } }
-                        .buttonStyle(.borderedProminent)
-                        .disabled(!ready || working)
-                        .help("Upload this library to an empty server, or keep it in step with its copy there")
+                    if otherLibraryRows != nil {
+                        Button("Replace This Mac’s Library…") { confirmJoin = true }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(!ready || working || LibraryKey(recoveryCode: recoveryCode) == nil)
+                            .help("Back up this Mac’s library, then take the server’s")
+                    } else {
+                        Button("Connect") { Task { await connect(join: false) } }
+                            .buttonStyle(.borderedProminent)
+                            .disabled(!ready || working)
+                            .help("Upload this library to an empty server, or keep it in step with its copy there")
+                    }
                 }
             } header: {
                 Text("Server")
             } footer: {
                 Text("Run the BenchLog server on a Mac or a NAS in the shop, then share one library between your devices. Away from the shop, reach it with Tailscale.")
             }
-            .confirmationDialog("Replace This Mac’s Library?", isPresented: Binding(get: { joinRows != nil }, set: { if !$0 { joinRows = nil } })) {
+            .confirmationDialog("Replace This Mac’s Library?", isPresented: $confirmJoin) {
                 Button("Replace This Mac’s Library", role: .destructive) { Task { await connect(join: true) } }
             } message: {
-                Text("The server already holds another library (\(joinRows ?? 0) items). This Mac’s library is backed up, then replaced by the server’s.")
+                Text("The server already holds another library (\(otherLibraryRows ?? 0) items). This Mac’s library is backed up, then replaced by the server’s.")
             }
         }
     }
@@ -73,11 +106,12 @@ struct SyncSettings: View {
         do {
             let library = try await sync.test(server: url, token: token.trimmingCharacters(in: .whitespaces))
             let mine = model.read("") { try $0.libraryID() }
+            otherLibraryRows = library.libraryId != nil && library.libraryId != mine ? library.rows : nil
             testResult = library.libraryId == nil && library.rows == 0
                 ? String(localized: "Connected. The server is empty: Connect uploads this library.")
                 : library.libraryId == mine
                     ? String(localized: "Connected. The server holds this library.")
-                    : String(localized: "Connected. The server holds another library (\(library.rows) items): Connect replaces this Mac’s.")
+                    : String(localized: "Connected. The server holds another library (\(library.rows) items). To join it, enter its library key.")
         } catch {
             testResult = error.localizedDescription
         }
@@ -88,11 +122,15 @@ struct SyncSettings: View {
         working = true
         defer { working = false }
         do {
-            try await sync.connect(model, server: url, token: token.trimmingCharacters(in: .whitespaces), join: join)
+            try await sync.connect(model, server: url, token: token.trimmingCharacters(in: .whitespaces), join: join,
+                                   recoveryCode: recoveryCode)
             token = ""
+            recoveryCode = ""
             testResult = nil
+            otherLibraryRows = nil
         } catch SyncError.otherLibrary(let rows) {
-            joinRows = rows
+            otherLibraryRows = rows
+            testResult = String(localized: "Connected. The server holds another library (\(rows) items). To join it, enter its library key.")
         } catch {
             testResult = error.localizedDescription
         }

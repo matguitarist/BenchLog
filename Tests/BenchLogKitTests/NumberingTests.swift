@@ -5,6 +5,7 @@ import Testing
 /// S-053 Invoices and tickets use the server's numbers.
 @Suite struct NumberingTests {
     let server = MemoryServer()
+    let key = LibraryKey()
     let mac: Library
     let other: Library
 
@@ -14,7 +15,7 @@ import Testing
     }
 
     private func connect(_ library: Library, join: Bool = false) async throws -> SyncEngine {
-        let engine = SyncEngine(library: library, transport: server)
+        let engine = SyncEngine(library: library, transport: server, key: key)
         try await engine.connect(join: join)
         try library.setSyncServer(URL(string: "http://bench.local:8420"))
         return engine
@@ -36,7 +37,7 @@ import Testing
         let device = try #require(try mac.repairRows().first?.device)
         let onMac = try mac.createRepair(deviceID: device.id, complaint: "A")
         try await macEngine.sync()
-        try await SyncEngine(library: other, transport: server).sync()
+        try await SyncEngine(library: other, transport: server, key: key).sync()
         let onOther = try other.createRepair(deviceID: device.id, complaint: "B")
         #expect(onMac.ticketNumber == 2)
         #expect(onOther.ticketNumber == 2 + Library.ticketBlockSize)

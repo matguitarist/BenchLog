@@ -51,9 +51,12 @@ The server (`server/`) stores rows without knowing their columns: each is `table
 - Files: an attachment's bytes go to `/v1/files/<attachment id>` with their SHA-256.
 - The first client claims the server with its `libraryId`; a server holds one library.
 - Search (`search`) is derived on each device and never synced.
+- `device.passcode` travels sealed (`sealed:v1:` + base64 of AES-GCM nonce, text, and tag)
+  with the library key, which never reaches the server. `meta/keyCheck` holds the sealed text
+  "BenchLog library key", so a joining device can check its key.
 
 ## Sync notes
 
 - Ticket numbers come from one counter. With more than one device creating repairs, the server should hand out numbers, or each client should take a block of them.
 - Invoice numbers have the same problem as ticket numbers, and the law wants them without gaps: let the server hand them out.
-- The passcode is sensitive. Encrypt it before it leaves the Mac.
+- The passcode is sealed before it leaves the device (S-054).

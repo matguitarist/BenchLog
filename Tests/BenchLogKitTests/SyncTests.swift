@@ -65,6 +65,7 @@ final class MemoryServer: SyncTransport, @unchecked Sendable {
 /// S-051 and S-052: connecting, and changes in both directions.
 @Suite struct SyncTests {
     let server = MemoryServer()
+    let key = LibraryKey()
     let mac: Library
     let other: Library
 
@@ -73,7 +74,7 @@ final class MemoryServer: SyncTransport, @unchecked Sendable {
         other = try Library()
     }
 
-    private func engine(_ library: Library) -> SyncEngine { SyncEngine(library: library, transport: server, pageSize: 3) }
+    private func engine(_ library: Library) -> SyncEngine { SyncEngine(library: library, transport: server, key: key, pageSize: 3) }
 
     /// A customer with a device, a repair, a part that fits it, and a photo.
     @discardableResult
