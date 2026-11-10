@@ -31,6 +31,8 @@ public protocol SyncTransport: Sendable {
     /// Hands out `count` numbers from a sequence (ticket, invoice, credit); returns the first.
     func take(_ sequence: String, count: Int) async throws -> Int
     func start(_ sequence: String, atLeast: Int) async throws
+    /// Gives back an unused number; the server takes it only while it is the last one out.
+    func giveBack(_ sequence: String, number: Int) async throws
     func hasFile(_ id: String) async throws -> Bool
     func upload(_ id: String, data: Data) async throws
     func download(_ id: String) async throws -> Data
@@ -125,6 +127,10 @@ public struct HTTPSyncTransport: SyncTransport {
         let _: [String: Int] = try await json("POST", "v1/numbers/\(sequence)/start", ["atLeast": atLeast])
     }
 
+    public func giveBack(_ sequence: String, number: Int) async throws {
+        let _: [String: Bool] = try await json("POST", "v1/numbers/\(sequence)/return", ["number": number])
+    }
+
     public func hasFile(_ id: String) async throws -> Bool {
         try await request("HEAD", "v1/files/\(id)").1.statusCode == 200
     }
@@ -184,7 +190,16 @@ public actor SyncEngine {
         return try await sync()
     }
 
-    /// One round: push, pull, then files.
+    /// A number for an invoice or credit note, from the server.
+    public func number(_ sequence: String) async throws -> Int {
+        try await transport.take(sequence, count: 1)
+    }
+
+    public func giveBack(_ sequence: String, number: Int) async throws {
+        try await transport.giveBack(sequence, number: number)
+    }
+
+    /// One round: push, pull, tickets, then files.
     @discardableResult
     public func sync() async throws -> SyncReport {
         var report = SyncReport()
@@ -213,6 +228,10 @@ public actor SyncEngine {
             report.pulled = try library.apply(rows).applied
         }
         try library.setLocalMeta("syncCursor", "\(cursor)")
+        // Keep enough ticket numbers to open repairs while the server is away.
+        if try library.reservedTickets() < Library.ticketReserve {
+            try library.addTicketBlock(first: try await transport.take("ticket", count: Library.ticketBlockSize), count: Library.ticketBlockSize)
+        }
         // Download files that arrived as attachment rows, or that an earlier sync missed.
         for attachment in try library.attachmentsMissingFiles() {
             if try await transport.hasFile(attachment.id.stored) {

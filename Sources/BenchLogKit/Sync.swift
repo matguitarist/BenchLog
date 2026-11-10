@@ -288,7 +288,7 @@ extension Library {
             }
             try db.execute(sql: "DELETE FROM meta WHERE key = 'business'")
             try db.execute(sql: "UPDATE meta SET value = ? WHERE key = 'libraryId'", arguments: [libraryID])
-            try db.execute(sql: "DELETE FROM meta WHERE key = 'syncCursor'")
+            try db.execute(sql: "DELETE FROM meta WHERE key IN ('syncCursor', 'ticketBlocks')")
         }
     }
 }

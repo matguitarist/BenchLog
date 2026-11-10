@@ -3501,6 +3501,16 @@
         }
       }
     },
+    "No ticket numbers are left on this Mac while the server is out of reach. Try again once it is back.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il ne reste plus de numéros de dossier sur ce Mac tant que le serveur est hors de portée. Réessayez quand il sera de retour."
+          }
+        }
+      }
+    },
     "No vendor": {
       "localizations": {
         "fr": {
@@ -6287,6 +6297,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Impossible de placer dans la corbeille : la facture %@ doit être conservée dans vos dossiers."
+          }
+        }
+      }
+    },
+    "Unable to number the document: the BenchLog server is out of reach. Invoice and credit note numbers come from the server, so two devices never use the same one. Try again once it is back.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible de numéroter le document : le serveur BenchLog est hors de portée. Les numéros de facture et de note de crédit viennent du serveur, pour que deux appareils n’utilisent jamais le même. Réessayez quand il sera de retour."
           }
         }
       }

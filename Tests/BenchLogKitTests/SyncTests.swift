@@ -52,6 +52,9 @@ final class MemoryServer: SyncTransport, @unchecked Sendable {
         try locked { let first = numbers[sequence]!; numbers[sequence] = first + count; return first }
     }
     func start(_ sequence: String, atLeast: Int) async throws { try locked { numbers[sequence] = max(numbers[sequence]!, atLeast) } }
+    func giveBack(_ sequence: String, number: Int) async throws {
+        try locked { if numbers[sequence] == number + 1 { numbers[sequence] = number } }
+    }
     func hasFile(_ id: String) async throws -> Bool { try locked { files[id] != nil } }
     func upload(_ id: String, data: Data) async throws { try locked { files[id] = data } }
     func download(_ id: String) async throws -> Data { try locked { files[id]! } }
@@ -106,7 +109,7 @@ final class MemoryServer: SyncTransport, @unchecked Sendable {
         #expect(try mac.pendingSyncCount() == 0)
         #expect(server.row("customer", customer.id.stored)?.data["name"] == .string("Léa Martin"))
         #expect(server.row("meta", "business") != nil)
-        #expect(server.nextNumber("ticket") == 2 && server.nextNumber("invoice") == 2)
+        #expect(server.nextNumber("ticket") == 2 + Library.ticketBlockSize && server.nextNumber("invoice") == 2)   // after this Mac's block
     }
 
     @Test func anotherDeviceJoinsAndGetsEverything() async throws {

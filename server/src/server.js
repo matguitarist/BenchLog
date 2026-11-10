@@ -7,6 +7,7 @@
 //   GET  /v1/pull?after=N&limit=M        {rows, cursor, more}
 //   POST /v1/numbers/:name  {count}      {first, count}         ticket | invoice | credit
 //   POST /v1/numbers/:name/start {atLeast}  {next}
+//   POST /v1/numbers/:name/return {number}  {returned}   an unused number, if still the last
 //   PUT  /v1/files/:id   (X-Sha256)      stores an attachment's bytes
 //   GET  /v1/files/:id                   the bytes, with X-Sha256
 //   HEAD /v1/files/:id                   200 when stored
@@ -67,6 +68,7 @@ export function createServer({ store, token, filesDir, log = () => {} }) {
         case 'POST numbers': {
           const body = await readJSON(req);
           if (parts[3] === 'start') return json(res, 200, { next: store.startAt(parts[2], body.atLeast) });
+          if (parts[3] === 'return') return json(res, 200, { returned: store.giveBack(parts[2], body.number) });
           if (parts.length !== 3) throw new StoreError('not found', 404);
           return json(res, 200, store.take(parts[2], body.count ?? 1));
         }

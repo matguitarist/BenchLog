@@ -114,7 +114,7 @@ extension Library {
     /// Issues an invoice (with the next number) or an estimate (valid for the profile's
     /// days), freezing everything it prints.
     @discardableResult
-    public func issue(_ kind: DocumentKind, for repairID: UUID, now: Date = .now) throws -> Invoice {
+    public func issue(_ kind: DocumentKind, for repairID: UUID, number given: Int? = nil, now: Date = .now) throws -> Invoice {
         guard let row = try repairRow(repairID) else { throw BillingError.nothingToBill }
         guard !row.customer.isShop else { throw ShopError.internalJob }
         let bill = try bill(for: repairID)
@@ -127,7 +127,7 @@ extension Library {
             complaint: row.repair.complaint, diagnosis: row.repair.diagnosis, lines: bill.lines, totals: bill.totals)
         let json = String(decoding: try JSONEncoder().encode(content), as: UTF8.self)
         return try db.write { db in
-            let number = kind == .invoice ? try Self.nextNumber("nextInvoiceNumber", db) : nil
+            let number = kind == .invoice ? try Self.nextNumber("nextInvoiceNumber", db, given: given) : nil
             let invoice = Invoice(id: UUID(), repairId: repairID, kind: kind, number: number, issuedAt: now,
                                   validUntil: kind == .estimate ? Calendar.current.date(byAdding: .day, value: profile.estimateValidDays, to: now) : nil,
                                   language: row.customer.documentsLanguage, content: json, totalCents: bill.totals.totalCents,
@@ -142,7 +142,7 @@ extension Library {
     /// lines and each tax reversed. The invoice keeps its number; to correct it, issue a new
     /// invoice after the credit note.
     @discardableResult
-    public func issueCreditNote(for invoiceID: UUID, reason: String = "", now: Date = .now) throws -> Invoice {
+    public func issueCreditNote(for invoiceID: UUID, reason: String = "", number given: Int? = nil, now: Date = .now) throws -> Invoice {
         guard let invoice = try invoice(invoiceID), invoice.kind == .invoice, var content = invoice.document else {
             throw BillingError.notAnInvoice
         }
@@ -162,7 +162,7 @@ extension Library {
         content.reason = reason.trimmingCharacters(in: .whitespacesAndNewlines)
         let json = String(decoding: try JSONEncoder().encode(content), as: UTF8.self)
         return try db.write { db in
-            let next = try Self.nextNumber("nextCreditNumber", db)
+            let next = try Self.nextNumber("nextCreditNumber", db, given: given)
             let credit = Invoice(id: UUID(), repairId: invoice.repairId, kind: .creditNote, number: nil, issuedAt: now, validUntil: nil,
                                  language: invoice.language, content: json, totalCents: -invoice.totalCents,
                                  paidAt: nil, paymentMethod: nil, decision: nil, decidedAt: nil, fileId: nil,
@@ -175,16 +175,22 @@ extension Library {
     }
 
     /// Takes the next number of a sequence kept in meta (invoices and credit notes).
-    static func nextNumber(_ key: String, _ db: Database) throws -> Int {
+    /// With `given` (a number from the server), uses it and keeps the local counter past it.
+    /// A library connected to a server never numbers on its own: two devices would collide.
+    static func nextNumber(_ key: String, _ db: Database, given: Int? = nil) throws -> Int {
         let next = try Int.fetchOne(db, sql: "SELECT CAST(value AS INTEGER) FROM meta WHERE key = ?", arguments: [key]) ?? 1
-        try db.execute(sql: "INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)", arguments: [key, "\(next + 1)"])
-        return next
+        if given == nil, try String.fetchOne(db, sql: "SELECT value FROM meta WHERE key = 'syncServer'") != nil {
+            throw NumberingError.needsServer
+        }
+        let number = given ?? next
+        try db.execute(sql: "INSERT OR REPLACE INTO meta (key, value) VALUES (?, ?)", arguments: [key, "\(max(next, number + 1))"])
+        return number
     }
 
     /// Invoices the sale of a shop device to its buyer: the next invoice number, one line at
     /// the sale price, and the region's taxes. A sale is invoiced once, unless credited.
     @discardableResult
-    public func issueSaleInvoice(for deviceID: UUID, now: Date = .now) throws -> Invoice {
+    public func issueSaleInvoice(for deviceID: UUID, number given: Int? = nil, now: Date = .now) throws -> Invoice {
         guard let device = try device(deviceID), device.disposition == .sold, let price = device.salePriceCents,
               let buyer = try customer(device.customerId), !buyer.isShop else { throw BillingError.saleNotReady }
         let credited = Set(try saleInvoices(of: deviceID).compactMap(\.creditsInvoiceId))
@@ -200,7 +206,7 @@ extension Library {
             lines: lines, totals: Billing.totals(lines, discountCents: 0, taxes: profile.chargedTaxes, taxesLabour: profile.taxesLabour))
         let json = String(decoding: try JSONEncoder().encode(content), as: UTF8.self)
         return try db.write { db in
-            let invoice = Invoice(id: UUID(), repairId: nil, kind: .invoice, number: try Self.nextNumber("nextInvoiceNumber", db),
+            let invoice = Invoice(id: UUID(), repairId: nil, kind: .invoice, number: try Self.nextNumber("nextInvoiceNumber", db, given: given),
                                   issuedAt: now, validUntil: nil, language: buyer.documentsLanguage, content: json,
                                   totalCents: content.totals.totalCents, paidAt: nil, paymentMethod: nil, decision: nil, decidedAt: nil,
                                   fileId: nil, createdAt: now, updatedAt: now, deletedAt: nil, deviceId: deviceID)

@@ -130,6 +130,25 @@ final class SyncController {
         } while again
     }
 
+    /// A number for an invoice or credit note from the server; nil when not connected.
+    /// Throws when connected and the server is out of reach.
+    func number(_ sequence: String, _ model: AppModel) async throws -> Int? {
+        guard let library = model.library, let server else { return nil }
+        guard let token = Self.token(for: (try? library.libraryID()) ?? "") else { throw NumberingError.needsServer }
+        do {
+            return try await SyncEngine(library: library, transport: transport(server, token)).number(sequence)
+        } catch {
+            model.log.post(.warning, "No \(sequence) number from the server: \(error.localizedDescription)", source: "Sync")
+            throw NumberingError.needsServer
+        }
+    }
+
+    /// Returns a number the document never used, so the sequence keeps no gap.
+    func giveBack(_ sequence: String, number: Int, _ model: AppModel) async {
+        guard let library = model.library, let server, let token = Self.token(for: (try? library.libraryID()) ?? "") else { return }
+        try? await SyncEngine(library: library, transport: transport(server, token)).giveBack(sequence, number: number)
+    }
+
     /// Snapshots: a library connected to a server, synced two minutes ago, two changes waiting.
     func showConnectedForSnapshot() {
         server = URL(string: "http://bench-mac.local:8420")

@@ -37,7 +37,7 @@ extension Library {
     /// and the region's taxes. Stocked parts leave stock as Sold. With no customer, the sale
     /// is to a walk-in and the invoice sits with the shop.
     @discardableResult
-    public func issueCounterSale(to customerID: UUID?, items: [CounterSaleItem], now: Date = .now) throws -> Invoice {
+    public func issueCounterSale(to customerID: UUID?, items: [CounterSaleItem], number given: Int? = nil, now: Date = .now) throws -> Invoice {
         let items = items.filter { $0.quantity > 0 && !$0.description.trimmingCharacters(in: .whitespaces).isEmpty }
         guard !items.isEmpty else { throw BillingError.nothingToBill }
         let profile = try businessProfile()
@@ -57,7 +57,7 @@ extension Library {
         let json = String(decoding: try JSONEncoder().encode(content), as: UTF8.self)
         let language = buyer.isShop ? profile.defaultDocumentsLanguage : buyer.documentsLanguage
         return try db.write { db in
-            var invoice = Invoice(id: UUID(), repairId: nil, kind: .invoice, number: try Self.nextNumber("nextInvoiceNumber", db),
+            var invoice = Invoice(id: UUID(), repairId: nil, kind: .invoice, number: try Self.nextNumber("nextInvoiceNumber", db, given: given),
                                   issuedAt: now, validUntil: nil, language: language, content: json,
                                   totalCents: content.totals.totalCents, paidAt: nil, paymentMethod: nil, decision: nil, decidedAt: nil,
                                   fileId: nil, createdAt: now, updatedAt: now, deletedAt: nil)

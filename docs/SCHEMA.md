@@ -45,7 +45,9 @@ The server (`server/`) stores rows without knowing their columns: each is `table
   on the server.
 - Numbers: the server keeps `ticket`, `invoice`, and `credit` sequences. Tickets come in
   blocks a client keeps for offline check-in; invoice and credit numbers one at a time.
-  `start` moves a sequence forward, never back.
+  `start` moves a sequence forward, never back; `return` takes back an unused number while
+  it is still the last one out, so a failed document leaves no gap. A connected library keeps
+  its ticket blocks in `meta.ticketBlocks` (local) and never numbers invoices on its own.
 - Files: an attachment's bytes go to `/v1/files/<attachment id>` with their SHA-256.
 - The first client claims the server with its `libraryId`; a server holds one library.
 - Search (`search`) is derived on each device and never synced.

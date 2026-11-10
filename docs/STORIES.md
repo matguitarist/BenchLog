@@ -659,7 +659,8 @@ Depends: S-050, S-052
 Acceptance:
 - [unit] A connected library issues invoices and credit notes with a number from the server; offline, issuing says to reconnect, and nothing is numbered.
 - [unit] A connected library opens repairs with ticket numbers from its reserved block, and tops the block up when it syncs.
-Status: todo
+Built: `Numbering.swift` (`NumberingError`, ticket blocks of 20 kept in `meta.ticketBlocks`, topped up below 10 at each sync). `nextNumber(_:_:given:)` refuses to number locally when connected; every issue function takes `number:`. The app asks `SyncController.number` before issuing and gives the number back (`/v1/numbers/:name/return`) when issuing fails. NumberingTests.
+Status: done
 
 ### S-054 Passcodes stay private on the server
 As the user, device passcodes never reach the server in clear text.

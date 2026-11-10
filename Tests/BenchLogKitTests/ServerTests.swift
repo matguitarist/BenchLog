@@ -46,7 +46,7 @@ import Testing
             try await SyncEngine(library: other, transport: transport).sync()
             try await SyncEngine(library: mac, transport: transport).sync()
             #expect(try mac.repairRows().first?.repair.status == .diagnosing)
-            #expect(try await transport.take("ticket", count: 1) == 2)
+            #expect(try await transport.take("ticket", count: 1) == 2 + 2 * Library.ticketBlockSize)   // after both blocks
         }
     }
 

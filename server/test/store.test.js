@@ -57,6 +57,15 @@ test('numbers: blocks of tickets, invoices one at a time, start never moves back
   assert.deepEqual(store.numbers(), { ticket: 53, invoice: 9, credit: 1 });
 });
 
+test('an unused number goes back only while it is the last one handed out', () => {
+  const store = new Store(':memory:');
+  const { first } = store.take('invoice');
+  assert.equal(store.giveBack('invoice', first), true);
+  assert.deepEqual(store.take('invoice'), { first, count: 1 });
+  store.take('invoice');
+  assert.equal(store.giveBack('invoice', first), false);
+});
+
 test('a server belongs to the first library that claims it', () => {
   const store = new Store(':memory:');
   assert.equal(store.info().libraryId, null);

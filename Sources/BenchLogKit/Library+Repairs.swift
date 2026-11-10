@@ -12,7 +12,8 @@ extension Library {
             let stored = try String.fetchOne(db, sql: "SELECT value FROM meta WHERE key = 'nextTicketNumber'")
             // Never reuse a number, even if the counter was edited by hand.
             let highest = try Int.fetchOne(db, sql: "SELECT MAX(ticketNumber) FROM repair") ?? 0
-            let number = max(Int(stored ?? "1") ?? 1, highest + 1)
+            // Connected to a server: the next number of a block the server gave this device.
+            let number = try Self.takeReservedTicket(db) ?? max(Int(stored ?? "1") ?? 1, highest + 1)
             var repair = Repair(id: UUID(), deviceId: deviceID, ticketNumber: number, status: .intake,
                                 complaint: complaint, diagnosis: "", receivedAt: now, promisedAt: promisedAt,
                                 completedAt: nil, pickedUpAt: nil, createdAt: now, updatedAt: now, deletedAt: nil)

@@ -52,9 +52,28 @@ extension AppModel {
 
     // MARK: Documents
 
+    /// The next invoice or credit note number from the server when the library is connected
+    /// (`.some(nil)` when it is not); nil, with the problem shown, when the server is away.
+    private func serverNumber(_ sequence: String) async -> Int?? {
+        do {
+            return .some(try await SyncController.shared.number(sequence, self))
+        } catch {
+            problem = error.localizedDescription
+            return nil
+        }
+    }
+
     /// Issues an invoice or estimate, prints it to PDF on the repair, and opens it.
     func issue(_ kind: DocumentKind, for repairID: UUID) async {
-        guard let invoice = write("Issued \(kind.rawValue) for repair \(repairID.stored)", { try $0.issue(kind, for: repairID) }) else { return }
+        var number: Int?
+        if kind == .invoice {
+            guard let given = await serverNumber("invoice") else { return }
+            number = given
+        }
+        guard let invoice = write("Issued \(kind.rawValue) for repair \(repairID.stored)", { try $0.issue(kind, for: repairID, number: number) }) else {
+            if let number { await SyncController.shared.giveBack("invoice", number: number, self) }
+            return
+        }
         await printDocument(invoice, open: true)
     }
 
@@ -66,18 +85,30 @@ extension AppModel {
 
     /// Issues a credit note that cancels an invoice, prints it on the repair, and opens it.
     func issueCreditNote(for invoiceID: UUID, reason: String) async {
-        guard let credit = write("Credited invoice \(invoiceID.stored)", { try $0.issueCreditNote(for: invoiceID, reason: reason) }) else { return }
+        guard let number = await serverNumber("credit") else { return }
+        guard let credit = write("Credited invoice \(invoiceID.stored)", { try $0.issueCreditNote(for: invoiceID, reason: reason, number: number) }) else {
+            if let number { await SyncController.shared.giveBack("credit", number: number, self) }
+            return
+        }
         await printDocument(credit, open: true)
     }
 
     /// Invoices a shop device's sale to its buyer, prints it on the device, and opens it.
     func issueSaleInvoice(for deviceID: UUID) async {
-        guard let invoice = write("Invoiced the sale of device \(deviceID.stored)", { try $0.issueSaleInvoice(for: deviceID) }) else { return }
+        guard let number = await serverNumber("invoice") else { return }
+        guard let invoice = write("Invoiced the sale of device \(deviceID.stored)", { try $0.issueSaleInvoice(for: deviceID, number: number) }) else {
+            if let number { await SyncController.shared.giveBack("invoice", number: number, self) }
+            return
+        }
         await printDocument(invoice, open: true)
     }
 
     func issueCounterSale(to customerID: UUID?, items: [CounterSaleItem]) async {
-        guard let invoice = write("Invoiced a counter sale", { try $0.issueCounterSale(to: customerID, items: items) }) else { return }
+        guard let number = await serverNumber("invoice") else { return }
+        guard let invoice = write("Invoiced a counter sale", { try $0.issueCounterSale(to: customerID, items: items, number: number) }) else {
+            if let number { await SyncController.shared.giveBack("invoice", number: number, self) }
+            return
+        }
         await printDocument(invoice, open: true)
     }
 

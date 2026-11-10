@@ -146,6 +146,14 @@ export class Store {
     return this.numbers()[name];
   }
 
+  /** Takes back a number that went unused, when nothing was handed out after it. */
+  giveBack(name, number) {
+    if (!SEQUENCES.includes(name)) throw new StoreError(`no sequence named ${name}`, 404);
+    if (!Number.isInteger(number) || number < 1) throw new StoreError('number must be a positive integer');
+    const changes = this.db.prepare('UPDATE sequence SET next = ? WHERE name = ? AND next = ?').run(number, name, number + 1).changes;
+    return Number(changes) === 1;
+  }
+
   fileRecord(id) {
     checkID(id);
     const r = this.db.prepare('SELECT id, sha256, size FROM file WHERE id = ?').get(id);
