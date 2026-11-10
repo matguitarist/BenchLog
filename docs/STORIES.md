@@ -705,7 +705,8 @@ UX:
 - Surface: a window (people keep it open beside the main window)
 - States: a search with no match shows the system's "No Results for “…”"
 - Words: "BenchLog Help", "Keyboard Shortcuts", "Set Up the Shop Server", "What's New in BenchLog", "Report a Problem"
-Status: todo
+Built: `Help/HelpWindow.swift` (HelpTopic, HelpCenter, HelpWindow, HelpCommands, HelpLinks) and eleven topics as Markdown in `Help/en` and `Help/fr`, package resources read through Bundle.module and rendered like a Markdown guide; `[[topic|…]]` links open another topic. The Help menu replaces the system's (Load Sample Data stays there in debug builds). Self-test: every topic in both languages, the menu, the issue link's version. Snapshots: help-getting-started, help-sync.
+Status: done
 
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.

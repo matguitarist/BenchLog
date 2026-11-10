@@ -107,6 +107,8 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Invoice | Issue the next numbered invoice (⇧⌘I); « Facturer » | bill, create invoice |
 | Search BenchLog | Find any customer, phone, device, serial, ticket, note, part, or guide (⌘F); « Rechercher dans BenchLog » | global search, quick open, spotlight |
 | Find in Guide | Find text inside the guide in front (⌘F there) | search guide |
+| BenchLog Help | The Help window (⌘?): one topic per job, in the app's language; « Aide BenchLog » | manual, docs, FAQ |
+| Report a Problem | Open a new GitHub issue with the version filled in; « Signaler un problème » | feedback, bug report, contact us |
 | Approve / Refuse | Record the customer's answer to an estimate | accept, decline |
 
 ## Document terms (fr-CA, printed)

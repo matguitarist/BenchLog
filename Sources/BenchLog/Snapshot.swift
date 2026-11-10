@@ -13,7 +13,7 @@ import SwiftUI
 /// Add APP_ACCENT=<id> to see the pages in another accent.
 /// Add APP_SNAPSHOT_MIN=1 to shrink the main window to its smallest size first.
 enum Snapshot {
-    static func runIfRequested(model: AppModel, openSettings: OpenSettingsAction) {
+    static func runIfRequested(model: AppModel, openSettings: OpenSettingsAction, openWindow: OpenWindowAction) {
         let env = ProcessInfo.processInfo.environment
         guard let dir = env["APP_SNAPSHOT"], !dir.isEmpty else { return }
         // Snapshots never run against the real library.
@@ -149,6 +149,23 @@ enum Snapshot {
                     capture(to: "\(dir)/settings-sync-connected-\(mode).png", window: settings)
                     capture(to: "\(dir)/sync-status-\(mode).png", window: main)
                 }
+            }
+            // BenchLog Help: help-<topic>-<mode>.png for the first topic and the server topic.
+            if only == nil || only?.contains("help") == true {
+                let before = Set(NSApp.windows.map(ObjectIdentifier.init))
+                HelpCenter.shared.topic = .gettingStarted
+                openWindow(id: "help")
+                try? await Task.sleep(for: .seconds(1.5))
+                let window = NSApp.windows.first { $0.isVisible && !before.contains(ObjectIdentifier($0)) }
+                for mode in ["light", "dark"] {
+                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                    for topic in [HelpTopic.gettingStarted, .sync] {
+                        HelpCenter.shared.topic = topic
+                        try? await Task.sleep(for: .seconds(1))
+                        capture(to: "\(dir)/help-\(topic.rawValue)-\(mode).png", window: window)
+                    }
+                }
+                window?.close()
             }
             print("SNAPSHOT done \(dir)")
             // An open sheet refuses terminate, and the run would wait forever.

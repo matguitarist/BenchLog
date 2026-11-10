@@ -65,12 +65,8 @@ struct BenchLogApp: App {
                     .keyboardShortcut(.delete, modifiers: .command)
                     .disabled(model.focusedTrashItem == nil || model.sheet != nil)
             }
-            #if DEBUG
-            CommandGroup(after: .help) {
-                Button("Load Sample Data") { SeedData.load(into: model) }
-                    .disabled(model.library == nil || !SeedData.isEmpty(model))
-            }
-            #endif
+            // Help: BenchLog Help (⌘?), its topics, the release notes, and Report a Problem.
+            HelpCommands(model: model)
             CommandGroup(after: .appInfo) {
                 Button("Check for Updates…") { Updater.shared.checkForUpdates() }
                     .disabled(!Updater.shared.isAvailable)
@@ -120,6 +116,13 @@ struct BenchLogApp: App {
                     .disabled(!model.canGoForward)
             }
         }
+
+        // Help > BenchLog Help: the topics, beside the main window.
+        Window("BenchLog Help", id: "help") {
+            HelpWindow()
+                .themed()
+        }
+        .defaultSize(width: 900, height: 640)
 
         // Open in Window: a guide beside the main window.
         WindowGroup("Guide", id: "guide", for: UUID.self) { $guideID in

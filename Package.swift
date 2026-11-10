@@ -19,6 +19,8 @@ let package = Package(
             name: "BenchLog",
             dependencies: ["BenchLogKit", .product(name: "Sparkle", package: "Sparkle"),
                            .product(name: "LogKitUI", package: "LogKit")],
+            // BenchLog Help: Help/<language>/<topic>.md, read through Bundle.module.
+            resources: [.copy("Help/en"), .copy("Help/fr")],
             // App code runs on the main thread unless you say otherwise.
             swiftSettings: [.defaultIsolation(MainActor.self)],
             // Sparkle.framework sits in Contents/Frameworks (build.sh copies it).

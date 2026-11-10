@@ -7072,6 +7072,136 @@
         }
       }
     },
+    "Getting Started": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Premiers pas"
+          }
+        }
+      }
+    },
+    "Estimates and Invoices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Estimations et factures"
+          }
+        }
+      }
+    },
+    "Parts and Inventory": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièces et inventaire"
+          }
+        }
+      }
+    },
+    "Shop Devices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appareils de l’atelier"
+          }
+        }
+      }
+    },
+    "Backups and Trash": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sauvegardes et corbeille"
+          }
+        }
+      }
+    },
+    "Sync and the Shop Server": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Synchro et serveur d’atelier"
+          }
+        }
+      }
+    },
+    "Keyboard Shortcuts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raccourcis clavier"
+          }
+        }
+      }
+    },
+    "BenchLog Help": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aide BenchLog"
+          }
+        }
+      }
+    },
+    "Set Up the Shop Server": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Installer le serveur d’atelier"
+          }
+        }
+      }
+    },
+    "What’s New in BenchLog": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveautés de BenchLog"
+          }
+        }
+      }
+    },
+    "Report a Problem": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signaler un problème"
+          }
+        }
+      }
+    },
+    "Search Help": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rechercher dans l’aide"
+          }
+        }
+      }
+    },
+    "Choose a Topic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez un sujet"
+          }
+        }
+      }
+    },
     "Open Settings (⌘,)": {
       "localizations": {
         "fr": {

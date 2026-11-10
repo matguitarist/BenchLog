@@ -424,6 +424,15 @@ enum SelfTest {
                 model.settingsTab = tab
                 check("Settings has the \(tab.rawValue) tab", model.settingsTab == tab && !tab.title.isEmpty)
             }
+            for topic in HelpTopic.allCases {
+                let languages = ["en", "fr"].filter { Bundle.module.url(forResource: topic.rawValue, withExtension: "md", subdirectory: $0) != nil }
+                check("Help has the \(topic.rawValue) topic in English and French", languages.count == 2 && topic.text.hasPrefix("# ") && topic.text.count > 300)
+            }
+            let helpMenu = NSApp.mainMenu?.items.last?.submenu?.items.map(\.title) ?? []
+            check("the Help menu has BenchLog Help and Report a Problem",
+                  helpMenu.contains(String(localized: "BenchLog Help")) && helpMenu.contains(String(localized: "Report a Problem")), "\(helpMenu)")
+            check("Report a Problem fills in the version", HelpLinks.newIssue.absoluteString.contains("BenchLog%20\(HelpLinks.version)")
+                  || HelpLinks.newIssue.absoluteString.contains("BenchLog \(HelpLinks.version)"), HelpLinks.newIssue.absoluteString)
             for page in SidebarItem.allCases {
                 model.sidebar = page
                 check("the sidebar opens \(page.rawValue)", model.sidebar == page)

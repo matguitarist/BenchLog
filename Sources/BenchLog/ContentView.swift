@@ -6,6 +6,7 @@ import SwiftUI
 struct ContentView: View {
     @Environment(AppModel.self) private var model
     @Environment(\.openSettings) private var openSettings
+    @Environment(\.openWindow) private var openWindow
     @Environment(\.undoManager) private var undoManager
 
     var body: some View {
@@ -73,7 +74,7 @@ struct ContentView: View {
         .task {
             SeedData.fillIfRequested(model: model)
             SelfTest.runIfRequested(model: model)
-            Snapshot.runIfRequested(model: model, openSettings: openSettings)
+            Snapshot.runIfRequested(model: model, openSettings: openSettings, openWindow: openWindow)
         }
         .task { await Backups.shared.runDaily(model) }
         .task { await SyncController.shared.run(model) }

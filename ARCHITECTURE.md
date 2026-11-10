@@ -38,6 +38,7 @@
   - `Views/SearchPanel.swift`: Search BenchLog (⌘F) over the main window, and `FindCommands`, which gives ⌘F to a PDF guide's find bar when one is in front.
   - `Views/ShopViews.swift`: the Devices page's Shop scope, its rows, and the Shop section on a shop device. `Views/RepairApproval.swift`: the approval picker, badge, and the Start Without Approval dialog's words.
   - `Views/SidebarFooter.swift`: the bar under the sidebar: Settings, and when connected the sync state and Sync Now.
+  - `Help/HelpWindow.swift`: BenchLog Help (⌘?) and the Help menu. Topics are Markdown in `Help/en` and `Help/fr` (package resources, `Bundle.module`), rendered like a Markdown guide. A new topic needs both files and a `HelpTopic` case; the self-test checks both languages.
   - `Views/TaxSection.swift`: Settings → Business → Taxes (country, region, a row per tax, US local rate and Tax labour). `Money.currencyCode` follows the business's country.
   - `Pages/ReportsPage.swift`: the Reports page and `CSVFile` for Export CSV….
   - `Models+Trash.swift`: Edit > Move to Trash, its Undo, and the confirmation for a customer with open repairs (`pendingTrash`).
