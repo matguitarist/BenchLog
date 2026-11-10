@@ -20,6 +20,8 @@ final class AppModel {
 
     var partsTab: PartsTab = .inventory
     var partSearch = ""
+    /// The Inventory's kind filter; nil shows every kind.
+    var partKind: PartKind?
     var selectedPart: UUID?
     var guideSearch = ""
     /// Ready repairs with no paid invoice.

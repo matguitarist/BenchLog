@@ -59,6 +59,13 @@ struct BenchLogApp: App {
                     .keyboardShortcut("p", modifiers: [.command, .shift])
                     .disabled(model.focusedRecord == nil || model.sheet != nil)
             }
+            CommandGroup(after: .newItem) {
+                Button("New Part…") { model.sheet = .newPart }
+                    .keyboardShortcut("n", modifiers: [.command, .control])
+                    .disabled(model.library == nil || model.sheet != nil)
+                Menu("Add Starter Parts") { StarterPartsButtons(model: model) }
+                    .disabled(model.library == nil || model.sheet != nil)
+            }
             CommandGroup(after: .pasteboard) {
                 Divider()
                 Button("Move to Trash") { model.trashFocused() }

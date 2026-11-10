@@ -743,6 +743,37 @@ Acceptance:
 - [manual] `tools/release.sh 2.2.0 --check` passes; release notes in French and English; the published release waits for the owner's go-ahead.
 Status: todo
 
+## M12 Parts — what a part is, starter parts, a wider page
+
+### S-061 Kind, condition, location, and notes on a part
+As the user, I say what a part is, the state it is sold in, where it sits, and I keep notes on it.
+Depends: S-013
+Acceptance:
+- [unit] A part has a kind (Part, Accessory, Cable, Controller, Supply), an optional condition (New, Used, Refurbished), a location, and notes; a part from before is a Part with the rest empty.
+- [unit] Search in Parts also matches the location; the inventory filters by kind.
+- [unit] A part lists the repairs it is on, newest first.
+- [snap] New Part and Edit Part have Kind, Condition, Location, and Notes. A part's page shows them, and Prices shows Cost, Price, Margin (with its share of the price), and Stock value.
+Built: `Part.swift` (`PartKind`, `PartCondition`, `marginCents`, `parts(matching:lowOnly:kind:)`, `repairs(usingPart:)`). Migration v16-part-details adds four columns to `part`; they sync as they are (the servers store rows as JSON). `PartSheet`, `PartsPage` (kind icon and price in each row, a Kind filter in the toolbar). File > New Part… (⌃⌘N). Self-test: kind, condition, margin, search by location. Snapshots: parts-inventory, part-edit-sheet.
+Status: done
+
+### S-062 Starter parts for a console
+As the user, I add the usual parts, accessories, cables, and controllers of a console in one step, then count what I have.
+Depends: S-061
+Acceptance:
+- [unit] Sets for the Sony PS1, Sony PS2, and Microsoft Xbox. Adding a set adds its parts at zero stock with a kind, a suggested price, and the models they fit; a part whose name is already in the inventory is left as it is, so adding twice adds nothing.
+- [self] File > Add Starter Parts has one item per console and All Consoles; the empty Parts page offers the same menu beside New Part.
+Built: `StarterParts.swift` (`StarterSet`, `StarterPart`, `addStarterParts`, `missingStarterParts`): 58 parts; the PlayStation cables fit both the PS1 and the PS2. Prices are suggestions in CAD, no cost. `StarterPartsButtons` in the File menu and the empty state. The sample data adds every set.
+Status: done
+
+### S-063 A part's page uses a wide window
+As the user, in full screen a part's page fills the space instead of one narrow column.
+Depends: S-061
+Acceptance:
+- [snap] From 880 pt wide, the page has two columns that start level: Details, Prices, Stock, and Fits; beside them On Repairs, Stock History, and Notes. Narrower, it is one column in that order.
+- [snap] The inventory list is wide enough to read a starter part's whole name.
+Built: `PartDetail` measures its width (`onGeometryChange`) and lays out one or two grouped forms. Snapshots: parts-inventory (wide), parts-inventory with APP_SNAPSHOT_MIN=1 (one column).
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

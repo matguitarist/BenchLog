@@ -189,6 +189,15 @@ extension AppModel {
         write("Saved part \(part.id.stored) (\(part.name))") { try $0.save(part, fits: fits) }
     }
 
+    /// Adds the starter parts of these consoles and shows the inventory.
+    func addStarterParts(_ sets: [StarterSet]) {
+        write("Added starter parts (\(sets.map(\.rawValue).joined(separator: ", ")))") { try $0.addStarterParts(sets) }
+        partSearch = ""
+        partKind = nil
+        partsTab = .inventory
+        sidebar = .parts
+    }
+
     func count(_ partID: UUID, counted: Int, note: String) {
         write("Counted part \(partID.stored): \(counted)") { try $0.count(partID, counted: counted, note: note) }
     }

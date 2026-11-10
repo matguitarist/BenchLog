@@ -47,7 +47,7 @@ enum Snapshot {
                 }
             }
             // Page states: each Parts tab, and a repair with parts on it.
-            let firstPart = model.read(nil) { try $0.parts(matching: "").first?.id }
+            let firstPart = model.read(nil) { try $0.parts(matching: "GBA SP speaker").first?.id }
             let waiting = model.read(nil) { library in
                 try library.repairRows().first { try library.isWaitingOnParts($0.id) && $0.repair.status != .waitingOnParts }?.id
             }

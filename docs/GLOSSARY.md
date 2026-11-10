@@ -30,6 +30,12 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Photo | An image attachment | picture, image |
 | File | A non-image attachment (PDF, boardview, …) | document, attachment |
 | Part | A component kept in stock or ordered for a repair | component, item, SKU |
+| Kind | What a part is: Part, Accessory, Cable, Controller, Supply (Type : Pièce, Accessoire, Câble, Manette, Fourniture) | type, category, class |
+| Condition (part) | The state a part is sold in: New, Used, Refurbished (Neuf, Usagé, Remis à neuf) | state, grade |
+| Location | Where a part sits in the shop: a shelf, a bin, a drawer (Emplacement) | bin, place, storage |
+| Price | What a customer pays for one part (Prix); Cost is what the shop paid | selling price, vending price, retail |
+| Margin | A part's price less its cost, with the share of the price (Marge) | profit, markup |
+| Starter Parts | The usual parts, accessories, cables, and controllers of a console, added at zero stock with a suggested price (Pièces de départ) | template, preset, sample parts |
 | Catalog | The brands, models, and revisions the device fields suggest (Catalogue) | list, database |
 | Merge Into | Rename a catalog name to one that exists, so the two become one | combine, join |
 | Inventory | The parts kept in stock (Parts tab) | In stock, stock list |

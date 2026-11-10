@@ -86,4 +86,50 @@ import Testing
         #expect(try library.parts(lowOnly: true).map(\.name) == ["A"])
         #expect(try library.lowStockCount() == 1)
     }
+
+    // S-061
+    @Test func aPartKeepsItsKindConditionLocationAndNotes() throws {
+        let pad = try library.save(Part(name: "Controller S", costCents: 1000, priceCents: 2999, kind: .controller,
+                                        condition: .used, location: "Shelf B2", notes: "Tested"), fits: [])
+        let read = try #require(try library.part(pad.id))
+        #expect(read.kind == .controller)
+        #expect(read.condition == .used)
+        #expect(read.location == "Shelf B2")
+        #expect(read.notes == "Tested")
+        #expect(read.marginCents == 1999)
+        try library.save(Part(name: "Fan"), fits: [])
+        #expect(try library.parts(matching: "shelf b").map(\.id) == [pad.id])
+        #expect(try library.parts(kind: .controller).map(\.id) == [pad.id])
+        #expect(try library.parts(kind: .part).map(\.name) == ["Fan"])
+    }
+
+    // S-061
+    @Test func aPartListsTheRepairsItIsOn() throws {
+        let stick = try library.save(Part(name: "Stick", quantity: 4), fits: [])
+        try library.usePart(stick.id, on: repair.id, quantity: 2)
+        let rows = try library.repairs(usingPart: stick.id)
+        #expect(rows.map(\.use.quantity) == [2])
+        #expect(rows.first?.ticketNumber == repair.ticketNumber)
+    }
+
+    // S-062
+    @Test func starterPartsAreAddedOnceAtZeroStock() throws {
+        let existing = try library.save(Part(name: "xbox power cord", priceCents: 500, quantity: 2), fits: [])
+        #expect(try library.missingStarterParts([.xbox]) == StarterSet.xbox.parts.count - 1)
+        #expect(try library.addStarterParts([.xbox]) == StarterSet.xbox.parts.count - 1)
+        #expect(try library.part(existing.id)?.priceCents == 500)
+        #expect(try library.addStarterParts([.xbox]) == 0)
+        let total = Set(StarterSet.allCases.flatMap(\.parts).map(\.name)).count
+        #expect(try library.addStarterParts() == total - StarterSet.xbox.parts.count)
+        let parts = try library.parts()
+        #expect(parts.count == total)
+        #expect(parts.filter { $0.id != existing.id }.allSatisfy { $0.quantity == 0 && ($0.priceCents ?? 0) > 0 })
+        let cable = try #require(parts.first { $0.name == "PlayStation AV cable (composite)" })
+        #expect(cable.kind == .cable)
+        #expect(try library.fits(of: cable.id).map(\.model) == ["PS1", "PS2"])
+        // Every set fits a model of the catalog a new library starts with.
+        for set in StarterSet.allCases {
+            #expect(try library.catalogModels(set.fit.category, brand: set.fit.brand).contains(set.fit.model))
+        }
+    }
 }

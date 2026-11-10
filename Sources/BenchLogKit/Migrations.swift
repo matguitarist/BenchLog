@@ -450,6 +450,15 @@ extension Library {
                     """)
             }
         }
+        migrator.registerMigration("v16-part-details") { db in
+            // What a part is, the state it is sold in, where it sits, and notes about it.
+            try db.execute(sql: """
+                ALTER TABLE part ADD COLUMN kind TEXT NOT NULL DEFAULT 'part';
+                ALTER TABLE part ADD COLUMN condition TEXT;
+                ALTER TABLE part ADD COLUMN location TEXT NOT NULL DEFAULT '';
+                ALTER TABLE part ADD COLUMN notes TEXT NOT NULL DEFAULT '';
+                """)
+        }
         return migrator
     }
 }

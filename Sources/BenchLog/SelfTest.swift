@@ -177,6 +177,21 @@ enum SelfTest {
                     check("To Order lists it", model.read(false) { try $0.partUseRows(.needed).contains { $0.use.name == "Self-test speaker" } })
                 }
 
+                // S-061, S-062 Part details and starter parts
+                if let pad = model.save(Part(name: "Self-test controller", costCents: 1000, priceCents: 2500, kind: .controller,
+                                             condition: .used, location: "Self-test shelf"), fits: []) {
+                    model.partKind = .controller
+                    check("a part keeps its kind, condition, and location",
+                          model.read(nil) { try $0.part(pad.id) }.map { $0.kind == .controller && $0.condition == .used && $0.marginCents == 1500 } ?? false)
+                    check("the inventory finds a part by its location",
+                          model.read([]) { try $0.parts(matching: "self-test shelf", kind: model.partKind) }.map(\.id) == [pad.id])
+                }
+                let partsBefore = model.read(0) { try $0.parts().count }
+                model.addStarterParts([.ps1])
+                check("Add Starter Parts adds a console's parts at zero stock, once",
+                      model.read(0) { try $0.parts().count } == partsBefore + StarterSet.ps1.parts.count
+                      && model.read(-1) { try $0.missingStarterParts([.ps1]) } == 0 && model.partKind == nil)
+
                 // S-016 Catalog
                 model.renameCatalog(CatalogPath(category: .handheld, brand: "Nintendo", model: "Game Boy", revision: "Self-Test Edition"),
                                     to: "Self-Test Edition 2")

@@ -2,6 +2,17 @@
 
 La page **Pièces** liste ce que vous gardez sur l’étagère, avec la quantité, le coût, le prix et les modèles compatibles.
 
+## Une pièce
+
+- Le **type** dit ce que c’est : Pièce, Accessoire, Câble, Manette ou Fourniture. Le filtre de la barre d’outils affiche un seul type.
+- L’**état** est Neuf, Usagé ou Remis à neuf. L’**emplacement** est son étagère, son bac ou son tiroir; la recherche le trouve.
+- Le **coût** est ce que vous avez payé pour une unité, le **prix** ce que paie le client. La **marge** est la différence.
+- **Sur des réparations** liste les réparations qui utilisent la pièce.
+
+## Pièces de départ
+
+**Fichier > Ajouter des pièces de départ** ajoute les pièces, accessoires, câbles et manettes habituels d’une console (Sony PS1, Sony PS2, Microsoft Xbox) avec un stock à zéro et un prix suggéré. Les pièces que vous avez déjà ne changent pas. Utilisez ensuite **Compter…** pour ce qui est sur l’étagère, et mettez votre coût et votre prix.
+
 ## Stock
 
 - Une pièce est en **Stock bas** quand sa quantité atteint son seuil ou passe dessous. Le badge de la barre latérale les compte.

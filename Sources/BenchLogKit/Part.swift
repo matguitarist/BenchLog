@@ -1,6 +1,18 @@
 import Foundation
 import GRDB
 
+/// What a part is, for the inventory's icons and filter.
+public enum PartKind: String, Codable, CaseIterable, Sendable, Identifiable {
+    case part, accessory, cable, controller, supply
+    public var id: String { rawValue }
+}
+
+/// The state a part is sold in.
+public enum PartCondition: String, Codable, CaseIterable, Sendable, Identifiable {
+    case new, used, refurbished
+    public var id: String { rawValue }
+}
+
 /// A part kept in stock.
 public struct Part: BenchRecord {
     public static let databaseTableName = "part"
@@ -17,9 +29,21 @@ public struct Part: BenchRecord {
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?
+    public var kind: PartKind = .part
+    /// Nil when it does not matter (a new component from a vendor).
+    public var condition: PartCondition?
+    /// Where it sits in the shop: a shelf, a bin, a drawer.
+    public var location: String = ""
+    public var notes: String = ""
 
     public init(id: UUID = UUID(), name: String, sku: String = "", vendor: String = "", url: String = "",
-                costCents: Int? = nil, priceCents: Int? = nil, quantity: Int = 0, lowStockThreshold: Int = 0, now: Date = .now) {
+                costCents: Int? = nil, priceCents: Int? = nil, quantity: Int = 0, lowStockThreshold: Int = 0,
+                kind: PartKind = .part, condition: PartCondition? = nil, location: String = "", notes: String = "",
+                now: Date = .now) {
+        self.kind = kind
+        self.condition = condition
+        self.location = location
+        self.notes = notes
         self.id = id
         self.name = name
         self.sku = sku
@@ -31,6 +55,12 @@ public struct Part: BenchRecord {
         self.lowStockThreshold = lowStockThreshold
         createdAt = now
         updatedAt = now
+    }
+
+    /// Price less cost for one, when both are known.
+    public var marginCents: Int? {
+        guard let costCents, let priceCents else { return nil }
+        return priceCents - costCents
     }
 
     /// At or below its threshold. A part with no threshold is never low.
@@ -79,6 +109,16 @@ public struct PartUse: BenchRecord {
     public var deletedAt: Date?
 }
 
+/// A repair a stocked part is on, for the part's details.
+public struct PartRepairRow: Hashable, Sendable, Identifiable {
+    public var use: PartUse
+    public var ticketNumber: Int
+    public var customerName: String
+    public var deviceTitle: String
+    public var repairStatus: RepairStatus
+    public var id: UUID { use.id }
+}
+
 /// A part on a repair, with the repair's ticket and customer, for To Order and Incoming.
 public struct PartUseRow: Hashable, Sendable, Identifiable {
     public var use: PartUse
@@ -91,14 +131,16 @@ public struct PartUseRow: Hashable, Sendable, Identifiable {
 extension Library {
     // MARK: Inventory
 
-    /// Parts sorted by name. `search` matches the name, SKU, or vendor.
-    public func parts(matching search: String = "", lowOnly: Bool = false) throws -> [Part] {
+    /// Parts sorted by name. `search` matches the name, SKU, vendor, or location.
+    public func parts(matching search: String = "", lowOnly: Bool = false, kind: PartKind? = nil) throws -> [Part] {
         try db.read { db in
             var request = Part.filter(Column("deletedAt") == nil)
             let text = search.trimmingCharacters(in: .whitespaces)
             if !text.isEmpty {
-                request = request.filter(Column("name").like("%\(text)%") || Column("sku").like("%\(text)%") || Column("vendor").like("%\(text)%"))
+                request = request.filter(Column("name").like("%\(text)%") || Column("sku").like("%\(text)%") || Column("vendor").like("%\(text)%")
+                                         || Column("location").like("%\(text)%"))
             }
+            if let kind { request = request.filter(Column("kind") == kind.rawValue) }
             if lowOnly {
                 request = request.filter(Column("lowStockThreshold") > 0 && Column("quantity") <= Column("lowStockThreshold"))
             }
@@ -239,6 +281,27 @@ extension Library {
             use.deletedAt = now
             use.updatedAt = now
             try use.update(db)
+        }
+    }
+
+    /// The repairs a stocked part is on, newest first.
+    public func repairs(usingPart partID: UUID) throws -> [PartRepairRow] {
+        try db.read { db in
+            try Row.fetchAll(db, sql: """
+                SELECT partUse.id AS useId, repair.ticketNumber, repair.status, customer.name AS customerName,
+                       device.brand || ' ' || device.model AS deviceTitle
+                FROM partUse
+                JOIN repair ON repair.id = partUse.repairId
+                JOIN device ON device.id = repair.deviceId
+                JOIN customer ON customer.id = device.customerId
+                WHERE partUse.partId = ? AND partUse.deletedAt IS NULL AND repair.deletedAt IS NULL
+                ORDER BY repair.receivedAt DESC, partUse.createdAt DESC
+                """, arguments: [partID.stored]).compactMap { row in
+                guard let use = try PartUse.fetchOne(db, key: row["useId"] as String),
+                      let status = RepairStatus(rawValue: row["status"]) else { return nil }
+                return PartRepairRow(use: use, ticketNumber: row["ticketNumber"], customerName: row["customerName"],
+                                     deviceTitle: row["deviceTitle"], repairStatus: status)
+            }
         }
     }
 

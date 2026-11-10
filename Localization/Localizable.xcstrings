@@ -171,6 +171,26 @@
         }
       }
     },
+    "Accessories": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessoires"
+          }
+        }
+      }
+    },
+    "Accessory": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Accessoire"
+          }
+        }
+      }
+    },
     "Add": {
       "localizations": {
         "fr": {
@@ -411,12 +431,32 @@
         }
       }
     },
+    "Add Starter Parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter des pièces de départ"
+          }
+        }
+      }
+    },
     "Add the Models It Covers…": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter les modèles couverts…"
+          }
+        }
+      }
+    },
+    "Add the parts you keep on hand, or start from the usual parts of a console.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez les pièces que vous gardez en stock, ou partez des pièces habituelles d’une console."
           }
         }
       }
@@ -437,6 +477,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajoutez les personnes qui vous apportent des appareils."
+          }
+        }
+      }
+    },
+    "Add the usual parts, cables, and controllers of a console, at zero stock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter les pièces, câbles et manettes habituels d’une console, avec un stock à zéro"
           }
         }
       }
@@ -541,12 +591,32 @@
         }
       }
     },
+    "All Consoles": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les consoles"
+          }
+        }
+      }
+    },
     "All Devices": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Tous les appareils"
+          }
+        }
+      }
+    },
+    "All Kinds": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tous les types"
           }
         }
       }
@@ -887,6 +957,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Acheteur"
+          }
+        }
+      }
+    },
+    "Cable": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Câble"
+          }
+        }
+      }
+    },
+    "Cables": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Câbles"
           }
         }
       }
@@ -1291,6 +1381,38 @@
         }
       }
     },
+    "condition.new": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neuf"
+          }
+        }
+      }
+    },
+    "condition.used": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Used"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Usagé"
+          }
+        }
+      }
+    },
     "Connect": {
       "localizations": {
         "fr": {
@@ -1367,6 +1489,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sommaire"
+          }
+        }
+      }
+    },
+    "Controller": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manette"
+          }
+        }
+      }
+    },
+    "Controllers": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manettes"
           }
         }
       }
@@ -1677,6 +1819,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Description"
+          }
+        }
+      }
+    },
+    "Details": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Détails"
           }
         }
       }
@@ -2781,6 +2933,38 @@
         }
       }
     },
+    "kind.part": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Part"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièce"
+          }
+        }
+      }
+    },
+    "kind.parts": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parts"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièces"
+          }
+        }
+      }
+    },
     "Labour": {
       "localizations": {
         "fr": {
@@ -2857,6 +3041,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Taux local"
+          }
+        }
+      }
+    },
+    "Location": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Emplacement"
           }
         }
       }
@@ -3011,6 +3205,16 @@
         }
       }
     },
+    "Margin": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marge"
+          }
+        }
+      }
+    },
     "Mark Not Refunded": {
       "localizations": {
         "fr": {
@@ -3141,6 +3345,16 @@
         }
       }
     },
+    "Name, SKU, vendor, or location": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nom, SKU, fournisseur ou emplacement"
+          }
+        }
+      }
+    },
     "Never": {
       "localizations": {
         "fr": {
@@ -3207,6 +3421,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nouvelle pièce"
+          }
+        }
+      }
+    },
+    "New Part…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle pièce…"
           }
         }
       }
@@ -3357,6 +3581,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucun message"
+          }
+        }
+      }
+    },
+    "No notes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune note"
           }
         }
       }
@@ -3611,6 +3845,16 @@
         }
       }
     },
+    "Not on a repair yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur aucune réparation pour l’instant"
+          }
+        }
+      }
+    },
     "Not Refunded": {
       "localizations": {
         "fr": {
@@ -3637,6 +3881,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Introuvable"
+          }
+        }
+      }
+    },
+    "Not set": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non précisé"
           }
         }
       }
@@ -3687,6 +3941,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Rien ne correspond à « %@ »."
+          }
+        }
+      }
+    },
+    "Nothing of This Kind": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien de ce type"
           }
         }
       }
@@ -3777,6 +4041,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "En commande"
+          }
+        }
+      }
+    },
+    "On Repairs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sur des réparations"
           }
         }
       }
@@ -4421,6 +4695,16 @@
         }
       }
     },
+    "Prices": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Prix"
+          }
+        }
+      }
+    },
     "Pricing": {
       "localizations": {
         "fr": {
@@ -4801,6 +5085,16 @@
         }
       }
     },
+    "Refurbished": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remis à neuf"
+          }
+        }
+      }
+    },
     "Refuse": {
       "localizations": {
         "fr": {
@@ -5117,6 +5411,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Faites tourner le serveur BenchLog sur un Mac ou un NAS à l’atelier, puis partagez une bibliothèque entre vos appareils. Hors de l’atelier, joignez-le avec Tailscale."
+          }
+        }
+      }
+    },
+    "Shelf, bin, or drawer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Étagère, bac ou tiroir"
+          }
+        }
+      }
+    },
+    "Show All Kinds": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher tous les types"
+          }
+        }
+      }
+    },
+    "Show one kind of part": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher un seul type de pièce"
           }
         }
       }
@@ -5697,6 +6021,26 @@
           "stringUnit": {
             "state": "translated",
             "value": "Sous-total"
+          }
+        }
+      }
+    },
+    "Supplies": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fournitures"
+          }
+        }
+      }
+    },
+    "Supply": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Fourniture"
           }
         }
       }

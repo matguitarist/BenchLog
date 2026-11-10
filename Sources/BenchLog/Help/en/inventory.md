@@ -2,6 +2,17 @@
 
 The **Parts** page lists what you keep on the shelf, with the quantity, the cost, the price, and the models each part fits.
 
+## A part
+
+- **Kind** says what it is: Part, Accessory, Cable, Controller, or Supply. The filter in the toolbar shows one kind.
+- **Condition** is New, Used, or Refurbished. **Location** is its shelf, bin, or drawer; search finds it.
+- **Cost** is what you paid for one, **Price** what a customer pays. **Margin** is the difference.
+- **On Repairs** lists the repairs the part is on.
+
+## Starter parts
+
+**File > Add Starter Parts** adds the usual parts, accessories, cables, and controllers of a console (Sony PS1, Sony PS2, Microsoft Xbox) at zero stock, with a suggested price. Parts you already have are left as they are. Then use **Count…** for what is on the shelf, and set your own cost and price.
+
 ## Stock
 
 - A part is in **Low Stock** when its quantity is at or below its threshold. The sidebar badge counts them.

@@ -16,11 +16,12 @@ struct PartsPage: View {
             case .inventory, .low:
                 HSplitView {
                     inventory
-                        .frame(minWidth: 300, idealWidth: 360, maxWidth: 520, maxHeight: .infinity)
+                        .frame(minWidth: 300, idealWidth: 400, maxWidth: 520, maxHeight: .infinity)
+                        .layoutPriority(1)
                     detail
-                        .frame(minWidth: 420, maxWidth: .infinity, maxHeight: .infinity)
+                        .frame(minWidth: 320, maxWidth: .infinity, maxHeight: .infinity)
                 }
-                .searchable(text: $model.partSearch, prompt: Text("Name, SKU, or vendor"))
+                .searchable(text: $model.partSearch, prompt: Text("Name, SKU, vendor, or location"))
             case .toOrder, .incoming:
                 orders
             case .restock:
@@ -38,6 +39,17 @@ struct PartsPage: View {
                 .pickerStyle(.segmented)
                 .help("Choose which parts the page shows")
             }
+            if model.partsTab == .inventory || model.partsTab == .low {
+                ToolbarItem {
+                    Picker("Kind", systemImage: "line.3.horizontal.decrease", selection: $model.partKind) {
+                        Text("All Kinds").tag(PartKind?.none)
+                        Divider()
+                        ForEach(PartKind.allCases) { Label($0.plural, systemImage: $0.symbol).tag(PartKind?.some($0)) }
+                    }
+                    .pickerStyle(.menu)
+                    .help("Show one kind of part")
+                }
+            }
             if model.partsTab == .restock {
                 ToolbarItem {
                     Button("Add Low Parts", systemImage: "cart.badge.plus") { model.addLowParts() }
@@ -50,12 +62,12 @@ struct PartsPage: View {
                     .help("Add a part to the inventory")
             }
         }
-        .task(id: "\(model.dataVersion) \(model.partsTab.rawValue) \(model.partSearch)") {
+        .task(id: "\(model.dataVersion) \(model.partsTab.rawValue) \(model.partSearch) \(model.partKind?.rawValue ?? "")") {
             switch model.partsTab {
             case .inventory:
-                parts = model.read([]) { try $0.parts(matching: model.partSearch) }
+                parts = model.read([]) { try $0.parts(matching: model.partSearch, kind: model.partKind) }
                 value = model.read(InventoryValue()) { try $0.inventoryValue() }
-            case .low: parts = model.read([]) { try $0.parts(matching: model.partSearch, lowOnly: true) }
+            case .low: parts = model.read([]) { try $0.parts(matching: model.partSearch, lowOnly: true, kind: model.partKind) }
             case .toOrder: uses = model.read([]) { try $0.partUseRows(.needed) }
             case .incoming: uses = model.read([]) { try $0.partUseRows(.ordered) }
             case .restock: break
@@ -69,6 +81,12 @@ struct PartsPage: View {
         if parts.isEmpty {
             if !model.partSearch.isEmpty {
                 ContentUnavailableView.search(text: model.partSearch)
+            } else if let kind = model.partKind {
+                ContentUnavailableView {
+                    Label("Nothing of This Kind", systemImage: kind.symbol)
+                } actions: {
+                    Button("Show All Kinds") { model.partKind = nil }
+                }
             } else if model.partsTab == .low {
                 ContentUnavailableView("Nothing Is Low", systemImage: "checkmark.circle",
                                        description: Text("Parts at or below their low-stock threshold show here."))
@@ -76,17 +94,27 @@ struct PartsPage: View {
                 ContentUnavailableView {
                     Label("No Parts", systemImage: "shippingbox")
                 } description: {
-                    Text("Add the parts you keep on hand.")
+                    Text("Add the parts you keep on hand, or start from the usual parts of a console.")
                 } actions: {
-                    Button("New Part") { model.sheet = .newPart }.buttonStyle(.borderedProminent)
+                    HStack(spacing: Space.sm) {
+                        Button("New Part") { model.sheet = .newPart }.buttonStyle(.borderedProminent)
+                        Menu("Add Starter Parts") { StarterPartsButtons(model: model) }
+                            .fixedSize()
+                            .help("Add the usual parts, cables, and controllers of a console, at zero stock")
+                    }
                 }
             }
         } else {
             List(parts, selection: $model.selectedPart) { part in
                 HStack(spacing: Space.sm) {
+                    Image(systemName: part.kind.symbol)
+                        .foregroundStyle(.secondary)
+                        .frame(width: 24)
+                        .accessibilityLabel(Text(part.kind.title))
                     VStack(alignment: .leading, spacing: 2) {
                         Text(part.name).fontWeight(.medium).lineLimit(1).help(part.name)
-                        Text([part.sku, part.vendor].filter { !$0.isEmpty }.joined(separator: " · "))
+                        Text(([part.kind.title, part.sku, part.vendor, part.location].filter { !$0.isEmpty }
+                              + [Money.text(part.priceCents)].filter { _ in part.priceCents != nil }).joined(separator: " · "))
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                     }
@@ -162,49 +190,154 @@ struct StockCount: View {
     }
 }
 
-/// One part: what it is, where it comes from, its stock, and the models it fits.
+/// The consoles with starter parts, then all of them: the File menu and the empty Parts page.
+struct StarterPartsButtons: View {
+    let model: AppModel
+
+    var body: some View {
+        ForEach(StarterSet.allCases) { set in
+            Button(set.title) { model.addStarterParts([set]) }
+        }
+        Divider()
+        Button("All Consoles") { model.addStarterParts(StarterSet.allCases) }
+    }
+}
+
+extension PartKind {
+    var plural: String {
+        switch self {
+        case .part: String(localized: "kind.parts", defaultValue: "Parts", comment: "A kind of part, plural: components for repairs")
+        case .accessory: String(localized: "Accessories")
+        case .cable: String(localized: "Cables")
+        case .controller: String(localized: "Controllers")
+        case .supply: String(localized: "Supplies")
+        }
+    }
+}
+
+/// One part: what it is, its prices, its stock, and the models it fits; beside them, in a
+/// wide window, the repairs it is on, its stock history, and its notes.
 struct PartDetail: View {
     @Environment(AppModel.self) private var model
     let partID: UUID
     @State private var part: Part?
     @State private var fits: [PartFit] = []
+    @State private var repairs: [PartRepairRow] = []
+    @State private var wide = false
+
+    /// From this width the details split into two columns.
+    private nonisolated static let wideWidth: CGFloat = 880
 
     var body: some View {
         Group {
             if let part {
-                Form {
-                    Section {
-                        HStack(alignment: .firstTextBaseline) {
-                            Text(part.name).font(.title.weight(.semibold)).textSelection(.enabled)
-                            Spacer()
-                            Button("Edit…") { model.sheet = .editPart(part.id) }
-                                .help("Change this part's details")
-                        }
-                        if !part.sku.isEmpty { LabeledContent("SKU") { Text(part.sku).monospaced().textSelection(.enabled) } }
-                        if !part.vendor.isEmpty { LabeledContent("Vendor", value: part.vendor) }
-                        if let url = URL(string: part.url), !part.url.isEmpty {
-                            LabeledContent("Link") { Link(url.host() ?? part.url, destination: url) }
-                        }
-                        LabeledContent("Cost", value: Money.text(part.costCents))
-                        LabeledContent("Price", value: Money.text(part.priceCents))
+                if wide {
+                    HStack(spacing: 0) {
+                        Form { main(part, header: Text("Details")) }.formStyle(.grouped)
+                        Form { side(part) }.formStyle(.grouped)
                     }
-                    StockSection(part: part)
-                    Section("Fits") {
-                        if fits.isEmpty { Text("Fits any model").foregroundStyle(.secondary) }
-                        ForEach(fits, id: \.self) { fit in
-                            Label(fit.title, systemImage: fit.category.symbol)
-                        }
+                } else {
+                    Form {
+                        main(part, header: nil)
+                        side(part)
                     }
-                    StockHistorySection(partID: part.id)
+                    .formStyle(.grouped)
                 }
-                .formStyle(.grouped)
             } else {
                 ContentUnavailableView("No Part Selected", systemImage: "shippingbox")
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onGeometryChange(for: Bool.self) { $0.size.width >= Self.wideWidth } action: { wide = $0 }
         .task(id: model.dataVersion) {
             part = model.read(nil) { try $0.part(partID) }
             fits = model.read([]) { try $0.fits(of: partID) }
+            repairs = model.read([]) { try $0.repairs(usingPart: partID) }
+        }
+    }
+
+    @ViewBuilder
+    private func main(_ part: Part, header: Text?) -> some View {
+        // Beside a second column, the first section has a header so both columns start level.
+        Section {
+            HStack(alignment: .firstTextBaseline, spacing: Space.sm) {
+                Image(systemName: part.kind.symbol)
+                    .font(.title2)
+                    .foregroundStyle(.secondary)
+                    .accessibilityLabel(Text(part.kind.title))
+                Text(part.name).font(.title.weight(.semibold)).textSelection(.enabled)
+                Spacer()
+                Button("Edit…") { model.sheet = .editPart(part.id) }
+                    .help("Change this part's details")
+            }
+            LabeledContent("Kind", value: part.kind.title)
+            if let condition = part.condition { LabeledContent("Condition", value: condition.title) }
+            if !part.sku.isEmpty { LabeledContent("SKU") { Text(part.sku).monospaced().textSelection(.enabled) } }
+            if !part.vendor.isEmpty { LabeledContent("Vendor", value: part.vendor) }
+            if let url = URL(string: part.url), !part.url.isEmpty {
+                LabeledContent("Link") { Link(url.host() ?? part.url, destination: url) }
+            }
+            if !part.location.isEmpty { LabeledContent("Location") { Text(part.location).textSelection(.enabled) } }
+        } header: {
+            if let header { header }
+        }
+        Section("Prices") {
+            LabeledContent("Cost", value: Money.text(part.costCents))
+            LabeledContent("Price", value: Money.text(part.priceCents))
+            if let margin = part.marginCents {
+                LabeledContent("Margin") {
+                    if let price = part.priceCents, price > 0 {
+                        Text("\(Money.text(margin)) (\(Double(margin) / Double(price), format: .percent.precision(.fractionLength(0))))")
+                    } else {
+                        Text(Money.text(margin))
+                    }
+                }
+                .monospacedDigit()
+            }
+            if part.quantity > 0, let cost = part.costCents {
+                LabeledContent("Stock value", value: Money.text(cost * part.quantity))
+            }
+        }
+        StockSection(part: part)
+        Section("Fits") {
+            if fits.isEmpty { Text("Fits any model").foregroundStyle(.secondary) }
+            ForEach(fits, id: \.self) { fit in
+                Label(fit.title, systemImage: fit.category.symbol)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func side(_ part: Part) -> some View {
+        Section("On Repairs") {
+            if repairs.isEmpty { Text("Not on a repair yet").foregroundStyle(.secondary) }
+            ForEach(repairs.prefix(8)) { row in
+                Button {
+                    model.open(.repair(row.use.repairId))
+                } label: {
+                    HStack(spacing: Space.sm) {
+                        Text(TicketNumber(row.ticketNumber).text).monospacedDigit()
+                        Text(verbatim: "\(row.customerName) · \(row.deviceTitle)").lineLimit(1).foregroundStyle(.secondary)
+                        if row.use.quantity > 1 { Text(verbatim: "× \(row.use.quantity)").foregroundStyle(.secondary) }
+                        Spacer()
+                        Label(row.use.status.title, systemImage: row.use.status.symbol)
+                            .font(.callout)
+                            .foregroundStyle(.secondary)
+                        StatusPill(status: row.repairStatus)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .help("Open repair \(TicketNumber(row.ticketNumber).text)")
+            }
+        }
+        StockHistorySection(partID: part.id)
+        Section("Notes") {
+            if part.notes.isEmpty {
+                Text("No notes").foregroundStyle(.secondary)
+            } else {
+                Text(part.notes).textSelection(.enabled)
+            }
         }
     }
 }

@@ -118,14 +118,31 @@ enum SeedData {
                                  fits: [PartFit(category: .console, brand: "Nintendo", model: "Switch")])
         let joyStick = try part("Joy-Con analog stick", sku: "JC-STICK", vendor: "AliExpress", cost: 299, price: 1499, quantity: 1, low: 4,
                                 fits: [PartFit(category: .console, brand: "Nintendo", model: "Switch")])
-        let gbaSpeaker = try part("GBA SP speaker", vendor: "Retro Modding", cost: 350, price: 1500, quantity: 2, low: 2,
+        var gbaSpeaker = try part("GBA SP speaker", vendor: "Retro Modding", cost: 350, price: 1500, quantity: 2, low: 2,
                                   fits: [PartFit(category: .handheld, brand: "Nintendo", model: "Game Boy Advance")])
+        gbaSpeaker.condition = .new
+        gbaSpeaker.location = "Drawer 3"
+        gbaSpeaker.notes = "Fits the AGS-001 and AGS-101. Check the polarity before soldering."
+        gbaSpeaker = try library.save(gbaSpeaker, fits: library.fits(of: gbaSpeaker.id))
         let deckStick = try part("Steam Deck thumbstick module", sku: "SD-TS-R", vendor: "iFixit", cost: 2295, price: 3995, quantity: 2, low: 1,
                                  fits: [PartFit(category: .handheld, brand: "Valve", model: "Steam Deck")])
         _ = try part("NES 72-pin connector", sku: "NES-72", vendor: "Retro Modding", cost: 600, price: 1800, quantity: 5, low: 2,
                      fits: [PartFit(category: .console, brand: "Nintendo", model: "NES")])
         let paste = try part("Thermal paste (1 g)", vendor: "Amazon", cost: 150, price: 500, quantity: 2, low: 3)
         _ = try part("USB-C port (generic)", sku: "USBC-16P", vendor: "DigiKey", cost: 120, price: 1500, quantity: 0, low: 5)
+
+        // Starter parts of the retro consoles, a few of them on the shelf.
+        try library.addStarterParts()
+        for (name, quantity, cost, location) in [("PS2 DualShock 2 controller (SCPH-10010)", 3, 1200, "Shelf B2"),
+                                                 ("PlayStation AV cable (composite)", 6, 250, "Bin 4"),
+                                                 ("Xbox clock capacitor (1 F, 2.5 V)", 10, 120, "Drawer 1")] {
+            guard var stocked = try library.parts(matching: name).first else { continue }
+            stocked.quantity = quantity
+            stocked.costCents = cost
+            stocked.location = location
+            stocked.vendor = "Retro Modding"
+            try library.save(stocked, fits: library.fits(of: stocked.id))
+        }
 
         // Restock: one received, one on its way, and drafts for every low part.
         if let received = try library.orderMore(paste.id, quantity: 10) {

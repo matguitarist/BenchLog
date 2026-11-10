@@ -16,6 +16,10 @@ struct PartSheet: View {
     @State private var price: Decimal?
     @State private var quantity = 0
     @State private var threshold = 0
+    @State private var kind = PartKind.part
+    @State private var condition: PartCondition?
+    @State private var location = ""
+    @State private var notes = ""
     @State private var fits: [PartFit] = []
     @State private var fitDraft = DeviceDraft()
     @State private var showErrors = false
@@ -33,9 +37,18 @@ struct PartSheet: View {
                     if showErrors, name.trimmingCharacters(in: .whitespaces).isEmpty {
                         Text("Enter a name.").font(.callout).foregroundStyle(.red)
                     }
+                    Picker("Kind", selection: $kind) {
+                        ForEach(PartKind.allCases) { Label($0.title, systemImage: $0.symbol).tag($0) }
+                    }
+                    Picker("Condition", selection: $condition) {
+                        Text("Not set").tag(PartCondition?.none)
+                        Divider()
+                        ForEach(PartCondition.allCases) { Text($0.title).tag(PartCondition?.some($0)) }
+                    }
                     TextField("SKU", text: $sku)
                     TextField("Vendor", text: $vendor)
                     TextField("Link", text: $url, prompt: Text("https://…"))
+                    TextField("Location", text: $location, prompt: Text("Shelf, bin, or drawer"))
                 }
                 Section {
                     TextField("Cost", value: $cost, format: Money.format)
@@ -54,6 +67,11 @@ struct PartSheet: View {
                         }
                     }
                 }
+                Section("Notes") {
+                    TextField("Notes", text: $notes, prompt: Text("Optional"), axis: .vertical)
+                        .lineLimit(2...5)
+                        .labelsHidden()
+                }
                 Section("Fits") {
                     ForEach(fits, id: \.self) { fit in
                         HStack {
@@ -71,7 +89,7 @@ struct PartSheet: View {
                 }
             }
             .formStyle(.grouped)
-            .fitsContent(max: 560)
+            .fitsContent(max: 640)
             SheetButtons(confirm: partID == nil ? String(localized: "Add Part") : String(localized: "Save"),
                          cancel: { dismiss() }, action: save)
         }
@@ -90,6 +108,10 @@ struct PartSheet: View {
             price = Money.decimal(part.priceCents)
             quantity = part.quantity
             threshold = part.lowStockThreshold
+            kind = part.kind
+            condition = part.condition
+            location = part.location
+            notes = part.notes
             fits = model.read([]) { try $0.fits(of: partID) }
             if let last = fits.last {
                 fitDraft.category = last.category
@@ -114,6 +136,10 @@ struct PartSheet: View {
         part.priceCents = Money.cents(price)
         part.quantity = quantity
         part.lowStockThreshold = threshold
+        part.kind = kind
+        part.condition = condition
+        part.location = location.trimmingCharacters(in: .whitespaces)
+        part.notes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let saved = model.save(part, fits: fits) else { return }
         model.selectedPart = saved.id
         dismiss()

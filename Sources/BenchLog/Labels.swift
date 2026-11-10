@@ -95,6 +95,38 @@ extension AttachmentKind {
     }
 }
 
+extension PartKind {
+    var title: String {
+        switch self {
+        case .part: String(localized: "kind.part", defaultValue: "Part", comment: "What a part is: a component for a repair")
+        case .accessory: String(localized: "Accessory")
+        case .cable: String(localized: "Cable")
+        case .controller: String(localized: "Controller")
+        case .supply: String(localized: "Supply")
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .part: "cpu"
+        case .accessory: "memorychip"
+        case .cable: "cable.connector"
+        case .controller: "gamecontroller"
+        case .supply: "drop"
+        }
+    }
+}
+
+extension PartCondition {
+    var title: String {
+        switch self {
+        case .new: String(localized: "condition.new", defaultValue: "New", comment: "The state a part is sold in")
+        case .used: String(localized: "condition.used", defaultValue: "Used", comment: "The state a part is sold in")
+        case .refurbished: String(localized: "Refurbished")
+        }
+    }
+}
+
 extension PartUseStatus {
     var title: String {
         switch self {
