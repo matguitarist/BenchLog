@@ -676,7 +676,8 @@ As the user, I install BenchLog 2.0 and its server, and both devices share one l
 Depends: S-049, S-050, S-051, S-052, S-053, S-054
 Acceptance:
 - [manual] `tools/release.sh 2.0.0 --check` passes; release notes in French and English explain the server; the published release waits for the owner's go-ahead.
-Status: todo
+Status: done
+Built: published by tools/release.sh 2.0.0 on 2026-11-09 after the owner's go-ahead; https://github.com/matguitarist/BenchLog/releases/tag/v2.0.0, feed offers 2.0.0.
 
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
