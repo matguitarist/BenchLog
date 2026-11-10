@@ -2,9 +2,19 @@
 
 With a **BenchLog server** on your shop network, every Mac shares one library. Each Mac keeps a full copy and works offline; changes go both ways a few seconds after you make them, and every minute.
 
-## Set up the server
+## Use this Mac as the server
 
-The server runs on an always-on Mac or a NAS, with Docker or with Node 24.
+The simplest server is a Mac that stays on in the shop, with BenchLog on it:
+
+1. Open **Settings > Sync** and choose **Use This Mac as the Server**.
+2. If macOS asks, allow BenchLog in **System Settings > General > Login Items**, then choose the button again.
+3. Settings shows what the other Macs enter: the **address**, such as `http://Bench-Mac.local:8420`, and the **token**, each with **Copy**.
+
+The server keeps running when BenchLog is closed and after a restart, and the Mac does not go to sleep on its own while it serves. **Stop Using This Mac as the Server…** stops it; its data stays in the folder that **Show Data Folder** opens.
+
+## Set up the server on a NAS
+
+The server also runs on a NAS or another always-on computer, with Docker or with Node 24.
 
 ```
 cd server

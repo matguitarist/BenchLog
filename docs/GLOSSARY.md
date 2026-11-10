@@ -68,6 +68,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Stock value / Inventory at cost | Parts on the shelf × their cost, plus shop devices in stock or for sale at what they cost | asset value, valuation |
 | Server | The BenchLog server on the shop network that holds the shared library | cloud, backend, host |
 | Sync / Sync Now | Send this device's changes to the server and get the others' | upload, refresh, backup |
+| This Mac as the Server | The server built into BenchLog, run on this Mac as a login item from Settings > Sync; « Ce Mac comme serveur » | host, local server, server mode |
 | Token | The secret the server prints on its first start; every device needs it to connect | password, API key |
 | Library Key | The secret that seals passcodes before they reach the server, shown as a recovery code; another device needs it to join | password, encryption key, PIN |
 | Connect / Replace This Mac's Library | Link this library to the server; when the server holds another library, back this one up and take the server's | join, merge, link |

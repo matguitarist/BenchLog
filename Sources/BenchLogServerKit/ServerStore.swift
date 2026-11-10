@@ -2,7 +2,7 @@ import Foundation
 import GRDB
 
 /// A request the server refuses, with its HTTP status.
-public struct ServerError: Error, Equatable {
+public struct ServerError: LocalizedError, Equatable {
     public var status: Int
     public var message: String
 
@@ -10,6 +10,8 @@ public struct ServerError: Error, Equatable {
         self.message = message
         self.status = status
     }
+
+    public var errorDescription: String? { message }
 }
 
 /// The library on the server: rows it stores without knowing their columns, number sequences,

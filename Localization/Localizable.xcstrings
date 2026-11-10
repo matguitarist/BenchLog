@@ -7221,6 +7221,236 @@
           }
         }
       }
+    },
+    "Allow BenchLog in System Settings > General > Login Items, then try again.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Autorisez BenchLog dans Réglages Système > Général > Éléments de connexion, puis réessayez."
+          }
+        }
+      }
+    },
+    "Another server already uses port 8420 on this Mac. Stop it, then try again.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Un autre serveur utilise déjà le port 8420 sur ce Mac. Arrêtez-le, puis réessayez."
+          }
+        }
+      }
+    },
+    "Copy the address other Macs enter in Settings > Sync": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier l’adresse que les autres Mac entrent dans Réglages > Synchro"
+          }
+        }
+      }
+    },
+    "Copy the token other Macs enter in Settings > Sync": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copier le jeton que les autres Mac entrent dans Réglages > Synchro"
+          }
+        }
+      }
+    },
+    "Keep the shop’s library on this Mac: the server runs even when BenchLog is closed, and other Macs connect to it on the shop network. This Mac must stay on.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gardez la bibliothèque de l’atelier sur ce Mac : le serveur tourne même quand BenchLog est fermé, et les autres Mac s’y connectent sur le réseau de l’atelier. Ce Mac doit rester allumé."
+          }
+        }
+      }
+    },
+    "Open Login Items": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir les éléments de connexion"
+          }
+        }
+      }
+    },
+    "Other Macs connect with": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les autres Mac se connectent avec"
+          }
+        }
+      }
+    },
+    "Other Macs stop syncing until they connect to another server. The server’s data stays on this Mac, and this Mac keeps its copy of the library.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les autres Mac cessent de se synchroniser jusqu’à ce qu’ils se connectent à un autre serveur. Les données du serveur restent sur ce Mac, et ce Mac garde sa copie de la bibliothèque."
+          }
+        }
+      }
+    },
+    "Run the BenchLog server on this Mac and connect this library to it": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Faire tourner le serveur BenchLog sur ce Mac et y connecter cette bibliothèque"
+          }
+        }
+      }
+    },
+    "Server on This Mac": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serveur sur ce Mac"
+          }
+        }
+      }
+    },
+    "Show Data Folder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le dossier de données"
+          }
+        }
+      }
+    },
+    "Show the server’s library and files in the Finder": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher la bibliothèque et les fichiers du serveur dans le Finder"
+          }
+        }
+      }
+    },
+    "Starting the server…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Démarrage du serveur…"
+          }
+        }
+      }
+    },
+    "Stop Server": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter le serveur"
+          }
+        }
+      }
+    },
+    "Stop Using This Mac as the Server…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ne plus utiliser ce Mac comme serveur…"
+          }
+        }
+      }
+    },
+    "Stop the Server on This Mac?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter le serveur sur ce Mac ?"
+          }
+        }
+      }
+    },
+    "Stop the server on this Mac; its data stays": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Arrêter le serveur sur ce Mac ; ses données restent"
+          }
+        }
+      }
+    },
+    "The server did not start.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le serveur n’a pas démarré."
+          }
+        }
+      }
+    },
+    "The server made no token.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le serveur n’a pas créé de jeton."
+          }
+        }
+      }
+    },
+    "The server on this Mac holds another library (%lld items). Connect to it from Settings > Sync with its address and library key, or move its folder away.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le serveur sur ce Mac contient une autre bibliothèque (%lld éléments). Connectez-vous-y depuis Réglages > Synchro avec son adresse et sa clé de bibliothèque, ou déplacez son dossier."
+          }
+        }
+      }
+    },
+    "They also need the library key below. Away from the shop, use this Mac’s Tailscale name as the address.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Il leur faut aussi la clé de bibliothèque ci-dessous. Hors de l’atelier, utilisez le nom Tailscale de ce Mac comme adresse."
+          }
+        }
+      }
+    },
+    "This Mac as the Server": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce Mac comme serveur"
+          }
+        }
+      }
+    },
+    "Use This Mac as the Server": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Utiliser ce Mac comme serveur"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

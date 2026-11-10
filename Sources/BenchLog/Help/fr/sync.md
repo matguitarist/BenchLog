@@ -2,9 +2,19 @@
 
 Avec un **serveur BenchLog** sur le réseau de l’atelier, tous les Mac partagent une bibliothèque. Chaque Mac en garde une copie complète et fonctionne hors ligne; les changements passent dans les deux sens quelques secondes après les avoir faits, et chaque minute.
 
-## Installer le serveur
+## Utiliser ce Mac comme serveur
 
-Le serveur tourne sur un Mac toujours allumé ou un NAS, avec Docker ou avec Node 24.
+Le serveur le plus simple est un Mac qui reste allumé à l’atelier, avec BenchLog dessus :
+
+1. Ouvrez **Réglages > Synchro** et choisissez **Utiliser ce Mac comme serveur**.
+2. Si macOS le demande, autorisez BenchLog dans **Réglages Système > Général > Éléments de connexion**, puis choisissez à nouveau le bouton.
+3. Les réglages montrent ce que les autres Mac entrent : l’**adresse**, comme `http://Bench-Mac.local:8420`, et le **jeton**, chacun avec **Copier**.
+
+Le serveur continue de tourner quand BenchLog est fermé et après un redémarrage, et le Mac ne se met pas en veille de lui-même tant qu’il sert. **Ne plus utiliser ce Mac comme serveur…** l’arrête ; ses données restent dans le dossier qu’ouvre **Afficher le dossier de données**.
+
+## Installer le serveur sur un NAS
+
+Le serveur tourne aussi sur un NAS ou un autre ordinateur toujours allumé, avec Docker ou avec Node 24.
 
 ```
 cd server

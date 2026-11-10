@@ -419,6 +419,7 @@ enum SelfTest {
 
             // S-051 to S-054 end to end: the real server, when Node and the source are here.
             await syncEndToEnd(model)
+            await serverOnThisMac(model)
 
             for tab in SettingsTab.allCases {
                 model.settingsTab = tab
@@ -519,6 +520,23 @@ enum SelfTest {
         }
         sync.disconnect(model)
         check("Disconnect forgets the server", !sync.isConnected)
+    }
+
+    /// S-059: Use This Mac as the Server, with the built-in server in this process.
+    private static func serverOnThisMac(_ model: AppModel) async {
+        let host = ServerHost.shared
+        let sync = SyncController.shared
+        check("a library not connected offers Use This Mac as the Server", !sync.isConnected && host.state == .off)
+        await host.start(model)
+        check("Use This Mac as the Server starts it and connects", host.state == .running && sync.isConnected && host.serves(sync.server),
+              "\(host.state)")
+        check("it shows the address and token other Macs enter", host.addressForOthers.hasSuffix(".local:8420") && (host.token?.count ?? 0) >= 32)
+        if let token = host.token {
+            let info = try? await HTTPSyncTransport(baseURL: host.localURL, token: token).library()
+            check("the server on this Mac holds this library", info?.libraryId == model.read(nil) { try $0.libraryID() } && (info?.rows ?? 0) > 0)
+        }
+        host.stop(model)
+        check("Stop disconnects and stops the server", !sync.isConnected && host.state == .off)
     }
 
     static func finish(code: Int32) {

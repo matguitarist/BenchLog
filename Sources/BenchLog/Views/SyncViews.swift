@@ -17,19 +17,26 @@ struct SyncSettings: View {
 
     var body: some View {
         if let server = sync.server {
-            Section("Server") {
-                LabeledContent("Address") { Text(server.absoluteString).textSelection(.enabled) }
+            let hosting = ServerHost.shared.serves(server)
+            Section(hosting ? "Server on This Mac" : "Server") {
+                if !hosting { LabeledContent("Address") { Text(server.absoluteString).textSelection(.enabled) } }
                 LabeledContent("Status") { SyncStatusLabel() }
                 if sync.pending > 0 { LabeledContent("Waiting to sync", value: "\(sync.pending)") }
                 HStack {
-                    Button("Disconnect", role: .destructive) { sync.disconnect(model) }
-                        .help("Stop syncing; this Mac keeps its copy of the library")
+                    if hosting {
+                        Button("Show Data Folder") { ServerHost.shared.showDataFolder() }
+                            .help("Show the server’s library and files in the Finder")
+                    } else {
+                        Button("Disconnect", role: .destructive) { sync.disconnect(model) }
+                            .help("Stop syncing; this Mac keeps its copy of the library")
+                    }
                     Spacer()
                     Button("Sync Now") { Task { await sync.syncNow(model) } }
                         .disabled(sync.status == .syncing)
                         .help("Send this Mac’s changes and get the others’ now")
                 }
             }
+            if hosting { ServerHostDetails() }
             if let code = sync.recoveryCode(model) {
                 Section {
                     HStack {
@@ -87,6 +94,7 @@ struct SyncSettings: View {
             } message: {
                 Text("The server already holds another library (\(otherLibraryRows ?? 0) items). This Mac’s library is backed up, then replaced by the server’s.")
             }
+            ServerHostOffer()
         }
     }
 

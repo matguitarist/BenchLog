@@ -149,6 +149,21 @@ enum Snapshot {
                     capture(to: "\(dir)/settings-sync-connected-\(mode).png", window: settings)
                     capture(to: "\(dir)/sync-status-\(mode).png", window: main)
                 }
+                // This Mac as the server (the built-in server, in this process), and Stop's question.
+                SyncController.shared.disconnect(model)
+                await ServerHost.shared.start(model)
+                for mode in ["light", "dark"] {
+                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                    try? await Task.sleep(for: .seconds(0.8))
+                    let settings = NSApp.windows.first { $0.isVisible && $0 !== main && !$0.isSheet }
+                    capture(to: "\(dir)/settings-sync-server-\(mode).png", window: settings)
+                }
+                ServerHost.shared.confirmingStop = true
+                try? await Task.sleep(for: .seconds(0.8))
+                capture(to: "\(dir)/settings-sync-server-stop.png", window: NSApp.windows.first { $0.isVisible && $0 !== main && !$0.isSheet })
+                ServerHost.shared.confirmingStop = false
+                try? await Task.sleep(for: .seconds(0.4))
+                ServerHost.shared.stop(model)
             }
             // BenchLog Help: help-<topic>-<mode>.png for the first topic and the server topic.
             if only == nil || only?.contains("help") == true {

@@ -734,7 +734,8 @@ UX:
 - Surface: a section in Settings > Sync (changes how this library syncs; Settings is where the server is chosen)
 - States: starting "Starting the server…"; needs approval "Allow BenchLog in System Settings > General > Login Items, then try again." with "Open Login Items"; failed: the reason under the button
 - Words: "This Mac as the Server", "Use This Mac as the Server", "Other Macs connect with", "Stop Using This Mac as the Server…", confirmation "Stop the Server on This Mac?" with "Stop Server" and "Cancel"
-Status: todo
+Built: `ServerHost.swift`: SMAppService.agent registers `LaunchAgents/com.mathieuares.benchlog.server.plist` (BenchLogServer --agent: logs to server.log, holds PreventUserIdleSystemSleep), waits for /v1/health, reads the token file, and connects the library to 127.0.0.1:8420; it refuses when another server already answers on 8420. In test runs the same server runs in-process on a free port, in a folder beside the test library. `Views/ServerHostViews.swift`: the offer, Login Items approval, the address and token with Copy, Stop with its question. Help's Sync topic explains it. Self-test: start, connect, address and token, the library on the server, Stop. Snapshots: settings-sync, settings-sync-server, settings-sync-server-stop. Checked by hand: agent mode (log, sleep assertion). Not yet tried: a real login item across a restart.
+Status: done
 
 ### S-060 Release 2.2.0
 Depends: S-059
