@@ -262,7 +262,7 @@ enum SheetKind: Identifiable, Hashable {
 
 /// The Parts page's tabs.
 enum PartsTab: String, CaseIterable, Identifiable {
-    case inventory, low, toOrder, incoming
+    case inventory, low, toOrder, incoming, restock
     var id: String { rawValue }
 
     var title: String {
@@ -271,6 +271,7 @@ enum PartsTab: String, CaseIterable, Identifiable {
         case .low: String(localized: "Low Stock")
         case .toOrder: String(localized: "To Order")
         case .incoming: String(localized: "Incoming")
+        case .restock: String(localized: "Restock")
         }
     }
 }

@@ -572,7 +572,8 @@ Acceptance:
 - [unit] Order More adds the part to the vendor's draft order; Add Low Parts fills drafts with every low part (enough to reach twice its threshold).
 - [unit] Mark Ordered, then Receive: each line's quantity goes into stock as a Received move, and the part's cost becomes the line's cost.
 - [snap] Parts has a Restock tab: one order per vendor with its lines, quantity and cost editable while a draft, and its total at cost.
-Status: todo
+Built: `Restock.swift` (`Restock`, `RestockLine`, `RestockOrder`; `orderMore`, `addLowParts`, `updateRestockLine`, `markOrdered`, `receive`, `discardRestock`, `restockOrders`, `unitsOnOrder`). Migration v13-restock. `Views/RestockViews.swift`: Parts > Restock, one section per order (drafts, then ordered, then the last ten received), with Add Low Parts in the toolbar. A part's page has Order More and its units on order. Snapshot: parts-restock.
+Status: done
 
 ### S-046 Counter sales
 As the user, I sell parts and accessories over the counter, without a repair, to a customer or a walk-in.

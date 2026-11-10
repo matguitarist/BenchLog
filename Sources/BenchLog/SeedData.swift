@@ -124,8 +124,16 @@ enum SeedData {
                                  fits: [PartFit(category: .handheld, brand: "Valve", model: "Steam Deck")])
         _ = try part("NES 72-pin connector", sku: "NES-72", vendor: "Retro Modding", cost: 600, price: 1800, quantity: 5, low: 2,
                      fits: [PartFit(category: .console, brand: "Nintendo", model: "NES")])
-        _ = try part("Thermal paste (1 g)", vendor: "Amazon", cost: 150, price: 500, quantity: 12, low: 3)
+        let paste = try part("Thermal paste (1 g)", vendor: "Amazon", cost: 150, price: 500, quantity: 2, low: 3)
         _ = try part("USB-C port (generic)", sku: "USBC-16P", vendor: "DigiKey", cost: 120, price: 1500, quantity: 0, low: 5)
+
+        // Restock: one received, one on its way, and drafts for every low part.
+        if let received = try library.orderMore(paste.id, quantity: 10) {
+            try library.markOrdered(received)
+            try library.receive(received)
+        }
+        if let ordered = try library.orderMore(deckStick.id, quantity: 2) { try library.markOrdered(ordered) }
+        try library.addLowParts()
         let rows = try library.repairRows()
         func repairOf(_ device: Device) -> UUID? { rows.first { $0.device.id == device.id }?.id }
         if let id = repairOf(mSwitch) {

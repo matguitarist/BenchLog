@@ -68,6 +68,7 @@ enum Snapshot {
                 ("parts-low", { model.sidebar = .parts; model.partsTab = .low }),
                 ("parts-toorder", { model.sidebar = .parts; model.partsTab = .toOrder }),
                 ("parts-incoming", { model.sidebar = .parts; model.partsTab = .incoming }),
+                ("parts-restock", { model.sidebar = .parts; model.partsTab = .restock }),
                 ("repair-parts", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = waiting }),
                 ("search-results", { model.sidebar = .repairs; model.searchText = "mario"; model.searching = true }),
                 ("repair-approval", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = approvalRepair }),

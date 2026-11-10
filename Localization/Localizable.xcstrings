@@ -221,6 +221,16 @@
         }
       }
     },
+    "Add Low Parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter les pièces en stock bas"
+          }
+        }
+      }
+    },
     "Add Model": {
       "localizations": {
         "fr": {
@@ -397,6 +407,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter ce modèle à ceux compatibles avec la pièce"
+          }
+        }
+      }
+    },
+    "Add this part to its vendor’s restock draft": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter cette pièce au brouillon de réapprovisionnement de son fournisseur"
           }
         }
       }
@@ -831,6 +851,26 @@
         }
       }
     },
+    "Cancel Order": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler la commande"
+          }
+        }
+      }
+    },
+    "Cancel this order; nothing goes into stock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Annuler cette commande ; rien n’entre en stock"
+          }
+        }
+      }
+    },
     "Cancelled": {
       "localizations": {
         "fr": {
@@ -907,6 +947,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Changer la quantité requise pour cette réparation"
+          }
+        }
+      }
+    },
+    "Change how many to order; zero removes the part": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Changer la quantité à commander ; zéro retire la pièce"
           }
         }
       }
@@ -1637,6 +1687,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Point %lld"
+          }
+        }
+      }
+    },
+    "Draft": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Brouillon"
           }
         }
       }
@@ -2721,6 +2781,16 @@
         }
       }
     },
+    "Mark Ordered": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Marquer commandée"
+          }
+        }
+      }
+    },
     "Mark Unpaid": {
       "localizations": {
         "fr": {
@@ -3091,6 +3161,16 @@
         }
       }
     },
+    "No Restock Orders": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune commande de réapprovisionnement"
+          }
+        }
+      }
+    },
     "No Shop Devices": {
       "localizations": {
         "fr": {
@@ -3207,6 +3287,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucun mouvement de stock"
+          }
+        }
+      }
+    },
+    "No vendor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun fournisseur"
           }
         }
       }
@@ -3357,6 +3447,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "OK"
+          }
+        }
+      }
+    },
+    "On order": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "En commande"
           }
         }
       }
@@ -3597,6 +3697,46 @@
           "stringUnit": {
             "state": "translated",
             "value": "Facultatif"
+          }
+        }
+      }
+    },
+    "Order More": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commander plus"
+          }
+        }
+      }
+    },
+    "Order stock for the shelf from a part’s page, or add every low part at once.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commandez du stock pour l’étagère depuis la page d’une pièce, ou ajoutez toutes les pièces en stock bas d’un coup."
+          }
+        }
+      }
+    },
+    "Ordered": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commandée"
+          }
+        }
+      }
+    },
+    "Ordered %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Commandée le %@"
           }
         }
       }
@@ -4051,6 +4191,26 @@
         }
       }
     },
+    "Put every line into stock and update each part’s cost": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre chaque ligne en stock et mettre à jour le coût de chaque pièce"
+          }
+        }
+      }
+    },
+    "Put every low part on its vendor’s draft, enough to reach twice its threshold": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mettre chaque pièce en stock bas sur le brouillon de son fournisseur, assez pour atteindre deux fois son seuil"
+          }
+        }
+      }
+    },
     "Q%lld %@": {
       "localizations": {
         "fr": {
@@ -4181,12 +4341,32 @@
         }
       }
     },
+    "Receive": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Recevoir"
+          }
+        }
+      }
+    },
     "Received": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "Reçue le"
+          }
+        }
+      }
+    },
+    "Received %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reçue le %@"
           }
         }
       }
@@ -4207,6 +4387,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Indiquer comment vous avez remboursé le client"
+          }
+        }
+      }
+    },
+    "Record that this order was sent to the vendor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Consigner que cette commande a été envoyée au fournisseur"
           }
         }
       }
@@ -4427,6 +4617,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Redémarrer maintenant"
+          }
+        }
+      }
+    },
+    "Restock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réappro"
           }
         }
       }
@@ -5361,6 +5561,16 @@
         }
       }
     },
+    "Throw away this draft": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Jeter ce brouillon"
+          }
+        }
+      }
+    },
     "Time spent": {
       "localizations": {
         "fr": {
@@ -5437,6 +5647,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Total"
+          }
+        }
+      }
+    },
+    "Total at cost": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total au coût"
           }
         }
       }
@@ -5547,6 +5767,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Unités"
+          }
+        }
+      }
+    },
+    "Units: %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unités : %lld"
           }
         }
       }
@@ -5717,6 +5947,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce que l’atelier a payé, plus les pièces au coûtant de ses travaux internes"
+          }
+        }
+      }
+    },
+    "What the vendor charges for one": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ce que le fournisseur facture pour une unité"
           }
         }
       }

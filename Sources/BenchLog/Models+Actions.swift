@@ -197,6 +197,31 @@ extension AppModel {
         write("Removed \(quantity) damaged of part \(partID.stored)") { try $0.removeDamaged(partID, quantity: quantity, note: note) }
     }
 
+    func orderMore(_ partID: UUID) {
+        write("Ordered more of part \(partID.stored)") { try $0.orderMore(partID) }
+    }
+
+    func addLowParts() {
+        write("Added low parts to restock") { try $0.addLowParts() }
+        partsTab = .restock
+    }
+
+    func updateRestockLine(_ lineID: UUID, quantity: Int, costCents: Int?) {
+        write("Changed restock line \(lineID.stored)") { try $0.updateRestockLine(lineID, quantity: quantity, costCents: costCents) }
+    }
+
+    func markOrdered(_ restockID: UUID) {
+        write("Marked restock \(restockID.stored) ordered") { try $0.markOrdered(restockID) }
+    }
+
+    func receive(_ restockID: UUID) {
+        write("Received restock \(restockID.stored)") { try $0.receive(restockID) }
+    }
+
+    func discardRestock(_ restockID: UUID) {
+        write("Discarded restock \(restockID.stored)") { try $0.discardRestock(restockID) }
+    }
+
     func adjustStock(of partID: UUID, by delta: Int) {
         write("Stock of part \(partID.stored) \(delta > 0 ? "+" : "")\(delta)") { try $0.adjustStock(of: partID, by: delta) }
     }

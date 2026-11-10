@@ -376,6 +376,32 @@ public final class Library: Sendable {
                     FROM part WHERE quantity > 0;
                 """)
         }
+        migrator.registerMigration("v13-restock") { db in
+            // Orders of stock for the shelf, one vendor each.
+            try db.execute(sql: """
+                CREATE TABLE restock (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    vendor TEXT NOT NULL DEFAULT '',
+                    status TEXT NOT NULL DEFAULT 'draft',
+                    orderedAt DATETIME,
+                    receivedAt DATETIME,
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE TABLE restockLine (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    restockId TEXT NOT NULL REFERENCES restock(id),
+                    partId TEXT NOT NULL REFERENCES part(id),
+                    quantity INTEGER NOT NULL,
+                    costCents INTEGER,
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX restockLine_restock ON restockLine(restockId);
+                """)
+        }
         return migrator
     }
 

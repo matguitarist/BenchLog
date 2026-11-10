@@ -22,6 +22,8 @@ struct PartsPage: View {
                 .searchable(text: $model.partSearch, prompt: Text("Name, SKU, or vendor"))
             case .toOrder, .incoming:
                 orders
+            case .restock:
+                RestockList()
             }
         }
         .navigationTitle("Parts")
@@ -35,6 +37,13 @@ struct PartsPage: View {
                 .pickerStyle(.segmented)
                 .help("Choose which parts the page shows")
             }
+            if model.partsTab == .restock {
+                ToolbarItem {
+                    Button("Add Low Parts", systemImage: "cart.badge.plus") { model.addLowParts() }
+                        .disabled(model.lowStockCount == 0)
+                        .help("Put every low part on its vendor’s draft, enough to reach twice its threshold")
+                }
+            }
             ToolbarItem {
                 Button("New Part", systemImage: "plus") { model.sheet = .newPart }
                     .help("Add a part to the inventory")
@@ -46,6 +55,7 @@ struct PartsPage: View {
             case .low: parts = model.read([]) { try $0.parts(matching: model.partSearch, lowOnly: true) }
             case .toOrder: uses = model.read([]) { try $0.partUseRows(.needed) }
             case .incoming: uses = model.read([]) { try $0.partUseRows(.ordered) }
+            case .restock: break
             }
         }
     }

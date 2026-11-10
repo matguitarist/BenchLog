@@ -60,6 +60,9 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Local rate | US only: the county and city rate added to the state's sales tax | city tax |
 | Tax labour | Whether labour is taxed; off in states that tax only parts | taxable services |
 | Credit Note | A numbered document (NC-0001) that cancels an invoice by reversing its lines and taxes; « Note de crédit » | refund invoice, void, credit memo |
+| Stock History | Every change to a part's stock, newest first, with why (installed, received, counted, damaged, sold…) and the ticket or invoice | log, ledger, movements |
+| Count | Set a part's stock to what is on the shelf; the difference is recorded | recount, audit, stocktake |
+| Restock | An order of stock for the shelf from one vendor: Draft, Ordered, Received | purchase order, PO, supplier order |
 | Refund | Paying a credit note back to the customer, with the method; « Remboursement » | reimbursement, payback |
 | Invoice Sale | Invoice a sold shop device to its buyer, with taxes; « Facturer la vente » | bill of sale, receipt |
 | Reports | The sidebar page with what was invoiced and the tax collected in a month, quarter, or year (Rapports) | dashboard, analytics, accounting |
@@ -118,3 +121,6 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Count (the shelf) | Compter |
 | Remove Damaged | Retirer endommagées |
 | Opening stock | Stock initial |
+| Restock (order) | Réappro (commande de réapprovisionnement) |
+| Order More / Add Low Parts | Commander plus / Ajouter les pièces en stock bas |
+| Mark Ordered / Receive | Marquer commandée / Recevoir |

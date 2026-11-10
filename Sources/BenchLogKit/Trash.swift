@@ -33,7 +33,7 @@ extension Library {
         "device.customerId", "repair.deviceId",
         "partUse.repairId", "partUse.partId", "labourLine.repairId", "invoice.repairId",
         "partFit.partId", "guideLink.guideId", "guide.fileId", "invoice.fileId",
-        "stockMove.partId", "stockMove.repairId",   // a part's history goes with it; a repair's moves keep their part
+        "stockMove.partId", "stockMove.repairId", "restockLine.partId",   // a part's history goes with it; a repair's moves keep their part
         "invoice.deviceId",   // a device with a sale invoice is never emptied: invoices are tax records
     ]
 
@@ -119,6 +119,7 @@ extension Library {
             try db.execute(sql: """
                 DELETE FROM partFit WHERE partId IN (\(Self.list(parts)));
                 DELETE FROM stockMove WHERE partId IN (\(Self.list(parts)));
+                DELETE FROM restockLine WHERE partId IN (\(Self.list(parts)));
                 UPDATE partUse SET partId = NULL WHERE partId IN (\(Self.list(parts)));
                 DELETE FROM part WHERE id IN (\(Self.list(parts)));
                 """)

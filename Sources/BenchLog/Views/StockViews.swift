@@ -35,6 +35,7 @@ struct StockSection: View {
     let part: Part
     @State private var counting = false
     @State private var removing = false
+    @State private var onOrder = 0
 
     var body: some View {
         Section("Stock") {
@@ -42,7 +43,10 @@ struct StockSection: View {
                 StockCount(part: part)
             }
             LabeledContent("Low-stock threshold", value: part.lowStockThreshold > 0 ? "\(part.lowStockThreshold)" : String(localized: "None"))
+            if onOrder > 0 { LabeledContent("On order", value: "\(onOrder)") }
             HStack(spacing: Space.sm) {
+                Button("Order More") { model.orderMore(part.id) }
+                    .help("Add this part to its vendor’s restock draft")
                 Spacer()
                 Button("Remove Damaged…") { removing = true }
                     .disabled(part.quantity == 0)
@@ -63,6 +67,7 @@ struct StockSection: View {
                     }
             }
         }
+        .task(id: model.dataVersion) { onOrder = model.read(0) { try $0.unitsOnOrder(part.id) } }
     }
 }
 

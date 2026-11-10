@@ -157,6 +157,18 @@ enum SelfTest {
                                   model.read(nil) { try $0.part(fan.id) }?.quantity == 2
                                   && history.prefix(2).map(\.move.reason) == [.damaged, .counted]
                                   && history.contains { $0.move.reason == .installed && $0.source != nil })
+                            model.orderMore(fan.id)
+                            let orders = model.read([]) { try $0.restockOrders() }
+                            if let order = orders.first(where: { $0.lines.contains { $0.part.id == fan.id } }) {
+                                let before = model.read(nil) { try $0.part(fan.id) }?.quantity ?? 0
+                                model.markOrdered(order.id)
+                                model.receive(order.id)
+                                check("a received restock goes into stock as Received",
+                                      model.read(nil) { try $0.part(fan.id) }?.quantity == before + order.units
+                                      && model.read([]) { try $0.stockHistory(of: fan.id) }.first?.move.reason == .received)
+                            } else {
+                                check("Order More makes a restock draft", false)
+                            }
                         }
                     }
                     model.useFreePart("Self-test speaker", on: repair.id)
