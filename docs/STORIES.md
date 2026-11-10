@@ -601,8 +601,8 @@ As the user, I install BenchLog 1.0.0 from a notarized download, and it updates 
 Depends: S-044, S-045, S-046, S-047
 Acceptance:
 - [manual] `tools/release.sh 1.0.0 --check` passes; release notes in French and English; the published release waits for the owner's go-ahead.
-Built: `release-notes/1.0.0.md` (English and French). `tools/release.sh 1.0.0 --check` passes; the script sets 1.0.0 in `Info.plist.in` when it publishes. Waiting for the owner's go-ahead to publish.
-Status: doing
+Built: `release-notes/1.0.0.md` (English and French). `tools/release.sh 1.0.0 --check` passes; the script sets 1.0.0 in `Info.plist.in` when it publishes. Published 2026-11-09: https://github.com/matguitarist/BenchLog/releases/tag/v1.0.0
+Status: done
 
 ## Later
 - **v2 Sync**: the Node server becomes a REST and SQLite sync service (pull and push by `updatedAt`, last-writer-wins per row, file upload). The Mac becomes a client.
