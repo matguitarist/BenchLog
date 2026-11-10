@@ -16,6 +16,7 @@ struct SheetHost: View {
         case .editPart(let id): PartSheet(partID: id)
         case .editGuide(let id): GuideSheet(guideID: id)
         case .importGuides(let folder): GuideImportSheet(folder: folder)
+        case .newCounterSale(let customer, let items): CounterSaleSheet(customerID: customer, start: items)
         }
     }
 }

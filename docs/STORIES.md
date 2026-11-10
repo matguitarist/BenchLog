@@ -583,7 +583,8 @@ Acceptance:
 - [unit] A counter sale is an invoice with the next number, its lines, and the region's taxes; stocked parts leave stock as Sold moves. Crediting it puts them back as Returned.
 - [snap] File > New Counter Sale… (⌥⌘N) opens a sheet: customer or Walk-in, parts from stock or typed items, quantity and price, the totals, and Invoice.
 - [snap] A customer's page lists their counter-sale invoices; a walk-in's PDF goes on the shop.
-Status: todo
+Built: `CounterSale.swift` (`CounterSaleItem`, `counterSaleTotals`, `issueCounterSale(to:items:)`, `counterSales(of:)`; crediting returns Sold parts as Returned). Migration v14-counter-sales rebuilds `invoice` with `customerId` (the shop for a walk-in). Documents print "Walk-in customer" and skip the device block when there is none. `Sheets/CounterSaleSheet.swift` from File > New Counter Sale… (⌥⌘N) or a customer's Counter Sales section; Reports shows "Walk-in" and opens the customer. Snapshots: counter-sale-sheet, customer-counter-sales, doc-counter-sale.
+Status: done
 
 ### S-047 Inventory value
 As the user, I know what my stock is worth, now and at the end of a period, for my year-end.

@@ -33,7 +33,8 @@ extension Library {
         "device.customerId", "repair.deviceId",
         "partUse.repairId", "partUse.partId", "labourLine.repairId", "invoice.repairId",
         "partFit.partId", "guideLink.guideId", "guide.fileId", "invoice.fileId",
-        "stockMove.partId", "stockMove.repairId", "restockLine.partId",   // a part's history goes with it; a repair's moves keep their part
+        "stockMove.partId", "stockMove.repairId", "restockLine.partId",
+        "invoice.customerId",   // a customer with a counter sale is never purged   // a part's history goes with it; a repair's moves keep their part
         "invoice.deviceId",   // a device with a sale invoice is never emptied: invoices are tax records
     ]
 
@@ -58,7 +59,8 @@ extension Library {
             let invoiced = try String.fetchAll(db, sql: """
                 SELECT iif(kind = 'invoice', printf('F-%04d', number), printf('NC-%04d', creditNumber)) FROM invoice
                 WHERE kind IN ('invoice', 'creditNote')
-                AND (repairId IN (\(Self.list(scope.repairs))) OR deviceId IN (\(Self.list(scope.devices)))) ORDER BY number
+                AND (repairId IN (\(Self.list(scope.repairs))) OR deviceId IN (\(Self.list(scope.devices)))
+                     OR (customerId = '\(scope.table == "customer" ? scope.id : "")')) ORDER BY number
                 """)
             if !invoiced.isEmpty { throw TrashError.hasInvoices(invoiced) }
             try Self.stamp(scope, set: now, where: "deletedAt IS NULL", db)
@@ -111,6 +113,7 @@ extension Library {
             let customers = try String.fetchAll(db, sql: """
                 SELECT id FROM customer WHERE deletedAt < ? AND isShop = 0
                 AND NOT EXISTS (SELECT 1 FROM device WHERE customerId = customer.id)
+                AND NOT EXISTS (SELECT 1 FROM invoice WHERE customerId = customer.id)
                 """, arguments: [cutoff])
             paths += try Self.deleteOwned(by: "customer", customers, db)
             try db.execute(sql: "DELETE FROM customer WHERE id IN (\(Self.list(customers)))")

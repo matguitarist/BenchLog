@@ -332,6 +332,15 @@ enum SelfTest {
                     check("a repair on a shop device is internal", false)
                 }
 
+                // S-046 A walk-in counter sale: an invoice filed with the shop; the part leaves stock as Sold.
+                if let cable = model.write("Self-test counter part", { try $0.save(Part(name: "Self-test cable", priceCents: 1_500, quantity: 3), fits: []) }) {
+                    await model.issueCounterSale(to: nil, items: [CounterSaleItem(partId: cable.id, description: cable.name, unitCents: 1_500)])
+                    let walkIn = model.read(nil) { try $0.existingShop() }.flatMap { shop in model.read([]) { try $0.counterSales(of: shop.id) }.first }
+                    check("a walk-in counter sale is invoiced, its PDF on the shop, and the part leaves stock",
+                          walkIn?.fileId != nil && model.read(nil) { try $0.part(cable.id) }?.quantity == 2
+                          && model.read([]) { try $0.stockHistory(of: cable.id) }.first?.move.reason == .sold)
+                }
+
                 // S-033 A customer with an open repair asks first, goes to the Trash with it, and Undo brings both back.
                 if let leaving = model.write("Self-test trash customer", { library -> Customer in
                     let customer = try library.save(Customer(name: "Trash Me"))

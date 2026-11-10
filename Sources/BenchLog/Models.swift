@@ -256,6 +256,8 @@ enum SheetKind: Identifiable, Hashable {
     case editPart(UUID)
     case editGuide(UUID)
     case importGuides(URL)
+    /// `items` start the sale filled in (snapshots).
+    case newCounterSale(customer: UUID?, items: [CounterSaleItem] = [])
 
     var id: Self { self }
 }

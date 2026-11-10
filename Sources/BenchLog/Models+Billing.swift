@@ -76,6 +76,11 @@ extension AppModel {
         await printDocument(invoice, open: true)
     }
 
+    func issueCounterSale(to customerID: UUID?, items: [CounterSaleItem]) async {
+        guard let invoice = write("Invoiced a counter sale", { try $0.issueCounterSale(to: customerID, items: items) }) else { return }
+        await printDocument(invoice, open: true)
+    }
+
     func decide(_ estimateID: UUID, approved: Bool) {
         write("Estimate \(estimateID.stored) \(approved ? "approved" : "refused")") { try $0.decide(estimateID, approved: approved) }
     }
@@ -128,8 +133,10 @@ extension AppModel {
             let data = try await DocumentPrinter.pdf(html: html(for: invoice))
             let file = write("Printed \(name)") { library -> Attachment in
                 if let old = invoice.fileId { try library.trash(Attachment.self, id: old) }
-                // A repair's documents go on the repair; a sale's on the device sold.
-                let owner: (NoteOwner, UUID) = invoice.repairId.map { (.repair, $0) } ?? (.device, invoice.deviceId ?? invoice.id)
+                // A repair's documents go on the repair; a sale's on the device sold; a counter
+                // sale's on the customer (the shop for a walk-in).
+                let owner: (NoteOwner, UUID) = invoice.repairId.map { (.repair, $0) }
+                    ?? invoice.deviceId.map { (.device, $0) } ?? (.customer, invoice.customerId ?? invoice.id)
                 let file = try library.addAttachment(data: data, originalName: name, to: owner.0, id: owner.1, kind: .document)
                 try library.setFile(file.id, of: invoice.id)
                 return file

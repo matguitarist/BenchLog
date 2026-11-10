@@ -61,6 +61,16 @@
         }
       }
     },
+    "%@ — %@ (%lld in stock)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ — %2$@ (%3$lld en stock)"
+          }
+        }
+      }
+    },
     "%lld d": {
       "localizations": {
         "fr": {
@@ -211,6 +221,16 @@
         }
       }
     },
+    "Add Item": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter un article"
+          }
+        }
+      }
+    },
     "Add Labour": {
       "localizations": {
         "fr": {
@@ -347,6 +367,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ajouter une note…"
+          }
+        }
+      }
+    },
+    "Add a part from stock or type an item.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez une pièce du stock ou tapez un article."
           }
         }
       }
@@ -1311,6 +1341,16 @@
         }
       }
     },
+    "Counter Sales": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ventes au comptoir"
+          }
+        }
+      }
+    },
     "Country": {
       "localizations": {
         "fr": {
@@ -1531,6 +1571,16 @@
         }
       }
     },
+    "Description": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Description"
+          }
+        }
+      }
+    },
     "Device": {
       "localizations": {
         "fr": {
@@ -1627,6 +1677,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Abandonner cette réparation ?"
+          }
+        }
+      }
+    },
+    "Discard this sale?": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abandonner cette vente ?"
           }
         }
       }
@@ -2531,6 +2591,26 @@
         }
       }
     },
+    "Item": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Article"
+          }
+        }
+      }
+    },
+    "Items": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Articles"
+          }
+        }
+      }
+    },
     "Keeps the last %lld daily backups; backups you make yourself stay.": {
       "localizations": {
         "fr": {
@@ -2921,6 +3001,26 @@
         }
       }
     },
+    "New Counter Sale": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle vente au comptoir"
+          }
+        }
+      }
+    },
+    "New Counter Sale…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouvelle vente au comptoir…"
+          }
+        }
+      }
+    },
     "New Customer": {
       "localizations": {
         "fr": {
@@ -3201,6 +3301,16 @@
         }
       }
     },
+    "No counter sales yet": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune vente au comptoir"
+          }
+        }
+      }
+    },
     "No devices yet": {
       "localizations": {
         "fr": {
@@ -3377,6 +3487,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Aucun stock bas"
+          }
+        }
+      }
+    },
+    "Nothing is invoiced.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rien n’est facturé."
           }
         }
       }
@@ -4881,6 +5001,36 @@
         }
       }
     },
+    "Sell a part from stock; it leaves stock as Sold": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendre une pièce du stock ; elle sort du stock comme vendue"
+          }
+        }
+      }
+    },
+    "Sell parts or items to this customer without a repair (⌥⌘N)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendre des pièces ou des articles à ce client sans réparation (⌥⌘N)"
+          }
+        }
+      }
+    },
+    "Sell something not in the inventory": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendre quelque chose qui n’est pas dans l’inventaire"
+          }
+        }
+      }
+    },
     "Selling to a customer moves the device to them; later repairs are theirs": {
       "localizations": {
         "fr": {
@@ -5261,6 +5411,16 @@
         }
       }
     },
+    "Take this line off the sale": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retirer cette ligne de la vente"
+          }
+        }
+      }
+    },
     "Tax labour": {
       "localizations": {
         "fr": {
@@ -5427,6 +5587,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "La nouvelle langue s’applique après un redémarrage."
+          }
+        }
+      }
+    },
+    "The price for one, before taxes": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le prix pour une unité, avant taxes"
           }
         }
       }
@@ -5861,6 +6031,16 @@
         }
       }
     },
+    "Walk-in": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Client de passage"
+          }
+        }
+      }
+    },
     "Warranty, in English": {
       "localizations": {
         "fr": {
@@ -5987,6 +6167,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ce que vous avez tapé n’est pas enregistré."
+          }
+        }
+      }
+    },
+    "Who is buying; a walk-in sale is invoiced with no name and filed with the shop": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qui achète ; une vente à un client de passage est facturée sans nom et classée avec l’atelier"
           }
         }
       }

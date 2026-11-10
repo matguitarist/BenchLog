@@ -114,7 +114,10 @@ struct ReportsPage: View {
                 .width(min: 90, ideal: 110)
             TableColumn("Number") { row in Text(row.invoice.numberText ?? "").monospacedDigit() }
                 .width(min: 70, ideal: 80)
-            TableColumn("Customer") { row in Text(row.customer).lineLimit(1).help(row.customer) }
+            TableColumn("Customer") { row in
+                let name = row.customer.isEmpty ? String(localized: "Walk-in") : row.customer
+                Text(name).lineLimit(1).help(name)
+            }
             TableColumn("Subtotal") { row in amount(row.subtotalCents) }
                 .width(min: 80, ideal: 100)
             TableColumn("Taxes") { row in amount(row.taxes.reduce(0) { $0 + $1.cents }) }
@@ -129,10 +132,19 @@ struct ReportsPage: View {
                 Button("Open PDF") { model.open(row.invoice) }.disabled(row.invoice.fileId == nil)
                 if let repair = row.invoice.repairId { Button("Open Repair") { model.open(.repair(repair)) } }
                 if let device = row.invoice.deviceId { Button("Open Device") { model.open(.device(device)) } }
+                if let customer = row.invoice.customerId, !row.customer.isEmpty { Button("Open Customer") { model.open(.customer(customer)) } }
             }
         } primaryAction: { ids in
             guard let row = report.rows.first(where: { ids.contains($0.id) }) else { return }
-            if let repair = row.invoice.repairId { model.open(.repair(repair)) } else if let device = row.invoice.deviceId { model.open(.device(device)) }
+            if let repair = row.invoice.repairId {
+                model.open(.repair(repair))
+            } else if let device = row.invoice.deviceId {
+                model.open(.device(device))
+            } else if let customer = row.invoice.customerId, !row.customer.isEmpty {
+                model.open(.customer(customer))
+            } else {
+                model.open(row.invoice)
+            }
         }
     }
 

@@ -210,6 +210,15 @@ enum SeedData {
         try library.setDisposition(.sold, priceCents: 12_000, buyer: emma.id, of: gbc.id, now: now.addingTimeInterval(-10 * day))
         let sale = try library.issueSaleInvoice(for: gbc.id, now: now.addingTimeInterval(-10 * day))
         try library.setPaid(sale.id, method: .credit, now: now.addingTimeInterval(-10 * day))
+        // Counter sales: one to a customer, paid; one to a walk-in.
+        let counter = try library.issueCounterSale(to: chloe.id, items: [
+            CounterSaleItem(partId: paste.id, description: paste.name, quantity: 2, unitCents: paste.priceCents ?? 0),
+            CounterSaleItem(description: "Protège-écran GBA SP", unitCents: 900),
+        ], now: now.addingTimeInterval(-5 * day))
+        try library.setPaid(counter.id, method: .debit, now: now.addingTimeInterval(-5 * day))
+        try library.issueCounterSale(to: nil, items: [
+            CounterSaleItem(partId: joyStick.id, description: joyStick.name, unitCents: joyStick.priceCents ?? 0),
+        ], now: now.addingTimeInterval(-2 * day))
         // Issued last, so invoice numbers follow their dates.
         if let id = repairOf(eDeck) {
             try library.save(LabourLine(repairId: id, description: "Remplacement du joystick droit", hundredthHours: 75, unitCents: 6500))

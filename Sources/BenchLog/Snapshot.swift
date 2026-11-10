@@ -60,6 +60,7 @@ enum Snapshot {
             let internalRepair = model.read(nil) { try $0.repairRows().first { $0.customer.isShop && !$0.repair.status.isClosed }?.id }
             let shopDevice = model.read(nil) { try $0.shopDevices().first { $0.device.disposition == .forSale }?.id }
             let soldDevice = model.read(nil) { try $0.shopDevices().first { $0.device.disposition == .sold }?.id }
+            let counterCustomer = model.read(nil) { try $0.customers().first { $0.name.hasPrefix("Chlo") }?.id }
             let states: [(String, () -> Void)] = [
                 ("guide-markdown", { model.sidebar = .guides; model.selectedGuide = markdownGuide }),
                 ("guide-pdf", { model.sidebar = .guides; model.selectedGuide = pdfGuide }),
@@ -75,6 +76,7 @@ enum Snapshot {
                 ("repair-internal", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = internalRepair }),
                 ("devices-shop", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = shopDevice }),
                 ("reports-quarter", { model.sidebar = .reports; model.reportPeriod = ReportPeriod(.quarter, containing: .now) }),
+                ("customer-counter-sales", { model.sidebar = .customers; model.selectedCustomer = counterCustomer }),
                 ("devices-shop-sold", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = soldDevice }),
                 ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
             ]
@@ -108,6 +110,7 @@ enum Snapshot {
                 ("repair-new-sheet", .repairs, .newRepair(customer: nil, device: nil)),
                 ("repair-new-for-customer-sheet", .customers, .newRepair(customer: customer, device: nil)),
                 ("part-edit-sheet", .parts, firstPart.map { .editPart($0) } ?? .newPart),
+                ("counter-sale-sheet", .customers, .newCounterSale(customer: customer, items: Self.sampleSale(model))),
                 ("guide-edit-sheet", .guides, markdownGuide.map { .editGuide($0) } ?? .newPart),
                 ("guides-import-sheet", .guides, .importGuides(Self.sampleVault())),
             ]
@@ -197,6 +200,16 @@ enum Snapshot {
         if let credit = documents.first(where: { $0.kind == .creditNote }) { await save(model.html(for: credit), "doc-credit-note") }
         let sold = ((try? library.shopDevices()) ?? []).first { $0.device.disposition == .sold }
         if let sold, let sale = (try? library.saleInvoices(of: sold.id))?.first { await save(model.html(for: sale), "doc-sale-invoice") }
+        if let shop = try? library.existingShop(), let walkIn = (try? library.counterSales(of: shop.id))?.first {
+            await save(model.html(for: walkIn), "doc-counter-sale")
+        }
+    }
+
+    /// A part from stock and a typed item, for the counter sale sheet.
+    private static func sampleSale(_ model: AppModel) -> [CounterSaleItem] {
+        let part = model.read(nil) { try $0.parts(matching: "").first { $0.quantity > 0 && $0.priceCents != nil } }
+        return (part.map { [CounterSaleItem(partId: $0.id, description: $0.name, quantity: 2, unitCents: $0.priceCents ?? 0)] } ?? [])
+            + [CounterSaleItem(description: "Carrying case", unitCents: 1_999)]
     }
 
     /// A small vault for the import sheet: model folders, a revision, a general note.

@@ -402,6 +402,47 @@ public final class Library: Sendable {
                 CREATE INDEX restockLine_restock ON restockLine(restockId);
                 """)
         }
+        migrator.registerMigration("v14-counter-sales") { db in
+            // A counter sale has neither a repair nor a device, only a customer (the shop for a
+            // walk-in). The CHECK changes, so the table is rebuilt again.
+            let columns = "id, repairId, deviceId, kind, number, issuedAt, validUntil, language, content, totalCents, paidAt, "
+                + "paymentMethod, decision, decidedAt, fileId, createdAt, updatedAt, deletedAt, creditNumber, creditsInvoiceId"
+            try db.execute(sql: """
+                CREATE TABLE invoice_new (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    repairId TEXT REFERENCES repair(id),
+                    deviceId TEXT REFERENCES device(id),
+                    customerId TEXT REFERENCES customer(id),
+                    kind TEXT NOT NULL,
+                    number INTEGER,
+                    issuedAt DATETIME NOT NULL,
+                    validUntil DATETIME,
+                    language TEXT NOT NULL,
+                    content TEXT NOT NULL,
+                    totalCents INTEGER NOT NULL,
+                    paidAt DATETIME,
+                    paymentMethod TEXT,
+                    decision TEXT,
+                    decidedAt DATETIME,
+                    fileId TEXT REFERENCES attachment(id),
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME,
+                    creditNumber INTEGER,
+                    creditsInvoiceId TEXT REFERENCES invoice(id),
+                    CHECK (repairId IS NOT NULL OR deviceId IS NOT NULL OR customerId IS NOT NULL)
+                );
+                INSERT INTO invoice_new (\(columns)) SELECT \(columns) FROM invoice;
+                DROP TABLE invoice;
+                ALTER TABLE invoice_new RENAME TO invoice;
+                CREATE INDEX invoice_repair ON invoice(repairId);
+                CREATE INDEX invoice_device ON invoice(deviceId);
+                CREATE INDEX invoice_customer ON invoice(customerId);
+                CREATE UNIQUE INDEX invoice_number ON invoice(number) WHERE number IS NOT NULL;
+                CREATE UNIQUE INDEX invoice_creditNumber ON invoice(creditNumber);
+                CREATE UNIQUE INDEX invoice_creditsInvoiceId ON invoice(creditsInvoiceId);
+                """)
+        }
         return migrator
     }
 

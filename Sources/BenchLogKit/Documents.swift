@@ -76,6 +76,8 @@ public struct Invoice: BenchRecord {
     public var creditsInvoiceId: UUID? = nil
     /// Sale invoices only: the shop device sold.
     public var deviceId: UUID? = nil
+    /// Counter sales only: the customer, or the shop for a walk-in.
+    public var customerId: UUID? = nil
 
     /// "F-0001" for an invoice, "NC-0001" for a credit note.
     public var numberText: String? {
@@ -165,8 +167,9 @@ extension Library {
                                  language: invoice.language, content: json, totalCents: -invoice.totalCents,
                                  paidAt: nil, paymentMethod: nil, decision: nil, decidedAt: nil, fileId: nil,
                                  createdAt: now, updatedAt: now, deletedAt: nil, creditNumber: next, creditsInvoiceId: invoice.id,
-                                 deviceId: invoice.deviceId)
+                                 deviceId: invoice.deviceId, customerId: invoice.customerId)
             try credit.insert(db)
+            try Self.returnSoldParts(db, invoice: invoice.id, credit: credit.id, now: now)
             return credit
         }
     }

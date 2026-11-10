@@ -80,6 +80,7 @@ struct CustomerDetail: View {
     let customerID: UUID
     @State private var customer: Customer?
     @State private var devices: [Device] = []
+    @State private var sales: [Invoice] = []
 
     var body: some View {
         Group {
@@ -121,6 +122,22 @@ struct CustomerDetail: View {
                                 .help("Add a device to this customer (⌘⇧D)")
                         }
                     }
+                    Section {
+                        if sales.isEmpty {
+                            Text("No counter sales yet").foregroundStyle(.secondary)
+                        }
+                        ForEach(sales) { document in
+                            DocumentRow(document: document, creditedBy: sales.first { $0.creditsInvoiceId == document.id })
+                        }
+                    } header: {
+                        HStack {
+                            Text("Counter Sales")
+                            Spacer()
+                            Button("New Counter Sale…") { model.sheet = .newCounterSale(customer: customer.id) }
+                                .controlSize(.small)
+                                .help("Sell parts or items to this customer without a repair (⌥⌘N)")
+                        }
+                    }
                     Section("Photos and Files") {
                         AttachmentsSection(owner: .customer, ownerID: customer.id)
                     }
@@ -137,6 +154,7 @@ struct CustomerDetail: View {
         .task(id: model.dataVersion) {
             customer = model.read(nil) { try $0.customer(customerID) }
             devices = model.read([]) { try $0.devices(of: customerID) }
+            sales = model.read([]) { try $0.counterSales(of: customerID) }
         }
     }
 }

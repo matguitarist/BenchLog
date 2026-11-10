@@ -29,7 +29,7 @@ public struct DocumentHTML {
         var intakeSlip, invoice, estimate, ticket, invoiceNumber, date, customer, device, serial, complaint,
             condition, intakePhotos, diagnosis, description, quantity, unitPrice, amount, labour, parts, subtotal,
             discount, taxable, total, warranty, terms, signature, validUntil, paid, phone,
-            email, hourly, flat, received, approval, approvalLine, creditNote, creditNumber, credits, reason, refunded, items: String
+            email, hourly, flat, received, approval, approvalLine, creditNote, creditNumber, credits, reason, refunded, items, walkIn: String
         var paidOn: (String, String) -> String
         var refundedOn: (String, String) -> String
         /// The approval rule the customer signs at check-in, with the amount for `upTo`.
@@ -51,7 +51,7 @@ public struct DocumentHTML {
                   flat: "forfait", received: "Reçu le", approval: "Approbation du client",
                   approvalLine: "J’accepte cette estimation et autorise la réparation.",
                   creditNote: "Note de crédit", creditNumber: "N° de note de crédit", credits: "Crédite la facture",
-                  reason: "Motif", refunded: "REMBOURSÉ", items: "Articles",
+                  reason: "Motif", refunded: "REMBOURSÉ", items: "Articles", walkIn: "Client de passage",
                   paidOn: { date, method in "Payé le \(date) par \(method)" },
                   refundedOn: { date, method in "Remboursé le \(date) par \(method)" },
                   approvalRule: { rule, amount in
@@ -81,7 +81,7 @@ public struct DocumentHTML {
                   flat: "flat rate", received: "Received", approval: "Customer Approval",
                   approvalLine: "I accept this estimate and authorize the repair.",
                   creditNote: "Credit Note", creditNumber: "Credit Note No.", credits: "Credits invoice",
-                  reason: "Reason", refunded: "REFUNDED", items: "Items",
+                  reason: "Reason", refunded: "REFUNDED", items: "Items", walkIn: "Walk-in customer",
                   paidOn: { date, method in "Paid on \(date) by \(method)" },
                   refundedOn: { date, method in "Refunded on \(date) by \(method)" },
                   approvalRule: { rule, amount in
@@ -232,13 +232,18 @@ public struct DocumentHTML {
 
     private func parties(customer: DocumentContent.Party, deviceTitle: String, serial: String) -> String {
         let w = words
-        var html = "<div class=\"parties\"><div><h2>\(e(w.customer))</h2><div class=\"strong\">\(e(customer.name))</div>"
+        var html = "<div class=\"parties\"><div><h2>\(e(w.customer))</h2><div class=\"strong\">\(e(customer.name.isEmpty ? w.walkIn : customer.name))</div>"
         if !customer.address.isEmpty { html += "<div>\(multiline(customer.address))</div>" }
         if !customer.phone.isEmpty { html += "<div>\(e(typo("\(w.phone) \(customer.phone)")))</div>" }
         if !customer.email.isEmpty { html += "<div>\(e(customer.email))</div>" }
-        html += "</div><div><h2>\(e(w.device))</h2><div class=\"strong\">\(e(deviceTitle))</div>"
-        if !serial.isEmpty { html += "<div>\(label(w.serial)) \(e(serial))</div>" }
-        html += "</div></div>"
+        html += "</div>"
+        // A counter sale has no device.
+        if !deviceTitle.isEmpty {
+            html += "<div><h2>\(e(w.device))</h2><div class=\"strong\">\(e(deviceTitle))</div>"
+            if !serial.isEmpty { html += "<div>\(label(w.serial)) \(e(serial))</div>" }
+            html += "</div>"
+        }
+        html += "</div>"
         return html
     }
 

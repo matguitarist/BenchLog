@@ -40,6 +40,9 @@ struct BenchLogApp: App {
                 Button("New Customer…") { model.sheet = .newCustomer }
                     .keyboardShortcut("n", modifiers: [.command, .shift])
                     .disabled(model.library == nil || model.sheet != nil)
+                Button("New Counter Sale…") { model.sheet = .newCounterSale(customer: model.customerForNewDevice) }
+                    .keyboardShortcut("n", modifiers: [.command, .option])
+                    .disabled(model.library == nil || model.sheet != nil)
                 Button("Add Device…") {
                     if let customer = model.customerForNewDevice { model.sheet = .addDevice(customer: customer) }
                 }
