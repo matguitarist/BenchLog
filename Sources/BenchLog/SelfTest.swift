@@ -387,6 +387,14 @@ enum SelfTest {
                     check("a walk-in counter sale is invoiced, its PDF on the shop, and the part leaves stock",
                           walkIn?.fileId != nil && model.read(nil) { try $0.part(cable.id) }?.quantity == 2
                           && model.read([]) { try $0.stockHistory(of: cable.id) }.first?.move.reason == .sold)
+                    // S-069 Counter Sales lists it as a walk-in; from that page, a new sale is the one shown.
+                    let listed = model.read([]) { try $0.counterSaleRows(matching: "Self-test cable") }
+                    check("Counter Sales lists the walk-in sale", listed.count == 1 && listed.first?.id == walkIn?.id && listed.first?.customerId == nil)
+                    model.sidebar = .counterSales
+                    await model.issueCounterSale(to: nil, items: [CounterSaleItem(description: "Self-test case", unitCents: 500)])
+                    check("a sale made on Counter Sales is selected there",
+                          model.selectedSale != nil && model.selectedSale == model.read([]) { try $0.counterSaleRows() }.first?.id)
+                    model.sidebar = .dashboard
                 }
 
                 // S-033 A customer with an open repair asks first, goes to the Trash with it, and Undo brings both back.

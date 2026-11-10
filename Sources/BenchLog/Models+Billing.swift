@@ -109,6 +109,11 @@ extension AppModel {
             if let number { await SyncController.shared.giveBack("invoice", number: number, self) }
             return
         }
+        // On the Counter Sales page, the new sale shows as soon as it is invoiced.
+        if sidebar == .counterSales {
+            saleSearch = ""
+            selectedSale = invoice.id
+        }
         await printDocument(invoice, open: true)
     }
 

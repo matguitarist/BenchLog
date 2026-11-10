@@ -1623,6 +1623,16 @@
         }
       }
     },
+    "Counter Sale %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vente au comptoir %@"
+          }
+        }
+      }
+    },
     "Counter Sales": {
       "localizations": {
         "fr": {
@@ -1729,6 +1739,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Client"
+          }
+        }
+      }
+    },
+    "Customer, item, or invoice number": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Client, article ou numéro de facture"
           }
         }
       }
@@ -2089,6 +2109,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Un code-barres que l’inventaire connaît ajoute une unité au stock. Un nouveau est recherché sur upcitemdb.com pour que vous le vérifiiez; seul le code-barres est envoyé."
+          }
+        }
+      }
+    },
+    "No Counter Sale Selected": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune vente au comptoir sélectionnée"
+          }
+        }
+      }
+    },
+    "No Counter Sales": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune vente au comptoir"
+          }
+        }
+      }
+    },
+    "Open Counter Sale": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir la vente au comptoir"
           }
         }
       }
@@ -5551,6 +5601,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "Lisez ou tapez un CUP ou un EAN"
+          }
+        }
+      }
+    },
+    "Select a sale to see its items and its invoice.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez une vente pour voir ses articles et sa facture."
+          }
+        }
+      }
+    },
+    "Sell parts or items without a repair (⌥⌘N)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendre des pièces ou des articles sans réparation (⌥⌘N)"
+          }
+        }
+      }
+    },
+    "Sell parts or items without a repair, to a customer or a walk-in.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vendez des pièces ou des articles sans réparation, à un client ou à un client de passage."
           }
         }
       }

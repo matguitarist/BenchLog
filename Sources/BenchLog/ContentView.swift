@@ -97,6 +97,7 @@ struct ContentView: View {
     private func page(_ item: SidebarItem) -> some View {
         switch item {
         case .dashboard: DashboardPage()
+        case .counterSales: CounterSalesPage()
         case .repairs: RepairsPage()
         case .customers: CustomersPage()
         case .devices: DevicesPage()

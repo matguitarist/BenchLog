@@ -9,7 +9,7 @@
 | ⌥⌘N | New Counter Sale |
 | ⇧⌘D | Add Device to the customer |
 | ⌘F | Search BenchLog |
-| ⌥⌘1 to ⌥⌘8 | Go to a sidebar page |
+| ⌥⌘1 to ⌥⌘9 | Go to a sidebar page |
 | ⌘[ and ⌘] | Back and Forward |
 | ⌘, | Settings |
 | ⌘? | BenchLog Help |

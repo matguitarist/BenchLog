@@ -157,7 +157,7 @@ struct ReportsPage: View {
                 .width(min: 80, ideal: 100)
             TableColumn("Total") { row in amount(row.totalCents) }
                 .width(min: 80, ideal: 100)
-            TableColumn("Status") { row in ReportStatus(row: row) }
+            TableColumn("Status") { row in InvoiceStatus(invoice: row.invoice, isCredited: row.isCredited) }
                 .width(min: 90, ideal: 110)
         }
         .contextMenu(forSelectionType: UUID.self) { ids in
@@ -165,6 +165,9 @@ struct ReportsPage: View {
                 Button("Open PDF") { model.open(row.invoice) }.disabled(row.invoice.fileId == nil)
                 if let repair = row.invoice.repairId { Button("Open Repair") { model.open(.repair(repair)) } }
                 if let device = row.invoice.deviceId { Button("Open Device") { model.open(.device(device)) } }
+                if row.invoice.customerId != nil {
+                    Button("Open Counter Sale") { model.open(.counterSale(row.invoice.creditsInvoiceId ?? row.invoice.id)) }
+                }
                 if let customer = row.invoice.customerId, !row.customer.isEmpty { Button("Open Customer") { model.open(.customer(customer)) } }
             }
         } primaryAction: { ids in
@@ -173,8 +176,8 @@ struct ReportsPage: View {
                 model.open(.repair(repair))
             } else if let device = row.invoice.deviceId {
                 model.open(.device(device))
-            } else if let customer = row.invoice.customerId, !row.customer.isEmpty {
-                model.open(.customer(customer))
+            } else if row.invoice.customerId != nil {
+                model.open(.counterSale(row.invoice.creditsInvoiceId ?? row.invoice.id))
             } else {
                 model.open(row.invoice)
             }
@@ -187,11 +190,13 @@ struct ReportsPage: View {
 }
 
 /// Paid, Unpaid, Credited, Refunded, or Not Refunded: words and a symbol.
-private struct ReportStatus: View {
-    let row: ReportRow
+struct InvoiceStatus: View {
+    let invoice: Invoice
+    /// An invoice a credit note cancels.
+    let isCredited: Bool
 
     var body: some View {
-        let (text, symbol, color): (String, String, Color) = switch (row.invoice.kind, row.isSettled, row.isCredited) {
+        let (text, symbol, color): (String, String, Color) = switch (invoice.kind, invoice.paidAt != nil, isCredited) {
         case (.creditNote, true, _): (String(localized: "Refunded"), "checkmark.circle.fill", .green)
         case (.creditNote, false, _): (String(localized: "Not Refunded"), "circle", .secondary)
         case (_, _, true): (String(localized: "Credited"), "arrow.uturn.backward.circle", .secondary)

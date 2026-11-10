@@ -840,6 +840,21 @@ Acceptance:
 Built: `RepairDetail` uses `TwoColumnForm`, whose `side` now also learns whether the page is wide. Two columns start at 820 pt, not 880, on every detail page: at 1600 pt the repair pane is 860 pt.
 Status: done
 
+### S-069 Counter Sales page
+As the user, I see every counter sale in one place, just under the Dashboard, and start a new one from there.
+Depends: S-046, S-067
+Acceptance:
+- [unit] The list holds every counter sale, to customers and walk-ins, newest first, each with its lines, totals, and the credit note that cancels it; search matches the customer, an item, or the invoice number.
+- [self] The page lists a walk-in sale; a sale made from the page is the one selected.
+- [snap] Counter Sales is the second sidebar page (⌥⌘2): the list (number, buyer, items, date, total, Paid or Unpaid) beside the sale (customer, date, items, totals, and its invoice with payment, PDF, and credit note).
+UX:
+- Flow: sidebar > Counter Sales (⌥⌘2) -> New Counter Sale (toolbar, ⌥⌘N) -> Invoice -> the sale is selected; a row in Reports opens its sale; Go > Back
+- Surface: a sidebar page (a place people come back to)
+- States: none yet: "No Counter Sales" with New Counter Sale; nothing selected: "No Counter Sale Selected"; no match: the system's search empty state
+- Words: "Counter Sales", "New Counter Sale", "Walk-in", "Open Counter Sale"
+Built: `Library.counterSaleRows(matching:)` (`CounterSaleRow`), `Pages/CounterSalesPage.swift`, `SidebarItem.counterSales`, `Destination.counterSale`. A customer's page keeps its own Counter Sales section. In Reports, a counter sale's row opens the sale (it opened the customer, or the PDF for a walk-in). The other pages' shortcuts move down one (Repairs is ⌥⌘3). Snapshots: counterSales, counter-sale.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

@@ -33,6 +33,9 @@ final class AppModel {
     var sidebar: SidebarItem? = .dashboard
     var settingsTab: SettingsTab = .general
     var selectedRepair: UUID?
+    /// Counter Sales: the sale shown, by its invoice.
+    var selectedSale: UUID?
+    var saleSearch = ""
     var selectedCustomer: UUID?
     var selectedDevice: UUID?
     var repairFilter: RepairFilter = .open
@@ -153,12 +156,13 @@ final class AppModel {
     }
 
     enum Destination {
-        case repair(UUID), customer(UUID), device(UUID), guide(UUID), part(UUID)
+        case repair(UUID), customer(UUID), device(UUID), guide(UUID), part(UUID), counterSale(UUID)
     }
 
     private var here: Place {
         let selection: UUID? = switch sidebar {
         case .repairs: selectedRepair
+        case .counterSales: selectedSale
         case .customers: selectedCustomer
         case .devices: selectedDevice
         case .guides: selectedGuide
@@ -172,6 +176,7 @@ final class AppModel {
         sidebar = place.sidebar
         switch place.sidebar {
         case .repairs: selectedRepair = place.selection
+        case .counterSales: selectedSale = place.selection
         case .customers: selectedCustomer = place.selection
         case .devices: selectedDevice = place.selection
         case .guides: selectedGuide = place.selection
@@ -198,6 +203,9 @@ final class AppModel {
         case .guide(let id):
             guideSearch = ""
             go(to: Place(sidebar: .guides, selection: id))
+        case .counterSale(let id):
+            saleSearch = ""
+            go(to: Place(sidebar: .counterSales, selection: id))
         case .part(let id):
             partSearch = ""
             partsTab = .inventory
@@ -298,13 +306,14 @@ enum PartsTab: String, CaseIterable, Identifiable {
 
 /// The sidebar pages. Snapshot mode walks through every case.
 enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
-    case dashboard, repairs, customers, devices, parts, guides, reports, log
+    case dashboard, counterSales, repairs, customers, devices, parts, guides, reports, log
 
     var id: String { rawValue }
 
     var title: String {
         switch self {
         case .dashboard: String(localized: "Dashboard")
+        case .counterSales: String(localized: "Counter Sales")
         case .repairs: String(localized: "Repairs")
         case .customers: String(localized: "Customers")
         case .devices: String(localized: "Devices")
@@ -318,6 +327,7 @@ enum SidebarItem: String, CaseIterable, Identifiable, Hashable {
     var symbol: String {
         switch self {
         case .dashboard: "square.grid.2x2"
+        case .counterSales: "cart"
         case .repairs: "wrench.and.screwdriver"
         case .customers: "person.2"
         case .devices: "laptopcomputer.and.iphone"

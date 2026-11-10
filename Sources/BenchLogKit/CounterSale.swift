@@ -90,3 +90,40 @@ extension Library {
         }
     }
 }
+
+/// One counter sale in the Counter Sales list: its invoice, who bought, and the credit
+/// note that cancels it, if any.
+public struct CounterSaleRow: Hashable, Sendable, Identifiable {
+    public var invoice: Invoice
+    /// The name printed on the invoice; empty for a walk-in.
+    public var customerName: String
+    /// The buyer's page; nil for a walk-in.
+    public var customerId: UUID?
+    public var lines: [BillLine]
+    public var totals: Totals
+    public var creditNote: Invoice?
+    public var id: UUID { invoice.id }
+}
+
+extension Library {
+    /// Every counter sale, newest first, to customers and walk-ins alike. `search` matches
+    /// the invoice number, the customer's name, or an item sold.
+    public func counterSaleRows(matching search: String = "") throws -> [CounterSaleRow] {
+        let documents = try db.read { db in
+            try Invoice.filter(Column("customerId") != nil && Column("deletedAt") == nil)
+                .order(Column("issuedAt").desc, Column("rowid").desc).fetchAll(db)
+        }
+        let shop = try existingShop()?.id
+        let credits = Dictionary(documents.compactMap { note in note.creditsInvoiceId.map { ($0, note) } }, uniquingKeysWith: { first, _ in first })
+        let needle = search.trimmingCharacters(in: .whitespaces)
+        return documents.compactMap { invoice -> CounterSaleRow? in
+            guard invoice.kind == .invoice, let content = invoice.document else { return nil }
+            let row = CounterSaleRow(invoice: invoice, customerName: content.customer.name,
+                                     customerId: invoice.customerId == shop ? nil : invoice.customerId,
+                                     lines: content.lines, totals: content.totals, creditNote: credits[invoice.id])
+            guard !needle.isEmpty else { return row }
+            let haystack = [invoice.numberText ?? "", row.customerName] + row.lines.map(\.description)
+            return haystack.contains { $0.localizedStandardContains(needle) } ? row : nil
+        }
+    }
+}

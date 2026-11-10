@@ -70,6 +70,7 @@ enum Snapshot {
             let shopDevice = model.read(nil) { try $0.shopDevices().first { $0.device.disposition == .forSale }?.id }
             let soldDevice = model.read(nil) { try $0.shopDevices().first { $0.device.disposition == .sold }?.id }
             let counterCustomer = model.read(nil) { try $0.customers().first { $0.name.hasPrefix("Chlo") }?.id }
+            let counterSale = model.read(nil) { try $0.counterSaleRows().last?.id }
             let states: [(String, () -> Void)] = [
                 ("guide-markdown", { model.sidebar = .guides; model.selectedGuide = markdownGuide }),
                 ("guide-pdf", { model.sidebar = .guides; model.selectedGuide = pdfGuide }),
@@ -85,6 +86,7 @@ enum Snapshot {
                 ("repair-internal", { model.sidebar = .repairs; model.repairFilter = .open; model.selectedRepair = internalRepair }),
                 ("devices-shop", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = shopDevice }),
                 ("reports-quarter", { model.sidebar = .reports; model.reportPeriod = ReportPeriod(.quarter, containing: .now) }),
+                ("counter-sale", { model.sidebar = .counterSales; model.selectedSale = counterSale }),
                 ("customer-counter-sales", { model.sidebar = .customers; model.selectedCustomer = counterCustomer }),
                 ("devices-shop-sold", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = soldDevice }),
                 ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
@@ -124,7 +126,7 @@ enum Snapshot {
                     scanned: [scannedGame].compactMap { $0 },
                     review: ProductInfo(barcode: "045496590420", title: "The Legend of Zelda: Breath of the Wild - Nintendo Switch",
                                         brand: "Nintendo", category: "Video Games"))),
-                ("counter-sale-sheet", .customers, .newCounterSale(customer: customer, items: Self.sampleSale(model))),
+                ("counter-sale-sheet", .counterSales, .newCounterSale(customer: customer, items: Self.sampleSale(model))),
                 ("guide-edit-sheet", .guides, markdownGuide.map { .editGuide($0) } ?? .newPart),
                 ("guides-import-sheet", .guides, .importGuides(Self.sampleVault())),
             ]

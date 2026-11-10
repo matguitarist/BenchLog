@@ -62,6 +62,22 @@ import Testing
         }
     }
 
+    /// S-069 The Counter Sales page lists every sale, newest first, with its credit note.
+    @Test func theCounterSalesListHasEverySaleNewestFirst() throws {
+        let first = try library.issueCounterSale(to: customer.id, items: items, now: Date(timeIntervalSinceNow: -3_600))
+        let walkIn = try library.issueCounterSale(to: nil, items: [CounterSaleItem(description: "Carrying case", unitCents: 2_000)])
+        let credit = try library.issueCreditNote(for: first.id, reason: "Wrong cable")
+        let rows = try library.counterSaleRows()
+        #expect(rows.map(\.id) == [walkIn.id, first.id])
+        #expect(rows[0].customerName.isEmpty && rows[0].customerId == nil && rows[0].creditNote == nil)
+        #expect(rows[1].customerName == "Nadia Roy" && rows[1].customerId == customer.id && rows[1].creditNote?.id == credit.id)
+        #expect(rows[1].lines.count == 2 && rows[1].totals.subtotalCents == 4_000)
+        #expect(try library.counterSaleRows(matching: "nadia").map(\.id) == [first.id])
+        #expect(try library.counterSaleRows(matching: "carrying").map(\.id) == [walkIn.id])
+        #expect(try library.counterSaleRows(matching: "F-0002").map(\.id) == [walkIn.id])
+        #expect(try library.counterSaleRows(matching: "nothing like it").isEmpty)
+    }
+
     @Test func aCustomerWithACounterSaleStaysOutOfTheTrash() throws {
         try library.issueCounterSale(to: customer.id, items: items)
         #expect(throws: TrashError.hasInvoices(["F-0001"])) { try library.moveToTrash(.customer(customer.id)) }
