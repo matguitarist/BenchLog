@@ -453,29 +453,43 @@ enum SelfTest {
     /// repair and issues an invoice with the server's numbers, then disconnects.
     @MainActor
     private static func syncEndToEnd(_ model: AppModel) async {
-        let source = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
-            .appending(path: "server/src/main.js")
-        guard let node = ["/opt/homebrew/bin/node", "/usr/local/bin/node"].first(where: { FileManager.default.isExecutableFile(atPath: $0) }),
-              FileManager.default.fileExists(atPath: source.path) else {
-            print("SKIP sync end to end: no Node or no server source")
-            return
+        // SELFTEST_SERVER=<url> (with SELFTEST_TOKEN) syncs with a server already running, such as
+        // the Docker image; it must hold no library yet. Otherwise the self-test starts server/ with Node.
+        let environment = ProcessInfo.processInfo.environment
+        let server: URL
+        let token: String
+        var process: Process?
+        if let given = environment["SELFTEST_SERVER"].flatMap(URL.init(string:)) {
+            server = given
+            token = environment["SELFTEST_TOKEN"] ?? ""
+            print("sync end to end with \(given.absoluteString)")
+        } else {
+            let source = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent()
+                .appending(path: "server/src/main.js")
+            guard let node = ["/opt/homebrew/bin/node", "/usr/local/bin/node"].first(where: { FileManager.default.isExecutableFile(atPath: $0) }),
+                  FileManager.default.fileExists(atPath: source.path) else {
+                print("SKIP sync end to end: no Node or no server source")
+                return
+            }
+            let data = Store.url.deletingLastPathComponent().appending(path: "server-\(UUID().uuidString)")
+            let port = Int.random(in: 41_000...49_000)
+            let started = Process()
+            started.executableURL = URL(fileURLWithPath: node)
+            started.arguments = [source.path]
+            started.environment = ["PORT": "\(port)", "DATA_DIR": data.path, "BENCHLOG_TOKEN": "self-test"]
+            started.standardOutput = FileHandle.nullDevice
+            guard (try? started.run()) != nil else { check("the sync server starts", false); return }
+            process = started
+            server = URL(string: "http://127.0.0.1:\(port)")!
+            token = "self-test"
         }
-        let data = Store.url.deletingLastPathComponent().appending(path: "server-\(UUID().uuidString)")
-        let port = Int.random(in: 41_000...49_000)
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: node)
-        process.arguments = [source.path]
-        process.environment = ["PORT": "\(port)", "DATA_DIR": data.path, "BENCHLOG_TOKEN": "self-test"]
-        process.standardOutput = FileHandle.nullDevice
-        guard (try? process.run()) != nil else { check("the sync server starts", false); return }
-        defer { process.terminate() }
-        let server = URL(string: "http://127.0.0.1:\(port)")!
+        defer { process?.terminate() }
         for _ in 0..<50 where (try? await URLSession.shared.data(from: server.appending(path: "v1/health"))) == nil {
             try? await Task.sleep(for: .milliseconds(100))
         }
         let sync = SyncController.shared
         do {
-            try await sync.connect(model, server: server, token: "self-test", join: false)
+            try await sync.connect(model, server: server, token: token, join: false)
         } catch {
             check("the library connects to the server", false, error.localizedDescription)
             return
@@ -487,7 +501,7 @@ enum SelfTest {
            let repair = model.createRepair(deviceID: device.id, complaint: "Synced repair", promisedAt: nil) {
             check("a connected library opens repairs from its ticket block", repair.ticketNumber > before)
             model.write("Self-test labour") { try $0.save(LabourLine(repairId: repair.id, description: "Bench", kind: .flat, unitCents: 5_000)) }
-            let next = (try? await HTTPSyncTransport(baseURL: server, token: "self-test").library())?.numbers["invoice"] ?? 0
+            let next = (try? await HTTPSyncTransport(baseURL: server, token: token).library())?.numbers["invoice"] ?? 0
             await model.issue(.invoice, for: repair.id)
             let invoice = model.read(nil) { try $0.invoices(for: repair.id).first { $0.kind == .invoice } }
             check("a connected library numbers invoices from the server", invoice?.number == next, "\(invoice?.number ?? 0) vs \(next)")
