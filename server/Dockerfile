@@ -8,6 +8,8 @@ FROM node:24-alpine
 WORKDIR /app
 COPY package.json ./
 COPY src ./src
+# The node user owns /data, so a new named volume is writable (Docker copies the ownership).
+RUN mkdir -p /data && chown node:node /data
 ENV PORT=8420 DATA_DIR=/data NODE_ENV=production
 VOLUME ["/data"]
 EXPOSE 8420

@@ -67,3 +67,10 @@ Rule: when a document kind gains a new use (a sale, not a repair), reread every 
 - Cause: the scene's `.commands` builder had eleven children; the runner's older SDK builds at most ten per builder.
 - Fix: the four standard command sets (Sidebar, Import from iPhone, Toolbar, Find) sit in one `Group`.
 - Rule: keep any result builder at ten children or fewer, and check CI (`gh run list`) after each push, not only at release.
+
+## 2026-11-09 The Docker server stopped at start: EACCES on /data/token
+
+- Symptom: `docker run … -v benchlog-data:/data benchlog-server` exited at once with "EACCES: permission denied, open '/data/token'". Found the first time the image ran (OrbStack), after 2.0.0 shipped.
+- Cause: the image had no `/data` folder, so Docker created the volume owned by root, and the server runs as `node`.
+- Fix: the Dockerfile creates `/data` owned by `node` before `VOLUME`; a new named volume copies that ownership. The README says how to make a host folder writable.
+- Rule: a Dockerfile that runs as a non-root user creates and chowns its volume folders, and the image is run once (`docker run`, health, restart) before a release that ships it.

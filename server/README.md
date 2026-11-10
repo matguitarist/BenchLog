@@ -16,6 +16,12 @@ docker run -d --name benchlog --restart unless-stopped \
 docker logs benchlog        # shows the library token, once
 ```
 
+On a Mac, OrbStack or Docker Desktop runs it. To keep the data in a folder of your own
+(a NAS share, for example) instead of the `benchlog-data` volume, use
+`-v /path/to/folder:/data`. The server runs as user 1000, so that folder must be writable
+by it: `sudo chown 1000:1000 /path/to/folder`, or add `--user "$(id -u):$(id -g)"` to
+`docker run`.
+
 ## Run it without Docker
 
 ```sh
