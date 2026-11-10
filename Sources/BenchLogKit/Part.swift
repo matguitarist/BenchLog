@@ -118,9 +118,18 @@ extension Library {
     @discardableResult
     public func save(_ part: Part, fits: [PartFit], now: Date = .now) throws -> Part {
         var part = part
+        part.quantity = max(0, part.quantity)
         part.updatedAt = now
         try db.write { db in
+            let old = try Part.fetchOne(db, key: part.id.stored)
             try part.save(db)
+            // A new part opens its stock history; a changed count is recorded as adjusted.
+            let delta = part.quantity - (old?.quantity ?? 0)
+            if delta != 0 {
+                try StockMove(id: UUID(), partId: part.id, delta: delta, quantityAfter: part.quantity,
+                              reason: old == nil ? .opening : .adjusted, repairId: nil, invoiceId: nil, restockId: nil,
+                              note: "", createdAt: now, updatedAt: now, deletedAt: nil).insert(db)
+            }
             try db.execute(sql: "DELETE FROM partFit WHERE partId = ?", arguments: [part.id.stored])
             for fit in Set(fits) {
                 try db.execute(sql: "INSERT INTO partFit VALUES (?, ?, ?, ?)",
@@ -150,16 +159,9 @@ extension Library {
         return (all.filter { fitting.contains($0.id.stored) }, all.filter { !fitting.contains($0.id.stored) })
     }
 
-    /// Changes the stock count by `delta` (never below zero).
+    /// Changes the stock count by `delta` (never below zero), recorded as adjusted.
     public func adjustStock(of partID: UUID, by delta: Int, now: Date = .now) throws {
-        try db.write { db in try Self.adjustStock(db, partID: partID, by: delta, now: now) }
-    }
-
-    private static func adjustStock(_ db: Database, partID: UUID, by delta: Int, now: Date) throws {
-        guard var part = try Part.fetchOne(db, key: partID.stored) else { return }
-        part.quantity = max(0, part.quantity + delta)
-        part.updatedAt = now
-        try part.update(db)
+        try db.write { db in _ = try Self.moveStock(db, partID: partID, by: delta, reason: .adjusted, now: now) }
     }
 
     // MARK: Parts on repairs
@@ -202,8 +204,9 @@ extension Library {
         try db.write { db in
             guard var use = try PartUse.fetchOne(db, key: useID.stored), use.status != status else { return }
             if let partID = use.partId {
-                if status == .installed { try Self.adjustStock(db, partID: partID, by: -use.quantity, now: now) }
-                if use.status == .installed { try Self.adjustStock(db, partID: partID, by: use.quantity, now: now) }
+                let source = StockSource(repair: use.repairId)
+                if status == .installed { try Self.moveStock(db, partID: partID, by: -use.quantity, reason: .installed, from: source, now: now) }
+                if use.status == .installed { try Self.moveStock(db, partID: partID, by: use.quantity, reason: .returned, from: source, now: now) }
             }
             use.status = status
             use.updatedAt = now
@@ -216,7 +219,9 @@ extension Library {
         try db.write { db in
             guard let old = try PartUse.fetchOne(db, key: use.id.stored) else { return }
             if let partID = use.partId, old.status == .installed, old.quantity != use.quantity {
-                try Self.adjustStock(db, partID: partID, by: old.quantity - use.quantity, now: now)
+                let delta = old.quantity - use.quantity
+                try Self.moveStock(db, partID: partID, by: delta, reason: delta < 0 ? .installed : .returned,
+                                   from: StockSource(repair: use.repairId), now: now)
             }
             var use = use
             use.updatedAt = now
@@ -229,7 +234,7 @@ extension Library {
         try db.write { db in
             guard var use = try PartUse.fetchOne(db, key: useID.stored) else { return }
             if let partID = use.partId, use.status == .installed {
-                try Self.adjustStock(db, partID: partID, by: use.quantity, now: now)
+                try Self.moveStock(db, partID: partID, by: use.quantity, reason: .returned, from: StockSource(repair: use.repairId), now: now)
             }
             use.deletedAt = now
             use.updatedAt = now

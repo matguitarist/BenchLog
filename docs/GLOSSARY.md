@@ -114,3 +114,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Taxable amount (parts) | Montant taxable (pièces) |
 | Paid | Payé |
 | Credit Note / Refunded | Note de crédit / Remboursé |
+| Stock History | Historique du stock |
+| Count (the shelf) | Compter |
+| Remove Damaged | Retirer endommagées |
+| Opening stock | Stock initial |

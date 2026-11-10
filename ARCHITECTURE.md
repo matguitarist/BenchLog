@@ -14,6 +14,7 @@
   - `Search.swift`: global search. An FTS5 table, `search`, filled and kept current by SQL triggers (one `Source` per table, plus the rows that show its text), so no write path can forget it. `Library.search` groups hits by kind. The sources are versioned (`sources(version:)`): each migration installs the version of its own time, so v7 never names a column v9 adds. A change to a `Source` is a new version and a new migration that calls `reinstall`.
   - `Approval.swift`: the approval rule and where a repair stands against it (`approvalState(of:)`).
   - `Taxes.swift`: countries, provinces and states with their standard taxes, tax names in each language, and what a profile charges (`chargedTaxes`). `Billing.totals` takes these taxes; documents take the country (currency, en_US or en_CA) from the business details they froze.
+  - `Stock.swift`: stock moves (why a part's quantity changed), counts, damaged units, and a part's stock history.
   - `Report.swift`: report periods and the sales and tax report over invoices and credit notes, with its CSV.
   - `Trash.swift`: Move to Trash and Put Back, cascading to children with one shared `deletedAt`, and Empty Trash, which deletes rows and files older than 30 days in dependency order.
   - `Shop.swift`: the shop as an owner (`customer.isShop`), internal jobs and their cost, and shop devices: what they cost, what became of them, and the profit once sold.

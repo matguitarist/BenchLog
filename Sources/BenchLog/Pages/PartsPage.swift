@@ -172,18 +172,14 @@ struct PartDetail: View {
                         LabeledContent("Cost", value: Money.text(part.costCents))
                         LabeledContent("Price", value: Money.text(part.priceCents))
                     }
-                    Section("Stock") {
-                        Stepper(value: Binding(get: { part.quantity }, set: { model.adjustStock(of: part.id, by: $0 - part.quantity) }), in: 0...9999) {
-                            StockCount(part: part)
-                        }
-                        LabeledContent("Low-stock threshold", value: part.lowStockThreshold > 0 ? "\(part.lowStockThreshold)" : String(localized: "None"))
-                    }
+                    StockSection(part: part)
                     Section("Fits") {
                         if fits.isEmpty { Text("Fits any model").foregroundStyle(.secondary) }
                         ForEach(fits, id: \.self) { fit in
                             Label(fit.title, systemImage: fit.category.symbol)
                         }
                     }
+                    StockHistorySection(partID: part.id)
                 }
                 .formStyle(.grouped)
             } else {

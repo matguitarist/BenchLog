@@ -351,6 +351,31 @@ public final class Library: Sendable {
                 CREATE UNIQUE INDEX invoice_creditsInvoiceId ON invoice(creditsInvoiceId);
                 """)
         }
+        migrator.registerMigration("v12-stock") { db in
+            // Every change to a part's stock, with why. What is on the shelf today opens the history.
+            try db.execute(sql: """
+                CREATE TABLE stockMove (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    partId TEXT NOT NULL REFERENCES part(id),
+                    delta INTEGER NOT NULL,
+                    quantityAfter INTEGER NOT NULL,
+                    reason TEXT NOT NULL,
+                    repairId TEXT REFERENCES repair(id),
+                    invoiceId TEXT REFERENCES invoice(id),
+                    restockId TEXT,
+                    note TEXT NOT NULL DEFAULT '',
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX stockMove_part ON stockMove(partId, createdAt);
+                INSERT INTO stockMove (id, partId, delta, quantityAfter, reason, createdAt, updatedAt)
+                    SELECT lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-4' || substr(hex(randomblob(2)), 2) || '-'
+                                 || substr('89ab', 1 + abs(random()) % 4, 1) || substr(hex(randomblob(2)), 2) || '-' || hex(randomblob(6))),
+                           id, quantity, quantity, 'opening', updatedAt, updatedAt
+                    FROM part WHERE quantity > 0;
+                """)
+        }
         return migrator
     }
 

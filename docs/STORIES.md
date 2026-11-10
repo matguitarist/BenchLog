@@ -551,6 +551,55 @@ Acceptance:
 Built: `issueSaleInvoice(for:)` and `saleInvoices(of:)`; migration v11-sales rebuilds `invoice` so `repairId` is optional and adds `deviceId` (a CHECK keeps one of them). One `item` line at the sale price, the region's taxes, the shared invoice sequence, no ticket and no repair warranty; the PDF goes on the device. Once per sale unless credited. Snapshots: devices-shop-sold, doc-sale-invoice.
 Status: done
 
+## M8 Inventory — stock history, restocking, counter sales, stock value
+
+### S-044 Stock history and counts
+As the user, I see why a part's stock changed, and I correct it after counting the shelf.
+Screens: part-history
+Depends: S-014
+Acceptance:
+- [unit] Every stock change is a move with its reason: opening, installed (with the repair), returned, received, counted, damaged, sold, adjusted. The sum of a part's moves is its quantity; parts already in stock get an opening move.
+- [unit] Count sets the quantity to what I counted and records the difference; Damaged takes stock out with a note.
+- [snap] A part's page has a Stock History list, newest first, with the ticket or invoice each move came from, and Count… and Remove Damaged… actions.
+Built: `Stock.swift` (`StockMove`, `StockReason`, `moveStock` that never goes below zero and records the units that actually moved, `count`, `removeDamaged`, `stockHistory`). Migration v12-stock adds `stockMove` and an opening move for every part in stock. Saving a part, the stepper, and installing or removing a part on a repair all record moves. `Views/StockViews.swift`: the part's Stock section with Count… and Remove Damaged… popovers, and Stock History (eight newest, Show All). Snapshot: parts-inventory.
+Status: done
+
+### S-045 Restock orders
+As the user, I order stock for the shelf from a vendor and receive it when it arrives.
+Screens: parts-restock
+Depends: S-044
+Acceptance:
+- [unit] Order More adds the part to the vendor's draft order; Add Low Parts fills drafts with every low part (enough to reach twice its threshold).
+- [unit] Mark Ordered, then Receive: each line's quantity goes into stock as a Received move, and the part's cost becomes the line's cost.
+- [snap] Parts has a Restock tab: one order per vendor with its lines, quantity and cost editable while a draft, and its total at cost.
+Status: todo
+
+### S-046 Counter sales
+As the user, I sell parts and accessories over the counter, without a repair, to a customer or a walk-in.
+Screens: counter-sale-sheet, doc-counter-sale
+Depends: S-044, S-038
+Acceptance:
+- [unit] A counter sale is an invoice with the next number, its lines, and the region's taxes; stocked parts leave stock as Sold moves. Crediting it puts them back as Returned.
+- [snap] File > New Counter Sale… (⌥⌘N) opens a sheet: customer or Walk-in, parts from stock or typed items, quantity and price, the totals, and Invoice.
+- [snap] A customer's page lists their counter-sale invoices; a walk-in's PDF goes on the shop.
+Status: todo
+
+### S-047 Inventory value
+As the user, I know what my stock is worth, now and at the end of a period, for my year-end.
+Screens: parts, reports
+Depends: S-044
+Acceptance:
+- [unit] Value = quantity × cost for each part, plus the cost of shop devices in stock or for sale; at a past date, quantities come from the stock moves.
+- [snap] The Parts list shows the stock value at cost and at price; Reports shows the inventory value at the end of the period, and how many parts have no cost.
+Status: todo
+
+### S-048 Release 1.0.0
+As the user, I install BenchLog 1.0.0 from a notarized download, and it updates itself.
+Depends: S-044, S-045, S-046, S-047
+Acceptance:
+- [manual] `tools/release.sh 1.0.0 --check` passes; release notes in French and English; the published release waits for the owner's go-ahead.
+Status: todo
+
 ## Later
 - **v2 Sync**: the Node server becomes a REST and SQLite sync service (pull and push by `updatedAt`, last-writer-wins per row, file upload). The Mac becomes a client.
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.

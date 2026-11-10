@@ -189,6 +189,14 @@ extension AppModel {
         write("Saved part \(part.id.stored) (\(part.name))") { try $0.save(part, fits: fits) }
     }
 
+    func count(_ partID: UUID, counted: Int, note: String) {
+        write("Counted part \(partID.stored): \(counted)") { try $0.count(partID, counted: counted, note: note) }
+    }
+
+    func removeDamaged(_ partID: UUID, quantity: Int, note: String) {
+        write("Removed \(quantity) damaged of part \(partID.stored)") { try $0.removeDamaged(partID, quantity: quantity, note: note) }
+    }
+
     func adjustStock(of partID: UUID, by delta: Int) {
         write("Stock of part \(partID.stored) \(delta > 0 ? "+" : "")\(delta)") { try $0.adjustStock(of: partID, by: delta) }
     }

@@ -33,6 +33,7 @@ extension Library {
         "device.customerId", "repair.deviceId",
         "partUse.repairId", "partUse.partId", "labourLine.repairId", "invoice.repairId",
         "partFit.partId", "guideLink.guideId", "guide.fileId", "invoice.fileId",
+        "stockMove.partId", "stockMove.repairId",   // a part's history goes with it; a repair's moves keep their part
         "invoice.deviceId",   // a device with a sale invoice is never emptied: invoices are tax records
     ]
 
@@ -97,6 +98,7 @@ extension Library {
                 DELETE FROM invoice WHERE repairId IN (\(Self.list(repairs)));
                 DELETE FROM partUse WHERE repairId IN (\(Self.list(repairs)));
                 DELETE FROM labourLine WHERE repairId IN (\(Self.list(repairs)));
+                UPDATE stockMove SET repairId = NULL WHERE repairId IN (\(Self.list(repairs)));
                 DELETE FROM repair WHERE id IN (\(Self.list(repairs)));
                 """)
             // Devices and customers, once nothing points at them.
@@ -116,6 +118,7 @@ extension Library {
             let parts = try String.fetchAll(db, sql: "SELECT id FROM part WHERE deletedAt < ?", arguments: [cutoff])
             try db.execute(sql: """
                 DELETE FROM partFit WHERE partId IN (\(Self.list(parts)));
+                DELETE FROM stockMove WHERE partId IN (\(Self.list(parts)));
                 UPDATE partUse SET partId = NULL WHERE partId IN (\(Self.list(parts)));
                 DELETE FROM part WHERE id IN (\(Self.list(parts)));
                 """)

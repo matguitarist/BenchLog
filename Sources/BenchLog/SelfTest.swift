@@ -150,6 +150,13 @@ enum SelfTest {
                             check("Installed takes the part out of stock", model.read(nil) { try $0.part(fan.id) }?.quantity == 0)
                             model.removeUse(use.id)
                             check("removing an installed part puts it back", model.read(nil) { try $0.part(fan.id) }?.quantity == 1)
+                            model.count(fan.id, counted: 3, note: "Self-test count")
+                            model.removeDamaged(fan.id, quantity: 1, note: "")
+                            let history = model.read([]) { try $0.stockHistory(of: fan.id) }
+                            check("Count and Remove Damaged change the stock and show in its history",
+                                  model.read(nil) { try $0.part(fan.id) }?.quantity == 2
+                                  && history.prefix(2).map(\.move.reason) == [.damaged, .counted]
+                                  && history.contains { $0.move.reason == .installed && $0.source != nil })
                         }
                     }
                     model.useFreePart("Self-test speaker", on: repair.id)
