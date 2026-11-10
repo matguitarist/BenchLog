@@ -14,7 +14,7 @@ struct SheetHost: View {
         case .newRepair(let customer, let device): NewRepairSheet(customerID: customer, deviceID: device)
         case .newPart: PartSheet(partID: nil)
         case .editPart(let id): PartSheet(partID: id)
-        case .addByBarcode(let scanned): BarcodeSheet(start: scanned)
+        case .addByBarcode(let scanned, let review): BarcodeSheet(start: scanned, startReview: review)
         case .editGuide(let id): GuideSheet(guideID: id)
         case .importGuides(let folder): GuideImportSheet(folder: folder)
         case .newCounterSale(let customer, let items): CounterSaleSheet(customerID: customer, start: items)

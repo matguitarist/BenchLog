@@ -5,27 +5,38 @@ import SwiftUI
 enum ScanResult: Equatable {
     /// The text is not a UPC or EAN.
     case invalid
-    /// One unit went into stock; `isNew` when the scan created the part.
-    case added(Part, isNew: Bool)
+    /// The inventory knows the barcode: one more unit went into stock.
+    case added(Part)
+    /// A new barcode the lookup found. Nothing is saved until the review says Add Part.
+    case found(ProductInfo)
     /// No part has the barcode and the lookup found no product (or failed, with why).
     case unknown(barcode: String, problem: String?)
 }
 
 /// Add by Barcode: each scan puts one unit on the shelf. A barcode the inventory knows adds
-/// to its part; a new one is looked up online and becomes a part; an unknown one asks for a name.
+/// to its part. A new one is looked up online and shown for review (name, kind, cost, price)
+/// before it becomes a part; one the lookup does not know gets the same review with an empty name.
 /// A USB or Bluetooth scanner types the digits and Return into the field.
 struct BarcodeSheet: View {
     @Environment(AppModel.self) private var model
     @Environment(\.dismiss) private var dismiss
     /// Parts shown as already added (snapshots).
     var start: [UUID] = []
+    /// A product shown as just looked up (snapshots).
+    var startReview: ProductInfo?
 
     @State private var code = ""
     @State private var busy = false
     @State private var invalid = false
-    @State private var unknown: String?
+    /// The barcode under review: a new part waits for Add Part or Skip.
+    @State private var pending: String?
+    /// Whether the lookup found the product under review.
+    @State private var found = false
     @State private var problem: String?
     @State private var name = ""
+    @State private var kind = PartKind.part
+    @State private var cost: Decimal?
+    @State private var price: Decimal?
     @State private var added: [Entry] = []
     @FocusState private var focus: Field?
 
@@ -48,30 +59,37 @@ struct BarcodeSheet: View {
                         TextField("Barcode", text: $code, prompt: Text("Scan or type a UPC or EAN"))
                             .focused($focus, equals: .code)
                             .onSubmit(scan)
-                            .disabled(busy)
+                            .disabled(busy || pending != nil)
                         if busy { ProgressView().controlSize(.small) }
                     }
                     if invalid {
                         Text("That is not a barcode. Check the digits.").font(.callout).foregroundStyle(.red)
                     }
                 } footer: {
-                    Text("Each scan adds one to stock. A new barcode is looked up at upcitemdb.com; only the barcode is sent.")
+                    Text("A barcode the inventory knows adds one to stock. A new one is looked up at upcitemdb.com for you to review; only the barcode is sent.")
                 }
-                if let unknown {
+                if let pending {
                     Section {
                         if let problem { Text(problem).font(.callout).foregroundStyle(.orange) }
                         TextField("Name", text: $name, prompt: Text("What is it?"))
                             .focused($focus, equals: .name)
-                            .onSubmit(addNamed)
+                        Picker("Kind", selection: $kind) {
+                            ForEach(PartKind.allCases) { Label($0.title, systemImage: $0.symbol).tag($0) }
+                        }
+                        TextField("Cost", value: $cost, format: Money.format)
+                        TextField("Price", value: $price, format: Money.format)
+                            .help("What a customer pays for one")
                         HStack {
                             Spacer()
-                            Button("Skip") { clearUnknown() }
+                            Button("Skip") { clearReview() }
                                 .help("Leave this barcode out")
-                            Button("Add Part", action: addNamed)
+                            Button("Add Part", action: addReviewed)
+                                .keyboardShortcut(.defaultAction)
                                 .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
+                                .help("Add it with one in stock")
                         }
                     } header: {
-                        Text("No product found for \(unknown)")
+                        Text(found ? "Review the new part for \(pending)" : "No product found for \(pending)")
                     }
                 }
                 if !added.isEmpty {
@@ -108,14 +126,14 @@ struct BarcodeSheet: View {
         .frame(width: 480)
         .onAppear {
             added = start.compactMap { id in model.read(nil) { try $0.part(id) } }.map { Entry(part: $0, isNew: false) }
-            focus = .code
+            if let startReview { review(startReview) } else { focus = .code }
         }
     }
 
     private func scan() {
         let text = code
-        guard !text.trimmingCharacters(in: .whitespaces).isEmpty, !busy else { return }
-        clearUnknown()
+        guard !text.trimmingCharacters(in: .whitespaces).isEmpty, !busy, pending == nil else { return }
+        invalid = false
         busy = true
         Task {
             let result = await model.addScanned(text)
@@ -124,33 +142,48 @@ struct BarcodeSheet: View {
             case .invalid:
                 invalid = true
                 focus = .code
-            case .added(let part, let isNew):
+            case .added(let part):
                 code = ""
-                added.append(Entry(part: part, isNew: isNew))
+                added.append(Entry(part: part, isNew: false))
                 focus = .code
+            case .found(let product):
+                code = ""
+                review(product)
             case .unknown(let barcode, let why):
                 code = ""
-                unknown = barcode
+                pending = barcode
+                found = false
                 problem = why
                 focus = .name
             }
         }
     }
 
-    private func addNamed() {
-        let trimmed = name.trimmingCharacters(in: .whitespaces)
-        guard let unknown, !trimmed.isEmpty else { return }
-        if let part = model.save(Part(name: trimmed, quantity: 1, barcode: unknown), fits: []) {
-            added.append(Entry(part: part, isNew: true))
-        }
-        clearUnknown()
+    /// Shows what the lookup found, to change or confirm.
+    private func review(_ product: ProductInfo) {
+        pending = product.barcode
+        found = true
+        problem = nil
+        name = product.title
+        kind = product.suggestedKind
+        focus = .name
     }
 
-    private func clearUnknown() {
-        invalid = false
-        unknown = nil
+    private func addReviewed() {
+        guard let pending, let part = model.addReviewed(barcode: pending, name: name, kind: kind,
+                                                        costCents: Money.cents(cost), priceCents: Money.cents(price)) else { return }
+        added.append(Entry(part: part, isNew: true))
+        clearReview()
+    }
+
+    private func clearReview() {
+        pending = nil
+        found = false
         problem = nil
         name = ""
+        kind = .part
+        cost = nil
+        price = nil
         focus = .code
     }
 }

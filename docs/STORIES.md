@@ -800,6 +800,21 @@ Acceptance:
 Built: `UI/TwoColumnForm.swift`, used by PartDetail, CustomerDetail, and DeviceDetail. The window's minimum width goes from 820 to 944 (sidebar 180 + list + detail at their minimums). Snapshots: `APP_SNAPSHOT_SIZE=1600x1000` for the wide pages, `APP_SNAPSHOT_MIN=1` for the smallest.
 Status: done
 
+### S-066 Review a scanned product before it is added
+As the user, I see what the barcode lookup found and correct it before it goes into the inventory.
+Depends: S-064
+Acceptance:
+- [self] A new barcode the lookup finds adds nothing by itself: it comes back for review. Add Part makes the part as reviewed (name, kind, cost, price) with one in stock; scanning it again adds one to stock without a review.
+- [snap] The review shows the barcode, Name and Kind filled from the lookup, Cost, Price, Skip, and Add Part.
+- [manual] Return in the review adds the part and puts the cursor back in Barcode for the next scan.
+UX:
+- Flow: scan -> review (Name, Kind, Cost, Price) -> Return or Add Part -> scan the next box
+- Surface: a section of the Add by Barcode sheet, the same one an unknown barcode uses with an empty name
+- States: Barcode is off while a review waits, so a scan cannot throw it away; Add Part is off without a name
+- Words: "Review the new part for …", "Add Part", "Skip"
+Built: `ScanResult.found`, `AppModel.addReviewed`; `addScanned` no longer saves a new part. Snapshot `part-barcode-review-sheet`.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

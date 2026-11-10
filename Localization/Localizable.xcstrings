@@ -2083,12 +2083,32 @@
         }
       }
     },
-    "Each scan adds one to stock. A new barcode is looked up at upcitemdb.com; only the barcode is sent.": {
+    "A barcode the inventory knows adds one to stock. A new one is looked up at upcitemdb.com for you to review; only the barcode is sent.": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Chaque lecture ajoute une unité au stock. Un nouveau code-barres est recherché sur upcitemdb.com; seul le code-barres est envoyé."
+            "value": "Un code-barres que l’inventaire connaît ajoute une unité au stock. Un nouveau est recherché sur upcitemdb.com pour que vous le vérifiiez; seul le code-barres est envoyé."
+          }
+        }
+      }
+    },
+    "Review the new part for %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérifiez la nouvelle pièce pour %@"
+          }
+        }
+      }
+    },
+    "Add it with one in stock": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "L’ajouter avec une unité en stock"
           }
         }
       }

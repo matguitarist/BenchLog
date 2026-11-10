@@ -14,8 +14,8 @@ The **Parts** page lists what you keep on the shelf, with the quantity, the cost
 **File > Add by Barcode…** (⇧⌘B) adds boxed games, controllers, and accessories by the UPC or EAN on the box. Scan with a USB or Bluetooth scanner, or type the digits and press Return.
 
 - A barcode the inventory knows adds one to that part's stock.
-- A new barcode is looked up at upcitemdb.com and becomes a part with one in stock. Only the barcode is sent. Use **Edit…** to set its kind, cost, and price.
-- If nothing is found, type its name. The free lookup allows 100 barcodes a day.
+- A new barcode is looked up at upcitemdb.com; only the barcode is sent. BenchLog shows what it found for you to review: correct the name and the kind, enter the cost and the price, then **Add Part** adds it with one in stock. **Skip** leaves it out.
+- If nothing is found, type its name in the same review. The free lookup allows 100 barcodes a day.
 
 A loose cartridge or disc has no barcode: add it with **New Part** and the kind **Game**.
 

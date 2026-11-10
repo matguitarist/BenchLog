@@ -260,8 +260,8 @@ enum SheetKind: Identifiable, Hashable {
     case newRepair(customer: UUID?, device: UUID?)
     case newPart
     case editPart(UUID)
-    /// `scanned` parts show as already added (snapshots).
-    case addByBarcode(scanned: [UUID] = [])
+    /// `scanned` parts show as already added and `review` as just looked up (snapshots).
+    case addByBarcode(scanned: [UUID] = [], review: ProductInfo? = nil)
     case editGuide(UUID)
     case importGuides(URL)
     /// `items` start the sale filled in (snapshots).

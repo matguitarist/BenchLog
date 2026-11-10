@@ -14,8 +14,8 @@ La page **Pièces** liste ce que vous gardez sur l’étagère, avec la quantit�
 **Fichier > Ajouter par code-barres…** (⇧⌘B) ajoute les jeux, manettes et accessoires en boîte à partir du CUP ou de l’EAN sur la boîte. Utilisez un lecteur USB ou Bluetooth, ou tapez les chiffres et appuyez sur Retour.
 
 - Un code-barres que l’inventaire connaît ajoute une unité au stock de cette pièce.
-- Un nouveau code-barres est recherché sur upcitemdb.com et devient une pièce avec une unité en stock. Seul le code-barres est envoyé. Utilisez **Modifier…** pour régler son type, son coût et son prix.
-- Si rien n’est trouvé, tapez son nom. La recherche gratuite permet 100 codes-barres par jour.
+- Un nouveau code-barres est recherché sur upcitemdb.com; seul le code-barres est envoyé. BenchLog montre ce qu’il a trouvé pour que vous le vérifiiez : corrigez le nom et le type, entrez le coût et le prix, puis **Ajouter la pièce** l’ajoute avec une unité en stock. **Passer** le laisse de côté.
+- Si rien n’est trouvé, tapez son nom dans la même vérification. La recherche gratuite permet 100 codes-barres par jour.
 
 Une cartouche ou un disque sans boîte n’a pas de code-barres : ajoutez-le avec **Nouvelle pièce** et le type **Jeu**.
 

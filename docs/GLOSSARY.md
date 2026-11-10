@@ -36,7 +36,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Price | What a customer pays for one part (Prix); Cost is what the shop paid | selling price, vending price, retail |
 | Margin | A part's price less its cost, with the share of the price (Marge) | profit, markup |
 | Barcode | The UPC or EAN printed on a part's box (Code-barres); the SKU is the shop's or vendor's own code | UPC field, scan code |
-| Add by Barcode | Scan boxes to put them in the inventory, one unit per scan; a new barcode is looked up online (Ajouter par code-barres) | scan, import, quick add |
+| Add by Barcode | Scan boxes to put them in the inventory, one unit per scan; a new barcode is looked up online and reviewed before it becomes a part (Ajouter par code-barres) | scan, import, quick add |
 | Starter Parts | The usual parts, accessories, cables, and controllers of a console, added at zero stock with a suggested price (Pièces de départ) | template, preset, sample parts |
 | Catalog | The brands, models, and revisions the device fields suggest (Catalogue) | list, database |
 | Merge Into | Rename a catalog name to one that exists, so the two become one | combine, join |

@@ -197,13 +197,23 @@ enum SelfTest {
                     barcode == "045496590420" ? ProductInfo(barcode: barcode, title: "Self-test game", category: "Video Games") : nil
                 }
                 let firstScan = await model.addScanned("0 45496 59042 0")
-                let secondScan = await model.addScanned("0045496590420")
-                if case .added(let game, true) = firstScan, case .added(let again, false) = secondScan {
-                    check("a new barcode is looked up and becomes a part with one in stock",
-                          game.kind == .game && game.quantity == 1 && game.barcode == "045496590420")
-                    check("scanning it again adds one to stock", again.id == game.id && again.quantity == 2)
+                if case .found(let product) = firstScan {
+                    check("a new barcode is looked up and waits for review: nothing is added yet",
+                          product.title == "Self-test game" && product.suggestedKind == .game
+                          && model.read(false) { try $0.part(barcode: "045496590420") == nil })
+                    let game = model.addReviewed(barcode: product.barcode, name: "Self-test game (reviewed)", kind: product.suggestedKind,
+                                                 costCents: 2000, priceCents: 4500)
+                    check("Add Part in the review makes the part as reviewed, with one in stock",
+                          game?.name == "Self-test game (reviewed)" && game?.kind == .game && game?.quantity == 1
+                          && game?.barcode == "045496590420" && game?.priceCents == 4500)
+                    let secondScan = await model.addScanned("0045496590420")
+                    if case .added(let again) = secondScan {
+                        check("scanning it again adds one to stock", again.id == game?.id && again.quantity == 2)
+                    } else {
+                        check("scanning it again adds one to stock", false)
+                    }
                 } else {
-                    check("a scanned barcode adds a part, then one more", false)
+                    check("a new barcode is looked up and waits for review", false)
                 }
                 let badScan = await model.addScanned("12345"), unknownScan = await model.addScanned("5030917181771")
                 check("a wrong code is refused and an unknown one asks for a name",

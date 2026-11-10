@@ -120,6 +120,10 @@ enum Snapshot {
                 ("repair-new-for-customer-sheet", .customers, .newRepair(customer: customer, device: nil)),
                 ("part-edit-sheet", .parts, firstPart.map { .editPart($0) } ?? .newPart),
                 ("part-barcode-sheet", .parts, .addByBarcode(scanned: [scannedGame, firstPart].compactMap { $0 })),
+                ("part-barcode-review-sheet", .parts, .addByBarcode(
+                    scanned: [scannedGame].compactMap { $0 },
+                    review: ProductInfo(barcode: "045496590420", title: "The Legend of Zelda: Breath of the Wild - Nintendo Switch",
+                                        brand: "Nintendo", category: "Video Games"))),
                 ("counter-sale-sheet", .customers, .newCounterSale(customer: customer, items: Self.sampleSale(model))),
                 ("guide-edit-sheet", .guides, markdownGuide.map { .editGuide($0) } ?? .newPart),
                 ("guides-import-sheet", .guides, .importGuides(Self.sampleVault())),
