@@ -34,6 +34,7 @@ struct SettingsView: View {
             switch tab {
             case .general: GeneralSettings()
             case .appearance: AppearanceSettings()
+            case .board: BoardSettings()
             case .updates: UpdateSettings()
             case .catalog: EmptyView()
             case .business: BusinessSettings()
@@ -51,7 +52,7 @@ struct SettingsView: View {
 
 /// The Settings tabs. Snapshot mode walks through every case.
 enum SettingsTab: String, CaseIterable, Identifiable {
-    case general, business, catalog, backup, sync, appearance, updates
+    case general, business, catalog, backup, sync, appearance, board, updates
 
     var id: String { rawValue }
 
@@ -63,6 +64,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .backup: String(localized: "Backup")
         case .sync: String(localized: "Sync")
         case .appearance: String(localized: "Appearance")
+        case .board: String(localized: "Board")
         case .updates: String(localized: "Updates")
         }
     }
@@ -75,6 +77,7 @@ enum SettingsTab: String, CaseIterable, Identifiable {
         case .backup: "externaldrive.badge.timemachine"
         case .sync: "arrow.triangle.2.circlepath"
         case .appearance: "paintpalette"
+        case .board: "cpu"
         case .updates: "arrow.triangle.2.circlepath"
         }
     }

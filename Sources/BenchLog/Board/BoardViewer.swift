@@ -35,7 +35,10 @@ final class BoardViewer {
     var schematic: URL? {
         didSet {
             if oldValue != nil, schematic != oldValue, schematic != nil { showsSchematic = true }
-            if schematic != oldValue { readFacts() }
+            if schematic != oldValue {
+                readFacts()
+                explanations = schematic.map(PartExplainer.cached(for:)) ?? [:]
+            }
         }
     }
     /// What the schematic says about the board's parts (values, pages); empty until read.
@@ -173,6 +176,83 @@ final class BoardViewer {
 
     /// Part Info is open.
     var showsPartInfo = false
+
+    // MARK: Explain This Part
+
+    /// Claude's answers for this schematic, by part name; kept next to the library.
+    private(set) var explanations: [String: String] = [:]
+    /// Parts waiting on Claude, and the last failure for a part.
+    private(set) var explaining: Set<String> = []
+    private(set) var explainFailures: [String: PartExplainer.Failure] = [:]
+
+    /// The question for a part: its page as a PDF, its name, type, value, and pin nets.
+    func question(forPart index: Int) throws(PartExplainer.Failure) -> PartExplainer.Question {
+        guard let board, let url = schematic else { throw .notInSchematic }
+        let part = board.parts[index]
+        let name = part.name.uppercased()
+        guard let page = facts.values[name]?.page ?? facts.pages[name]?.first,
+              let document = pdf.document ?? PDFDocument(url: url),
+              let data = PartExplainer.pagePDF(document, page: page) else { throw .notInSchematic }
+        var pins: [String] = []
+        var grounds: [Int] = []
+        for pin in part.pins.map({ board.pins[$0] }) {
+            if Board.isGround(pin.net) { grounds.append(pin.number); continue }
+            let note = Self.netNote(pin.net).dropFirst(2)
+            pins.append("\(pin.number): " + (pin.net.isEmpty ? "no net" : pin.net) + (note.isEmpty ? "" : " (\(note))"))
+        }
+        if !grounds.isEmpty { pins.append("\(grounds.map(String.init).joined(separator: ", ")): GND") }
+        return PartExplainer.Question(part: part.name, type: PartType(partName: part.name).map(Self.word(for:)),
+                                      value: value(ofPart: index)?.summary, pins: pins, pageNumber: page + 1,
+                                      page: data, language: PartExplainer.language)
+    }
+
+    /// Asks Claude what a part does, unless it already answered for this schematic.
+    func explain(part index: Int) {
+        guard let board, let url = schematic else { return }
+        let name = board.parts[index].name.uppercased()
+        guard explanations[name] == nil, !explaining.contains(name) else { return }
+        explainFailures[name] = nil
+        guard let key = PartExplainer.apiKey else { explainFailures[name] = .noKey; return }
+        let question: PartExplainer.Question
+        do { question = try self.question(forPart: index) } catch { explainFailures[name] = error; return }
+        explaining.insert(name)
+        log?.post(.info, "Asked Claude about \(name), page \(question.pageNumber) of \(url.lastPathComponent)", source: "Board")
+        Task { [weak self] in
+            do {
+                let answer = try await PartExplainer.ask(question, key: key)
+                guard let self else { return }
+                self.explaining.remove(name)
+                // Kept even if people moved on to another schematic: the file is the schematic's.
+                var kept = PartExplainer.cached(for: url)
+                kept[name] = answer
+                PartExplainer.keep(kept, for: url)
+                if self.schematic == url { self.explanations[name] = answer }
+            } catch {
+                guard let self else { return }
+                self.explaining.remove(name)
+                let failure = error as? PartExplainer.Failure ?? .network(error.localizedDescription)
+                self.explainFailures[name] = failure
+                self.log?.post(.warning, "Claude didn't explain \(name): \(failure.localizedDescription)", source: "Board")
+            }
+        }
+    }
+
+    /// Board > Explain This Part: opens Part Info and asks.
+    func explainSelectedPart() {
+        guard let part = infoPart else { return }
+        showsPartInfo = true
+        explain(part: part)
+    }
+
+    /// Forgets an answer, to ask again.
+    func forgetExplanation(part index: Int) {
+        guard let board, let url = schematic else { return }
+        let name = board.parts[index].name.uppercased()
+        explanations[name] = nil
+        var kept = PartExplainer.cached(for: url)
+        kept[name] = nil
+        PartExplainer.keep(kept, for: url)
+    }
 
     func togglePartInfo() {
         showsPartInfo = infoPart != nil && !showsPartInfo
@@ -824,6 +904,9 @@ struct BoardCommands: Commands {
                     .keyboardShortcut("s", modifiers: [.command, .option])
                 Button("Part Info") { viewer?.togglePartInfo() }
                     .keyboardShortcut("i")
+                    .disabled(viewer?.infoPart == nil)
+                Button("Explain This Part") { viewer?.explainSelectedPart() }
+                    .keyboardShortcut("i", modifiers: [.command, .option])
                     .disabled(viewer?.infoPart == nil)
                 Button("Enlarge Page") { viewer?.enlargePage() }
                     .keyboardShortcut("e", modifiers: [.command, .option])

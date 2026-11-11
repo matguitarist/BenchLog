@@ -722,6 +722,37 @@ enum SelfTest {
             let fields = viewer.value(ofPart: u2).map(PartInfoView.fields(of:)) ?? []
             check("Part Info lists the schematic's fields", fields.map(\.1) == ["TPS62180", "QFN"], "\(fields)")
         }
+        // S-080: Explain This Part, without calling Claude.
+        if let u2 = board.part(named: "U2"), let url = viewer.schematic {
+            PartExplainer.saveKey(nil)
+            viewer.explain(part: u2)
+            check("without a key Explain This Part says to add one", viewer.explainFailures["U2"] == .noKey && viewer.explaining.isEmpty)
+            let question = try? viewer.question(forPart: u2)
+            let body = question.map(PartExplainer.body(for:)).flatMap { try? JSONSerialization.jsonObject(with: $0) as? [String: Any] }
+            let content = ((body?["messages"] as? [[String: Any]])?.first?["content"] as? [[String: Any]]) ?? []
+            let facts = content.last?["text"] as? String ?? ""
+            check("the question holds the page as a PDF and the part's facts, nothing else",
+                  question?.pageNumber == 1 && PDFDocument(data: question?.page ?? Data())?.pageCount == 1
+                  && body?["model"] as? String == "claude-opus-5-5" && body?["fallbacks"] as? String == "default"
+                  && Set(body?.keys.map { $0 } ?? []) == ["model", "max_tokens", "output_config", "fallbacks", "system", "messages"]
+                  && content.map { $0["type"] as? String } == ["document", "text"]
+                  && facts.contains("Part: U2 (chip)") && facts.contains("TPS62180 QFN") && facts.contains("PP3V3_S0"), facts)
+            let ok = Data(#"{"content":[{"type":"thinking","thinking":""},{"type":"text","text":"U2 makes PP3V3_S0."}],"stop_reason":"end_turn"}"#.utf8)
+            check("Claude's text is read from its answer", (try? PartExplainer.answer(from: ok, status: 200)) == "U2 makes PP3V3_S0.")
+            let refused = Data(#"{"content":[],"stop_reason":"refusal"}"#.utf8)
+            check("a refusal and a bad key say why", (try? PartExplainer.answer(from: refused, status: 200)) == nil
+                  && { do { _ = try PartExplainer.answer(from: Data(), status: 401); return false } catch { return error as? PartExplainer.Failure == .invalidKey } }())
+            PartExplainer.keep(["U2": "U2 makes PP3V3_S0."], for: url)
+            viewer.schematic = nil
+            viewer.schematic = url
+            PartExplainer.saveKey("sk-ant-test")
+            viewer.explain(part: u2)
+            check("an answer kept with the schematic isn't asked again", viewer.explanations["U2"] == "U2 makes PP3V3_S0." && viewer.explaining.isEmpty)
+            viewer.forgetExplanation(part: u2)
+            check("Ask Again forgets the kept answer", PartExplainer.cached(for: url)["U2"] == nil)
+            PartExplainer.saveKey(nil)
+            await viewer.factsTask?.value
+        }
         // S-077: the bar says what a part is and a net's voltage.
         viewer.select(board.part(named: "C1").map { .part($0) }, from: .board)
         check("the bar names a part's type and value", viewer.summary.hasPrefix("C1: capacitor, 10 µF 20% 6.3 V X5R 0402, 2 pins"), viewer.summary)

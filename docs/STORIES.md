@@ -994,7 +994,8 @@ Acceptance:
 - [manual] An answer for a charger chip, a PMIC, and a load switch on the A1502.
 UX:
 - Off until a Claude API key is added in Settings > Board (kept in the Keychain). Explain This Part in Part Info and the Board menu (⌥⌘I); the answer is marked as Claude's, with a Copy button.
-Status: to do
+Built: `PartExplainer` (raw HTTP to the Messages API: `claude-opus-5-5`, effort medium, `fallbacks: "default"` with the `server-side-fallback-2026-07-01` beta; the page goes as a one-page PDF document block); the key in the Keychain (service com.mathieuares.benchlog.claude, in memory in test runs); answers in Explanations/<schematic>-<size>.json next to the library; `BoardSettings` (Settings > Board); Board > Explain This Part (⌥⌘I).
+Status: done
 
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.

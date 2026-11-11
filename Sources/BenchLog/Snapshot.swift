@@ -226,11 +226,18 @@ enum Snapshot {
                         capture(to: "\(dir)/board-part-\(mode).png", window: window)
                         // Part Info, for a chip and for a capacitor: the popover is a window of its own.
                         if let viewer = BoardViewer.latest, let board = viewer.board {
+                            // A sample answer for the chip, as Explain This Part keeps it (the /tmp store only).
+                            if let url = viewer.schematic {
+                                PartExplainer.keep([part.uppercased(): "\(part) is a step-down regulator: it takes PPBUS_MAIN and makes PP3V3_S0 when PMIC_EN is high. With the board powered, expect about 3.3 V on PP3V3_S0; if it reads 0 V, check PMIC_EN first, then the inductor for a short to ground."], for: url)
+                                viewer.schematic = nil
+                                viewer.schematic = url
+                                await viewer.factsTask?.value
+                            }
                             for (shot, name) in [("chip", part), ("capacitor", env["APP_SNAPSHOT_BOARD_CAP"] ?? "C1")] {
                                 guard let index = board.part(named: name) else { continue }
                                 viewer.select(.part(index), from: .search)
                                 viewer.showsPartInfo = true
-                                try? await Task.sleep(for: .seconds(1))
+                                try? await Task.sleep(for: .seconds(2.5))
                                 let popover = NSApp.windows.first { $0.isVisible && String(describing: type(of: $0)).contains("Popover") }
                                 capture(to: "\(dir)/board-info-\(shot)-\(mode).png", window: popover ?? window)
                                 viewer.showsPartInfo = false

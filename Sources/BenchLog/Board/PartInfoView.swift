@@ -1,3 +1,4 @@
+import AppKit
 import BoardViewKit
 import SwiftUI
 
@@ -18,8 +19,8 @@ struct PartInfoView: View {
                     Text(part.name).font(.title3.bold()).foregroundStyle(.primary)
                 }
                 Section("Schematic") { schematic(part) }
-                Section("Pins") { pins(part, board) }
                 ExplainSection(viewer: viewer, partIndex: partIndex)
+                Section("Pins") { pins(part, board) }
             }
             .formStyle(.grouped)
         }
@@ -85,10 +86,56 @@ struct PartInfoView: View {
     }
 }
 
-/// Explain This Part: placeholder until S-080.
+/// Explain This Part: Claude's answer about the part, asked only when people click.
 private struct ExplainSection: View {
     @Bindable var viewer: BoardViewer
     let partIndex: Int
+    @Environment(AppModel.self) private var model
+    @Environment(\.openSettings) private var openSettings
 
-    var body: some View { EmptyView() }
+    var body: some View {
+        let name = viewer.board?.parts[partIndex].name.uppercased() ?? ""
+        Section {
+            if let answer = viewer.explanations[name] {
+                Text(answer)
+                    .textSelection(.enabled)
+                    .fixedSize(horizontal: false, vertical: true)
+                HStack {
+                    Button("Copy", systemImage: "doc.on.doc") {
+                        NSPasteboard.general.clearContents()
+                        NSPasteboard.general.setString(answer, forType: .string)
+                    }
+                    Button("Ask Again", systemImage: "arrow.clockwise") {
+                        viewer.forgetExplanation(part: partIndex)
+                        viewer.explain(part: partIndex)
+                    }
+                    .help("Ask Claude again about this part")
+                }
+            } else if viewer.explaining.contains(name) {
+                LabeledContent("Asking Claude…") { ProgressView().controlSize(.small) }
+            } else {
+                if let failure = viewer.explainFailures[name] {
+                    Label(failure.localizedDescription, systemImage: "exclamationmark.triangle")
+                        .foregroundStyle(.secondary)
+                }
+                if PartExplainer.apiKey == nil {
+                    Button("Add a Claude API Key…") {
+                        model.settingsTab = .board
+                        openSettings()
+                    }
+                } else {
+                    Button("Explain This Part", systemImage: "sparkles") { viewer.explain(part: partIndex) }
+                        .help("Ask Claude what this part does. Sends its schematic page and pin nets (⌥⌘I)")
+                }
+            }
+        } header: {
+            Text("Explain This Part")
+        } footer: {
+            if viewer.explanations[name] != nil {
+                Text("Claude's answer, from the schematic page. Check it against the board.")
+            } else {
+                Text("Sends only this part's schematic page, its value, and its pin nets to Anthropic.")
+            }
+        }
+    }
 }

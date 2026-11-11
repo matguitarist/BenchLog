@@ -32,6 +32,8 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Board | A boardview file opened in BenchLog's Board window: the board's parts, pins, and nets, top or bottom (Carte) | boardview viewer, PCB view |
 | Schematic | The circuit diagram PDF shown beside a board; BenchLog finds the selected part or net in it (Schéma) | guide, manual |
 | Net | A connection on a board: every pin wired to it, like PPBUS_G3H (Réseau) | signal, trace, rail |
+| Part Info | A board part's type, value and ratings from the schematic, its pages, and its pins with their nets (Infos sur la pièce, ⌘I) | inspector, details, properties |
+| Explain This Part | Asks Claude what a board part does, from its schematic page; the answer is kept with the schematic (Expliquer cette pièce) | AI, assistant, analyze |
 | Part | A component kept in stock or ordered for a repair | component, item, SKU |
 | Kind | What a part is: Part, Accessory, Cable, Controller, Game, Supply (Type : Pièce, Accessoire, Câble, Manette, Jeu, Fourniture) | type, category, class |
 | Condition (part) | The state a part is sold in: New, Used, Refurbished (Neuf, Usagé, Remis à neuf) | state, grade |
