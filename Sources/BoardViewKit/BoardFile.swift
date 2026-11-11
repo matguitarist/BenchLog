@@ -1,6 +1,7 @@
 import Foundation
 
-// Reads boardview files into a Board.
+// Reads boardview files into a Board. The kind of file comes from its bytes, not its name:
+// a .bdv renamed .brd still opens.
 //
 // .brd (the OpenBoardView "Test_Link" layout), plain or substitution-encoded. The rules
 // follow BoardViewCraft's reader (crates/bvc-core/src/parser/brd.rs and test_link.rs,
@@ -32,7 +33,7 @@ public enum BoardFileError: Error, Equatable, LocalizedError {
 
 public enum BoardFile {
     /// Extensions the viewer opens. Other boardview files open in their default app.
-    public static let readableExtensions: Set<String> = ["brd"]
+    public static let readableExtensions: Set<String> = ["brd", "brd2", "bdv"]
 
     public static func canRead(fileName: String) -> Bool {
         readableExtensions.contains((fileName as NSString).pathExtension.lowercased())
@@ -49,11 +50,14 @@ public enum BoardFile {
         } else {
             text = String(decoding: bytes, as: UTF8.self)
         }
-        guard text.contains("var_data:") else {
-            if text.hasPrefix("BRDOUT:") { throw BoardFileError.unsupported("BRD2") }
-            throw BoardFileError.unsupported(String(localized: "this kind of .brd"))
+        if text.contains("var_data:") { return try readTestLink(text) }
+        if text.hasPrefix("BRDOUT:") { return try readBRD2(text) }
+        if bytes.starts(with: BDV.lineKeyedMagic) {
+            return try readBDVFixture(String(decoding: BDV.decodeByLine(bytes), as: UTF8.self))
         }
-        return try readTestLink(text)
+        let bdv = String(decoding: BDV.decodeByByte(bytes), as: UTF8.self)
+        if bdv.contains("var_data:") { return try readTestLink(bdv) }
+        throw BoardFileError.unsupported(String(localized: "this kind of board file"))
     }
 
     /// Undoes the substitution: each byte is rotated left by two and inverted. Line breaks

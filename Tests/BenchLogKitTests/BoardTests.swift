@@ -93,11 +93,116 @@ import Testing
     }
 
     @Test func otherFormatsAreRefused() {
-        #expect(throws: BoardFileError.unsupported("BRD2")) { try BoardFile.read(Data("BRDOUT: 1 2 3".utf8)) }
-        #expect(throws: BoardFileError.self) { try BoardFile.read(Data(repeating: 0, count: 64)) }
+        #expect(throws: BoardFileError.unsupported("this kind of board file")) { try BoardFile.read(Data(repeating: 0, count: 64)) }
         #expect(throws: BoardFileError.self) { try BoardFile.read(Data("str_length:\nvar_data:\n1 0 0 0\n".utf8)) }
+        #expect(throws: BoardFileError.malformed("no parts")) { try BoardFile.read(Data("BRDOUT: 0 0 0\nNETS: 0\nPARTS: 0\n".utf8)) }
         #expect(BoardFile.canRead(fileName: "820-4924-A.BRD"))
+        #expect(BoardFile.canRead(fileName: "board.bdv") && BoardFile.canRead(fileName: "board.brd2"))
         #expect(!BoardFile.canRead(fileName: "board.fz"))
+    }
+
+    // S-071
+    static let brd2 = """
+        BRDOUT: 4 1000 500
+        0 0
+        1000 0
+        1000 500
+        0 500
+        NETS: 3
+        1 PP3V3
+        2 GND
+        3 UNCONNECTED
+        PARTS: 3
+        U1 100 100 200 200 0 1
+        C1 300 100 340 100 4 2
+        J1 500 100 600 100 6 3
+        PINS: 8
+        100 100 1 1
+        200 100 2 1
+        200 200 3 1
+        100 200 1 1
+        300 100 1 2
+        340 100 2 2
+        500 100 1 3
+        600 100 2 3
+        NAILS: 1
+        7 50 50 1 2
+        """
+
+    @Test func readsABRD2Board() throws {
+        let board = try BoardFile.read(Data(Self.brd2.utf8))
+        #expect(board.outline.count == 4)
+        #expect(board.parts.map(\.name) == ["U1", "C1", "J1"])
+        #expect(board.parts.map(\.pins.count) == [4, 2, 2])
+        #expect(board.parts[1].side == .bottom && !board.parts[1].isThroughHole)
+        #expect(board.parts[2].isThroughHole)
+        #expect(board.pins(onNet: "PP3V3").count == 4)
+        #expect(board.pins[2].net == "")
+        #expect(board.testPoints == [BoardTestPoint(position: BoardPoint(x: 50, y: 50), side: .bottom, net: "PP3V3", probe: 7)])
+    }
+
+    @Test func aBRD2CountingPinsFromOneReadsTheSame() throws {
+        let fromOne = Self.brd2
+            .replacingOccurrences(of: "200 200 0 1", with: "200 200 1 1")
+            .replacingOccurrences(of: "340 100 4 2", with: "340 100 5 2")
+            .replacingOccurrences(of: "600 100 6 3", with: "600 100 7 3")
+        let board = try BoardFile.read(Data(fromOne.utf8))
+        #expect(board.parts.map(\.pins.count) == [4, 2, 2])
+    }
+
+    @Test func bdvDecodersUndoTheirEncoding() {
+        let text = "var_data: 0 1 1 0\r\nParts:\nU1 5 1\n"
+        for byLine in [false, true] {
+            let bytes = [UInt8](BDV.encode(text, byLine: byLine))
+            let decoded = byLine ? BDV.decodeByLine(bytes) : BDV.decodeByByte(bytes)
+            #expect(String(decoding: decoded, as: UTF8.self) == text)
+        }
+        // The key wraps from 285 to 159.
+        let long = String(repeating: "a", count: 400)
+        #expect(String(decoding: BDV.decodeByByte([UInt8](BDV.encode(long, byLine: false))), as: UTF8.self) == long)
+        let lines = String(repeating: "a\n", count: 400)
+        #expect(String(decoding: BDV.decodeByLine([UInt8](BDV.encode(lines, byLine: true))), as: UTF8.self) == lines)
+    }
+
+    @Test func aByteKeyedBDVReadsLikeItsBRD() throws {
+        let bdv = try BoardFile.read(BDV.encode(BoardSample.text, byLine: false))
+        #expect(bdv.parts.map(\.name) == board.parts.map(\.name))
+        #expect(bdv.pins == board.pins)
+    }
+
+    @Test func theSampleAsBRD2ReadsLikeItsBRD() throws {
+        let brd2 = try BoardFile.read(Data(BoardSample.brd2Text.utf8))
+        #expect(brd2.parts.map(\.name) == board.parts.map(\.name))
+        #expect(brd2.parts.map(\.side) == board.parts.map(\.side))
+        #expect(brd2.parts.map(\.isThroughHole) == board.parts.map(\.isThroughHole))
+        #expect(brd2.pins == board.pins)
+        #expect(brd2.testPoints == board.testPoints)
+    }
+
+    @Test func aLineKeyedBDVReadsItsListing() throws {
+        let listing = """
+            <<format.asc>>
+            0.0 0.0 0.0
+            2.0 0.0 0.0
+            2.0 1.0 0.0
+            <<pins.asc>>
+            Part U1 (T)
+            1 1 0.100 0.100 1 PP1V8
+            2 2 0.200 0.100 1 (NC)
+            Part C9 (B)
+            1 1 0.500 0.500 2 PP1V8
+            2 2 0.500 0.540 2 GND
+            $3 1.5 0.5 1 D2 (B) #3 GND
+            """
+        let data = BDV.encode(listing, byLine: true)
+        #expect(data.starts(with: Array("dd:".utf8)))
+        let board = try BoardFile.read(data)
+        #expect(board.outline == [BoardPoint(x: 0, y: 0), BoardPoint(x: 2000, y: 0), BoardPoint(x: 2000, y: 1000)])
+        #expect(board.parts.map(\.name) == ["U1", "C9"])
+        #expect(board.parts.map(\.side) == [.top, .bottom])
+        #expect(board.pins(onNet: "PP1V8").count == 2)
+        #expect(board.pins[1].net == "" && board.pins[1].position == BoardPoint(x: 200, y: 100))
+        #expect(board.testPoints.first?.side == .bottom && board.testPoints.first?.net == "GND" && board.testPoints.first?.probe == 3)
     }
 
     @Test func aNameIsWholeOnlyBetweenSeparators() {

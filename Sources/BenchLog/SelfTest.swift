@@ -651,10 +651,21 @@ enum SelfTest {
         let schematic = PDFDocument(data: SeedData.sampleSchematic())
         check("the schematic has the names to find", schematic?.findString("PMIC_EN", withOptions: []).isEmpty == false)
         let broken = folder.appending(path: "broken.brd")
-        try? Data("BRDOUT: 1".utf8).write(to: broken)
+        try? Data(repeating: 0x5A, count: 256).write(to: broken)
         let failing = BoardViewer(source: .file(broken))
         await failing.load(model)
-        check("a board BenchLog can't read says why", failing.board == nil && failing.failure?.contains("BRD2") == true, failing.failure ?? "")
+        check("a board BenchLog can't read says why", failing.board == nil && failing.failure?.contains("can't read") == true, failing.failure ?? "")
+
+        // S-071: a BRD2 and a .bdv open too.
+        let brd2 = folder.appending(path: "board.brd2")
+        let bdv = folder.appending(path: "board.bdv")
+        try? Data(BoardSample.brd2Text.utf8).write(to: brd2)
+        try? BoardSample.bdvData.write(to: bdv)
+        for url in [brd2, bdv] {
+            let other = BoardViewer(source: .file(url))
+            await other.load(model)
+            check("a .\(url.pathExtension) board opens", other.board?.parts.count == 16, other.failure ?? "")
+        }
     }
 
     static func finish(code: Int32) {

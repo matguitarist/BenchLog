@@ -40,7 +40,7 @@ public struct Attachment: BenchRecord {
     public var isImage: Bool { type?.conforms(to: .image) ?? false }
 
     /// Boardview files from the common viewers (OpenBoardView, FlexBV, BoardViewer, Allegro, TVW).
-    public static let boardviewExtensions: Set<String> = ["brd", "bdv", "bv", "fz", "cad", "tvw", "asc", "cst", "gr", "f2b", "bvr"]
+    public static let boardviewExtensions: Set<String> = ["brd", "brd2", "bdv", "bv", "fz", "cad", "tvw", "asc", "cst", "gr", "f2b", "bvr"]
     public var isBoardview: Bool {
         Self.boardviewExtensions.contains((originalName as NSString).pathExtension.lowercased())
     }

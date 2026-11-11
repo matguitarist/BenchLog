@@ -76,4 +76,33 @@ public enum BoardSample {
 
     /// The board encoded, as a real .brd file is.
     public static var data: Data { BoardFile.encode(text) }
+
+    /// The same board as a byte-keyed .bdv.
+    public static var bdvData: Data { BDV.encode(text, byLine: false) }
+
+    /// The same board as BRD2 text: nets numbered from 1, pins counted from 0, a
+    /// through-hole part on both sides (3).
+    public static var brd2Text: String {
+        guard let board = try? BoardFile.read(data) else { return "" }
+        let netIDs = Dictionary(uniqueKeysWithValues: board.nets.enumerated().map { ($0.element, $0.offset + 1) })
+        func side(_ part: BoardPart) -> Int { part.isThroughHole ? 3 : part.side == .top ? 1 : 2 }
+        var lines = ["BRDOUT: \(board.outline.count) \(Int(board.bounds.width)) \(Int(board.bounds.height))"]
+        lines += board.outline.map { "\(Int($0.x)) \(Int($0.y))" }
+        lines.append("NETS: \(board.nets.count)")
+        lines += board.nets.map { "\(netIDs[$0]!) \($0)" }
+        lines.append("PARTS: \(board.parts.count)")
+        lines += board.parts.map { part in
+            let b = part.bounds
+            return "\(part.name) \(Int(b.minX)) \(Int(b.minY)) \(Int(b.maxX)) \(Int(b.maxY)) \(part.pins.lowerBound) \(side(part))"
+        }
+        lines.append("PINS: \(board.pins.count)")
+        lines += board.pins.map { pin in
+            "\(Int(pin.position.x)) \(Int(pin.position.y)) \(netIDs[pin.net] ?? 0) \(side(board.parts[pin.part]))"
+        }
+        lines.append("NAILS: \(board.testPoints.count)")
+        lines += board.testPoints.map { nail in
+            "\(nail.probe) \(Int(nail.position.x)) \(Int(nail.position.y)) \(netIDs[nail.net] ?? 0) \(nail.side == .top ? 1 : 2)"
+        }
+        return lines.joined(separator: "\n") + "\n"
+    }
 }

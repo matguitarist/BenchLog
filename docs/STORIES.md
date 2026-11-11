@@ -877,10 +877,21 @@ UX:
 Built: `BoardViewKit` (Foundation only): `BoardFile` (the .brd reader, ported from BoardViewCraft, MIT or Apache-2.0), `Board`, `Schematic`, `BoardSample`. App: `Board/BoardViewer.swift` (`BoardSource`, `BoardWindow`, `BoardCommands`), `Board/BoardCanvas.swift` (an NSView), `Board/SchematicView.swift` (PDFKit). The schematic is a PDF on the same record or, for a repair, on its device. Sample data puts a made-up board on the Switch repair and its schematic on the Switch. `APP_SNAPSHOT_BOARD=<.brd>` snapshots a real board. Checked with an A1502 board (820-4924-A): 3,794 parts and 10,514 pins read in 40 ms, U7100 found in its 82-page schematic.
 Status: done
 
+### S-071 Open BRD2 and .bdv boards
+As the user, I double-click a BRD2 or .bdv board on a repair or device, or pick one in File > Open Board…, and it opens in the Board window like a .brd.
+Depends: S-070
+Acceptance:
+- [unit] BRD2 reads its outline, nets ("UNCONNECTED" is none), parts (side 1 top, 2 bottom, else through-hole), pins up to the next part's first pin (counted from 0, or from 1), and nails.
+- [unit] A .bdv decodes with either key schedule (by byte: a .brd inside; by line, starting "dd:": the part listing in inches); the key wraps from 285 to 159.
+- [unit] The sample board as BRD2 and as .bdv reads the same parts, pins, and test points as its .brd; a file of another kind says "BenchLog can't read this kind of board file yet."
+- [self] A .brd2 and a .bdv open in the Board window; an unknown file says why.
+Built: `BoardFile+BRD2.swift`, `BoardFile+BDV.swift` (ported from BoardViewCraft's brd2.rs and bdv.rs). `BoardFile.read` picks the reader from the bytes, so a .bdv renamed .brd still opens. `BoardSample.brd2Text` and `bdvData`. No real BRD2 or .bdv was at hand: checked against BoardViewCraft's own test shapes only.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
-- More board formats in the Board window: .bdv, .fz, .cad (GenCAD), .tvw, … ported from BoardViewCraft one at a time.
+- More board formats in the Board window: .fz, .cad (GenCAD), .tvw, … ported from BoardViewCraft one at a time.
 - Board notes and readings: a measurement on a pin or net (diode mode, voltage, resistance) saved on the repair.
 - French app UI (the String Catalog already holds every string).
 - Customer SMS or email "your device is ready".
