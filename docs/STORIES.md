@@ -952,6 +952,48 @@ UX:
 Built: `LargePagePDFView` posts `PDFViewPageChanged` to `onPageChange`; `BoardViewer.pageQuery`, `submitPageSearch`, `stepPageSearch`, `largePageHighlights`, `canStepSchematic`.
 Status: done
 
+### S-077 A part's type and a net's voltage, from their names
+As the user, I click a part or a net and the bar under the board says what it is: "C713: capacitor", "PP3V3_S0: 3.3 V, S0", without opening the schematic.
+Depends: S-070
+Acceptance:
+- [unit] A part's letters give its type: C capacitor, R resistor, RP/RN resistor network, L inductor, FB/FL ferrite bead, U/IC chip, Q transistor, D/CR diode, LED, F fuse, J/CN connector, Y/X crystal, OSC oscillator, SW switch, TP/PP test point, XW jumper, T transformer; other letters say nothing.
+- [unit] A net's name gives its voltage (3V3, 1V05, 0V9, 5V, +1.8V, 12V, 1P8) and power state (S0, S3, S4, S5, S0SW, G3H, G3, ALW, SUS); PPBUS, PPDCIN, and a net with no voltage say none; GND is ground.
+- [self] The bar reads "C1: capacitor, 2 pins, top" and "PP3V3_S0, 3.3 V in S0: 12 pins on the net".
+UX:
+- Words: the type in lowercase after the name; the voltage and the state after a net's name ("3.3 V in S0", "1.8 V", "always on" for G3H and ALW). Nothing is shown when the name says nothing; never a guess.
+Status: done
+
+### S-078 A part's value, from the schematic
+As the user, I click a capacitor and see "10 µF, 6.3 V, X5R, 0402", read from the words printed beside its name in the schematic.
+Depends: S-077
+Acceptance:
+- [unit] Attribute text like "10UF 20% 6.3V X5R 0402", "4.7K 1% 1/16W MF 0201", "0.47UH-20%-6A", or "330UF 2V POLY" parses into value, tolerance, voltage, power, dielectric, and package; a part number for chips ("TPS62180", "CD3217B12").
+- [self] The sample schematic's parts read their values from the words in a box around their name on the page; a name on several pages takes the page that has attributes.
+- [manual] On the A1502 schematic, most capacitors and resistors show a value.
+UX:
+- Read when the schematic loads, off the main thread, and kept for the window. The bar adds the value: "C713: capacitor, 10 µF 6.3 V X5R 0402, top".
+Status: to do
+
+### S-079 Part Info
+As the user, I open Part Info (⌘I) for the selected part and see its type, value and ratings, package, side, its pins with their nets and voltages, and the schematic pages it is on.
+Depends: S-078
+Acceptance:
+- [self] Part Info lists every pin with its net and the net's voltage; a page in the list opens it large.
+- [snap] board-info: Part Info for a chip and for a capacitor, light and dark.
+UX:
+- A popover from the bar under the board, or Board > Part Info (⌘I). Ground pins are grouped ("8 pins on GND").
+Status: to do
+
+### S-080 Explain This Part, with Claude
+As the user, I ask Claude what a part does ("U7000: the charger; it makes PPBUS_G3H from PPDCIN"), only when I ask, and only its schematic page is sent.
+Depends: S-079
+Acceptance:
+- [self] Without a key the action says how to add one in Settings; the request holds the page image and the part's nets, never the customer's or repair's data; an answer is kept with the schematic and not asked twice.
+- [manual] An answer for a charger chip, a PMIC, and a load switch on the A1502.
+UX:
+- Off until a Claude API key is added in Settings > Board (kept in the Keychain). Explain This Part in Part Info and the Board menu (⌥⌘I); the answer is marked as Claude's, with a Copy button.
+Status: to do
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

@@ -198,19 +198,62 @@ final class BoardViewer {
             return String(localized: "\(board.parts.count) parts, \(board.nets.count) nets. Click a part or a pin.")
         case .part(let index):
             let part = board.parts[index]
-            return String(localized: "\(part.name): \(part.pins.count) pins, \(part.side == .top ? String(localized: "top") : String(localized: "bottom"))")
+            let type = PartType(partName: part.name).map { "\(Self.word(for: $0)), " } ?? ""
+            return "\(part.name): \(type)" + String(localized: "\(part.pins.count) pins, \(part.side == .top ? String(localized: "top") : String(localized: "bottom"))")
         case .pin(let index):
             let pin = board.pins[index]
             let part = board.parts[pin.part].name
             if pin.net.isEmpty { return String(localized: "\(part) pin \(pin.number), no net") }
-            return String(localized: "\(part) pin \(pin.number): \(pin.net), \(board.pins(onNet: pin.net).count) pins on the net") + testPointNote(pin.net, board)
+            return String(localized: "\(part) pin \(pin.number): \(pin.net)") + Self.netNote(pin.net)
+                + String(localized: ", \(board.pins(onNet: pin.net).count) pins on the net") + testPointNote(pin.net, board)
         case .net(let name):
-            return String(localized: "\(name): \(board.pins(onNet: name).count) pins on the net") + testPointNote(name, board)
+            return name + Self.netNote(name) + String(localized: ": \(board.pins(onNet: name).count) pins on the net") + testPointNote(name, board)
         case .testPoint(let index):
             let point = board.testPoints[index]
             let side = point.side == .top ? String(localized: "top") : String(localized: "bottom")
             if point.net.isEmpty { return String(localized: "Test point \(point.probe), \(side), no net") }
-            return String(localized: "Test point \(point.probe), \(side): \(point.net), \(board.pins(onNet: point.net).count) pins on the net")
+            return String(localized: "Test point \(point.probe), \(side): \(point.net)") + Self.netNote(point.net)
+                + String(localized: ", \(board.pins(onNet: point.net).count) pins on the net")
+        }
+    }
+
+    /// ", 3.3 V in S0", ", 12 V, always on", ", always on", or nothing when the name says nothing.
+    static func netNote(_ net: String) -> String {
+        let info = NetInfo(netName: net)
+        let volts = info.volts.map { $0.formatted(.number.precision(.fractionLength(0...2))) + " V" }
+        let state: String? = switch info.state {
+        case nil: nil
+        case _ where info.isAlwaysOn: String(localized: "always on")
+        case let code?: String(localized: "in \(code)")
+        }
+        switch (volts, state) {
+        case let (v?, s?): return info.isAlwaysOn ? ", \(v), \(s)" : ", \(v) \(s)"
+        case let (v?, nil): return ", \(v)"
+        case let (nil, s?): return info.isAlwaysOn ? ", \(s)" : ""
+        case (nil, nil): return ""
+        }
+    }
+
+    /// The type of a part on a board, lowercase, for the bar under it.
+    static func word(for type: PartType) -> String {
+        switch type {
+        case .capacitor: String(localized: "capacitor")
+        case .resistor: String(localized: "resistor")
+        case .resistorNetwork: String(localized: "resistor network")
+        case .inductor: String(localized: "inductor")
+        case .ferriteBead: String(localized: "ferrite bead")
+        case .chip: String(localized: "chip")
+        case .transistor: String(localized: "transistor")
+        case .diode: String(localized: "diode")
+        case .led: String(localized: "LED")
+        case .fuse: String(localized: "fuse")
+        case .connector: String(localized: "connector")
+        case .crystal: String(localized: "crystal")
+        case .oscillator: String(localized: "oscillator")
+        case .switchPart: String(localized: "switch")
+        case .testPoint: String(localized: "test point")
+        case .jumper: String(localized: "jumper")
+        case .transformer: String(localized: "transformer")
         }
     }
 

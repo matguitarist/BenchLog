@@ -703,6 +703,13 @@ enum SelfTest {
         viewer.pickFromLargePage("L1")
         check("a name picked on the large page closes it and selects it", viewer.enlargedPage == nil
               && viewer.selection == board.part(named: "L1").map { .part($0) })
+        // S-077: the bar says what a part is and a net's voltage.
+        viewer.select(board.part(named: "C1").map { .part($0) }, from: .board)
+        check("the bar names a part's type", viewer.summary.hasPrefix("C1: capacitor, 2 pins"), viewer.summary)
+        viewer.select(.net("PP3V3_S0"), from: .board)
+        let volts = 3.3.formatted(.number.precision(.fractionLength(0...2)))
+        check("the bar gives a net's voltage and power state", viewer.summary.hasPrefix("PP3V3_S0, \(volts) V in S0: "), viewer.summary)
+        check("an always-on net says so", BoardViewer.netNote("PPBUS_G3H") == ", always on" && BoardViewer.netNote("USB_DP").isEmpty)
         viewer.pick(fromSchematic: "u2")
         check("a part picked in the schematic is selected on the board", viewer.selection == board.part(named: "U2").map { .part($0) })
         viewer.pick(fromSchematic: "USB_DP")
