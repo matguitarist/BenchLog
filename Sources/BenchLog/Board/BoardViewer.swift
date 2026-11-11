@@ -162,6 +162,34 @@ final class BoardViewer {
         }
     }
 
+    /// The part Part Info is about: the selected part, or the selected pin's part.
+    var infoPart: Int? {
+        switch selection {
+        case .part(let index): index
+        case .pin(let index): board?.pins[index].part
+        default: nil
+        }
+    }
+
+    /// Part Info is open.
+    var showsPartInfo = false
+
+    func togglePartInfo() {
+        showsPartInfo = infoPart != nil && !showsPartInfo
+    }
+
+    /// A schematic page, large, from Part Info: shows the schematic first when it is hidden.
+    func openPageLarge(_ page: Int) {
+        showsPartInfo = false
+        if !showsSchematic { showsSchematic = true }
+        Task { @MainActor in
+            // The pane loads the PDF on its first update.
+            for _ in 0..<20 where pdf.document == nil { try? await Task.sleep(for: .milliseconds(50)) }
+            guard pdf.document != nil else { return }
+            enlargedPage = min(page, max(pageCount - 1, 0))
+        }
+    }
+
     /// What the schematic says about a part, nil when it says nothing.
     func value(ofPart index: Int) -> PartValue? {
         guard let board, let value = facts.values[board.parts[index].name.uppercased()], !value.isEmpty else { return nil }
@@ -482,13 +510,27 @@ private struct BoardViewerView: View {
             VStack(spacing: 0) {
                 BoardCanvas(viewer: viewer, colors: ThemeStore.shared.boardColors)
                 Divider()
-                Text(viewer.summary)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, Space.md)
+                HStack(spacing: Space.sm) {
+                    Text(viewer.summary)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Button("Part Info", systemImage: "info.circle") { viewer.togglePartInfo() }
+                        .labelStyle(.iconOnly)
+                        .buttonStyle(.borderless)
+                        .disabled(viewer.infoPart == nil)
+                        .help("Show the part's value, pages, and pins (⌘I)")
+                        .popover(isPresented: $viewer.showsPartInfo, arrowEdge: .top) {
+                            if let part = viewer.infoPart {
+                                PartInfoView(viewer: viewer, partIndex: part)
+                                    .frame(width: 360, height: 480)
+                                    .noInitialFocus()
+                            }
+                        }
+                }
+                .padding(.horizontal, Space.md)
                     .padding(.vertical, Space.sm)
                     .gridArea("board-bar", inset: Space.sm)
             }
@@ -780,6 +822,9 @@ struct BoardCommands: Commands {
                     .disabled(viewer?.canStepSchematic != true)
                 Button(viewer?.showsSchematic == false ? "Show Schematic" : "Hide Schematic") { viewer?.showsSchematic.toggle() }
                     .keyboardShortcut("s", modifiers: [.command, .option])
+                Button("Part Info") { viewer?.togglePartInfo() }
+                    .keyboardShortcut("i")
+                    .disabled(viewer?.infoPart == nil)
                 Button("Enlarge Page") { viewer?.enlargePage() }
                     .keyboardShortcut("e", modifiers: [.command, .option])
                     .disabled(viewer?.canEnlargePage != true)

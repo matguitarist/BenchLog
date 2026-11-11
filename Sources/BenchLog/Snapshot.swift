@@ -224,6 +224,20 @@ enum Snapshot {
                         }
                         try? await Task.sleep(for: .seconds(1.2))
                         capture(to: "\(dir)/board-part-\(mode).png", window: window)
+                        // Part Info, for a chip and for a capacitor: the popover is a window of its own.
+                        if let viewer = BoardViewer.latest, let board = viewer.board {
+                            for (shot, name) in [("chip", part), ("capacitor", env["APP_SNAPSHOT_BOARD_CAP"] ?? "C1")] {
+                                guard let index = board.part(named: name) else { continue }
+                                viewer.select(.part(index), from: .search)
+                                viewer.showsPartInfo = true
+                                try? await Task.sleep(for: .seconds(1))
+                                let popover = NSApp.windows.first { $0.isVisible && String(describing: type(of: $0)).contains("Popover") }
+                                capture(to: "\(dir)/board-info-\(shot)-\(mode).png", window: popover ?? window)
+                                viewer.showsPartInfo = false
+                                try? await Task.sleep(for: .seconds(0.4))
+                            }
+                            if let index = board.part(named: part) { viewer.select(.part(index), from: .search) }
+                        }
                         BoardViewer.latest?.toggleFullBoard()
                         try? await Task.sleep(for: .seconds(1))
                         capture(to: "\(dir)/board-full-\(mode).png", window: window)

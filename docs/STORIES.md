@@ -983,7 +983,8 @@ Acceptance:
 - [snap] board-info: Part Info for a chip and for a capacitor, light and dark.
 UX:
 - A popover from the bar under the board, or Board > Part Info (⌘I). Ground pins are grouped ("8 pins on GND").
-Status: to do
+Built: `PartInfoView` (a grouped Form in a popover from the ⓘ button in the bar under the board); `BoardViewer.infoPart`, `showsPartInfo`, `togglePartInfo`, `openPageLarge`; Board > Part Info (⌘I).
+Status: done
 
 ### S-080 Explain This Part, with Claude
 As the user, I ask Claude what a part does ("U7000: the charger; it makes PPBUS_G3H from PPDCIN"), only when I ask, and only its schematic page is sent.

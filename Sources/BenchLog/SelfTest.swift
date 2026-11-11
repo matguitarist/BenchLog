@@ -710,6 +710,18 @@ enum SelfTest {
               && viewer.board.flatMap { b in b.part(named: "U2").flatMap { viewer.value(ofPart: $0)?.summary } } == "TPS62180 QFN",
               "\(viewer.facts.values.count) values")
         check("each part's pages are known", viewer.facts.pages["C1"] == [0])
+        // S-079: Part Info is about the selected part, or the selected pin's part.
+        if let u2 = board.part(named: "U2") {
+            viewer.select(.pin(board.parts[u2].pins.lowerBound), from: .board)
+            check("Part Info follows a pin to its part", viewer.infoPart == u2)
+            viewer.togglePartInfo()
+            check("Part Info opens for a part", viewer.showsPartInfo)
+            viewer.select(.net("PP3V3_S0"), from: .board)
+            viewer.togglePartInfo()
+            check("Part Info stays closed for a net", !viewer.showsPartInfo && viewer.infoPart == nil)
+            let fields = viewer.value(ofPart: u2).map(PartInfoView.fields(of:)) ?? []
+            check("Part Info lists the schematic's fields", fields.map(\.1) == ["TPS62180", "QFN"], "\(fields)")
+        }
         // S-077: the bar says what a part is and a net's voltage.
         viewer.select(board.part(named: "C1").map { .part($0) }, from: .board)
         check("the bar names a part's type and value", viewer.summary.hasPrefix("C1: capacitor, 10 µF 20% 6.3 V X5R 0402, 2 pins"), viewer.summary)
