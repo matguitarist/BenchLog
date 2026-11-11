@@ -29,10 +29,23 @@ final class BoardViewer {
     private(set) var failure: String?
     private(set) var boardURL: URL?
     private(set) var schematics: [SchematicChoice] = []
+    /// The schematic PDF in use. Choosing another one shows it.
     var schematic: URL? {
-        didSet { if schematic != oldValue { showsSchematic = schematic != nil || showsSchematic } }
+        didSet { if oldValue != nil, schematic != oldValue, schematic != nil { showsSchematic = true } }
     }
-    var showsSchematic = true
+    /// The board opens alone; the schematic opens beside it on the first pick.
+    var showsSchematic = false {
+        didSet {
+            guard showsSchematic != oldValue else { return }
+            opensSchematicOnPick = false
+            if showsSchematic, isFullBoard { leaveFullBoard(restoring: false) }
+        }
+    }
+    @ObservationIgnored private var opensSchematicOnPick = true
+    /// The whole board in the whole window: no schematic, zoomed to fit.
+    private(set) var isFullBoard = false
+    /// What Full Board puts back.
+    @ObservationIgnored private var beforeFullBoard: (showsSchematic: Bool, shown: BoardRect?, selection: BoardSelection?)?
     var side: BoardSide = .top
     private(set) var selection: BoardSelection?
     var query = ""
@@ -91,7 +104,6 @@ final class BoardViewer {
         }
         schematics = pdfs
         schematic = Schematic.pick(for: title, from: pdfs.map(\.name)).map { pdfs[$0].url }
-        showsSchematic = true
 
         guard let url = boardURL else { return }
         do {
@@ -114,6 +126,7 @@ final class BoardViewer {
     func select(_ selection: BoardSelection?, from origin: Origin) {
         self.selection = selection
         guard let board else { return }
+        if selection != nil, opensSchematicOnPick, !isFullBoard { showsSchematic = true }
         var terms = board.schematicTerms(for: selection)
         // A ground net is on most pages: the part says more.
         if case .pin = selection, let net = terms.first, Board.isGround(net) { terms.reverse() }
@@ -189,6 +202,43 @@ final class BoardViewer {
 
     func flip() { side = side.flipped }
     func zoom(_ direction: Int) { canvas?.zoom(direction) }
+
+    /// Back to how the window opens: the top, the whole board, no selection, no schematic.
+    func reset() {
+        if isFullBoard { leaveFullBoard(restoring: false) }
+        select(nil, from: .board)
+        side = .top
+        showsSchematic = false
+        opensSchematicOnPick = true
+        zoom(0)
+    }
+
+    /// Full Board on: hides the schematic and fits the board; off: puts both back as they were.
+    func toggleFullBoard() {
+        if isFullBoard {
+            leaveFullBoard(restoring: true)
+            return
+        }
+        beforeFullBoard = (showsSchematic, canvas?.shownRect, selection)
+        isFullBoard = true
+        let opens = opensSchematicOnPick
+        showsSchematic = false
+        opensSchematicOnPick = opens
+        canvas?.zoom(0)
+    }
+
+    private func leaveFullBoard(restoring: Bool) {
+        isFullBoard = false
+        guard let before = beforeFullBoard else { return }
+        beforeFullBoard = nil
+        guard restoring else { return }
+        let opens = opensSchematicOnPick
+        // A part picked while the board was full opens the schematic now, the first time.
+        showsSchematic = before.showsSchematic || (opens && selection != nil)
+        if !showsSchematic { opensSchematicOnPick = opens }
+        // Back to what was in view, unless something was picked since.
+        if selection == before.selection, let shown = before.shown { canvas?.show(shown) }
+    }
 }
 
 // MARK: Window
@@ -270,6 +320,12 @@ private struct BoardViewerView: View {
                     Button("Zoom In", systemImage: "plus.magnifyingglass") { viewer.zoom(1) }
                         .help("Zoom in (⌘+)")
                 }
+            }
+            ToolbarItem {
+                Toggle(isOn: Binding(get: { viewer.isFullBoard }, set: { _ in viewer.toggleFullBoard() })) {
+                    Label("Full Board", systemImage: "arrow.up.left.and.arrow.down.right")
+                }
+                .help(viewer.isFullBoard ? "Put the schematic and the view back (⇧⌘F)" : "Show the whole board in the whole window (⇧⌘F)")
             }
             ToolbarItem {
                 Toggle(isOn: $viewer.showsSchematic) {
@@ -412,6 +468,8 @@ struct BoardCommands: Commands {
                     .keyboardShortcut("-")
                 Button("Zoom to Fit") { viewer?.zoom(0) }
                     .keyboardShortcut("0")
+                Button(viewer?.isFullBoard == true ? "Exit Full Board" : "Full Board") { viewer?.toggleFullBoard() }
+                    .keyboardShortcut("f", modifiers: [.command, .shift])
                 Divider()
                 Button("Next in Schematic") { viewer?.stepSchematic(1) }
                     .keyboardShortcut("g")

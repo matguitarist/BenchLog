@@ -888,6 +888,19 @@ Acceptance:
 Built: `BoardFile+BRD2.swift`, `BoardFile+BDV.swift` (ported from BoardViewCraft's brd2.rs and bdv.rs). `BoardFile.read` picks the reader from the bytes, so a .bdv renamed .brd still opens. `BoardSample.brd2Text` and `bdvData`. No real BRD2 or .bdv was at hand: checked against BoardViewCraft's own test shapes only.
 Status: done
 
+### S-072 The board opens alone; Full Board
+As the user, I open a board and see all of it, full width; the schematic opens beside it only once I pick a part, a pin, or a net. Full Board gives the whole window to the whole board, and puts the schematic and my view back after.
+Depends: S-070
+Acceptance:
+- [self] A board opens without the schematic; the first pick opens it; once hidden by hand it stays hidden on later picks.
+- [self] Full Board hides the schematic and fits the board; a pick there keeps the board full; leaving it puts the schematic back (or opens it, after a first pick).
+- [snap] board (alone), board-part (U2 in view beside the schematic), board-full (the whole board, U2 selected).
+UX:
+- Full Board: a toolbar toggle and Board > Full Board (⇧⌘F); Exit Full Board when on. The view picked before comes back unless something was picked since.
+- When the schematic opens or closes, what the last zoom fitted stays in view, until the person pans or zooms.
+Built: `BoardViewer.showsSchematic` starts off, `toggleFullBoard()`, `reset()`; `BoardCanvasView` keeps its last fit across a resize (`fitted`), `shownRect` and `show(_:)`.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

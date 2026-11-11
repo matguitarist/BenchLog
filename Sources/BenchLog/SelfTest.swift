@@ -642,6 +642,23 @@ enum SelfTest {
         check("a .brd board opens", viewer.board?.parts.count == 16, viewer.failure ?? "")
         check("the schematic beside it is picked", viewer.schematic?.lastPathComponent == BoardSample.schematicName && viewer.schematics.count == 2)
         guard let board = viewer.board else { return }
+        // S-072: the board opens alone; the first pick opens the schematic; Full Board hides it.
+        check("the board opens without the schematic", !viewer.showsSchematic)
+        viewer.select(board.part(named: "U1").map { .part($0) }, from: .board)
+        check("the first pick opens the schematic", viewer.showsSchematic)
+        viewer.toggleFullBoard()
+        check("Full Board hides the schematic", viewer.isFullBoard && !viewer.showsSchematic)
+        viewer.toggleFullBoard()
+        check("leaving Full Board puts the schematic back", !viewer.isFullBoard && viewer.showsSchematic)
+        viewer.showsSchematic = false
+        viewer.select(board.part(named: "U2").map { .part($0) }, from: .board)
+        check("a schematic hidden by hand stays hidden on the next pick", !viewer.showsSchematic)
+        viewer.reset()
+        viewer.toggleFullBoard()
+        viewer.select(board.part(named: "U2").map { .part($0) }, from: .board)
+        check("a pick in Full Board keeps the board full", viewer.isFullBoard && !viewer.showsSchematic)
+        viewer.toggleFullBoard()
+        check("leaving Full Board after a pick opens the schematic", viewer.showsSchematic)
         viewer.pick(fromSchematic: "u2")
         check("a part picked in the schematic is selected on the board", viewer.selection == board.part(named: "U2").map { .part($0) })
         viewer.pick(fromSchematic: "USB_DP")

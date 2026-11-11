@@ -200,7 +200,7 @@ enum Snapshot {
                 window?.close()
             }
             // The Board window: the sample board on the Switch repair (or APP_SNAPSHOT_BOARD=<.brd>),
-            // whole, then with a part selected and found in the schematic.
+            // whole and alone, then with a part selected and found in the schematic, then Full Board.
             if only == nil || only?.contains("board") == true {
                 let env = ProcessInfo.processInfo.environment
                 let boardFile = model.read(nil) { library in
@@ -216,9 +216,7 @@ enum Snapshot {
                     let part = env["APP_SNAPSHOT_BOARD_PART"] ?? "U2"
                     for mode in ["light", "dark"] {
                         NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
-                        BoardViewer.latest?.select(nil, from: .board)
-                        BoardViewer.latest?.side = .top
-                        BoardViewer.latest?.zoom(0)
+                        BoardViewer.latest?.reset()
                         try? await Task.sleep(for: .seconds(1))
                         capture(to: "\(dir)/board-\(mode).png", window: window)
                         if let viewer = BoardViewer.latest, let index = viewer.board?.part(named: part) {
@@ -226,6 +224,10 @@ enum Snapshot {
                         }
                         try? await Task.sleep(for: .seconds(1.2))
                         capture(to: "\(dir)/board-part-\(mode).png", window: window)
+                        BoardViewer.latest?.toggleFullBoard()
+                        try? await Task.sleep(for: .seconds(1))
+                        capture(to: "\(dir)/board-full-\(mode).png", window: window)
+                        BoardViewer.latest?.toggleFullBoard()
                     }
                     window?.close()
                 }

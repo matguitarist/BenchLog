@@ -52,6 +52,9 @@ final class BoardCanvasView: NSView {
     private var highlighted: Set<Int> = []
     private var dragStart: NSPoint?
     private var dragged = false
+    /// What the last zoom fitted, and its margin: kept in view when the view changes size
+    /// (the schematic opening or closing), until the person pans or zooms.
+    private var fitted: (rect: BoardRect, margin: Double)?
 
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -109,24 +112,35 @@ final class BoardCanvasView: NSView {
         switch direction {
         case 0:
             guard let board else { return }
-            scale = fitScale
-            center = board.bounds.center
+            fit(board.bounds, margin: 1.08)
         default:
             zoom(by: direction > 0 ? 1.5 : 1 / 1.5, at: CGPoint(x: bounds.midX, y: bounds.midY))
         }
-        needsDisplay = true
     }
 
     /// Fits a rectangle in view, at least `minimumSize` board units wide, so a small part keeps
     /// its neighbors around it.
     func zoom(to rect: BoardRect, minimumSize: Double) {
-        let width = max(rect.width, minimumSize), height = max(rect.height, minimumSize)
-        scale = clamp(min(bounds.width / (width * 1.3), bounds.height / (height * 1.3)))
+        let c = rect.center, w = max(rect.width, minimumSize) / 2, h = max(rect.height, minimumSize) / 2
+        fit(BoardRect(minX: c.x - w, minY: c.y - h, maxX: c.x + w, maxY: c.y + h), margin: 1.3)
+    }
+
+    /// The part of the board in view, to come back to with `show(_:)`.
+    var shownRect: BoardRect { visibleBoardRect }
+
+    /// Shows what `shownRect` gave, as it was.
+    func show(_ rect: BoardRect) { fit(rect, margin: 1) }
+
+    private func fit(_ rect: BoardRect, margin: Double) {
+        fitted = (rect, margin)
+        guard bounds.width > 0, bounds.height > 0 else { return }
+        scale = clamp(min(bounds.width / max(rect.width * margin, 1), bounds.height / max(rect.height * margin, 1)))
         center = rect.center
         needsDisplay = true
     }
 
     private func zoom(by factor: CGFloat, at point: CGPoint) {
+        fitted = nil
         let before = toBoard(point)
         scale = clamp(scale * factor)
         let after = toBoard(point)
@@ -137,7 +151,12 @@ final class BoardCanvasView: NSView {
 
     override func setFrameSize(_ newSize: NSSize) {
         super.setFrameSize(newSize)
-        if scale == 0, newSize.width > 0, newSize.height > 0 { zoom(0) }
+        guard newSize.width > 0, newSize.height > 0 else { return }
+        if let fitted {
+            fit(fitted.rect, margin: fitted.margin)
+        } else if scale == 0 {
+            zoom(0)
+        }
     }
 
     // MARK: Drawing
@@ -310,6 +329,7 @@ final class BoardCanvasView: NSView {
     /// Moves the board by a distance in points (y up).
     private func pan(dx: CGFloat, dy: CGFloat) {
         guard scale > 0 else { return }
+        fitted = nil
         center.x -= dx / scale * mirror
         center.y -= dy / scale
         needsDisplay = true
