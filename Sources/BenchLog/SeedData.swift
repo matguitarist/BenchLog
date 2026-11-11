@@ -1,5 +1,6 @@
 import AppKit
 import BenchLogKit
+import BoardViewKit
 import Foundation
 
 /// Sample data for snapshots and demos: APP_SEED=1 with APP_STORE in /tmp fills an
@@ -91,7 +92,8 @@ enum SeedData {
             let captioned = try library.attachments(for: .repair, id: first.id)
             if let back = captioned.dropFirst().first { try library.setCaption("Scratches on the back", of: back.id) }
             try library.addAttachment(data: Data("%PDF-1.4\n%sample\n".utf8), originalName: "Switch OLED fan replacement.pdf", to: .repair, id: first.id)
-            try library.addAttachment(data: Data(repeating: 0, count: 48_000), originalName: "HAC-001-01 mainboard.brd", to: .repair, id: first.id)
+            try library.addAttachment(data: BoardSample.data, originalName: BoardSample.fileName, to: .repair, id: first.id)
+            try library.addAttachment(data: sampleSchematic(), originalName: BoardSample.schematicName, to: .device, id: mSwitch.id)
         }
         try repair(jPhone, "Cracked screen, touch dead on the top edge.", daysAgo: 3, [.diagnosing],
                    diagnosis: "Display assembly damaged; frame fine.", notes: ["Face ID works."])
@@ -290,6 +292,48 @@ enum SeedData {
         guard let tiff = image.tiffRepresentation, let bitmap = NSBitmapImageRep(data: tiff),
               let png = bitmap.representation(using: .png, properties: [:]) else { return Data() }
         return png
+    }
+
+    /// The sample board's schematic: a page per block, its parts drawn as boxes and its nets as
+    /// labelled wires, so the Board window can find them.
+    static func sampleSchematic() -> Data {
+        let data = NSMutableData()
+        var box = CGRect(x: 0, y: 0, width: 792, height: 612)
+        guard let consumer = CGDataConsumer(data: data as CFMutableData),
+              let context = CGContext(consumer: consumer, mediaBox: &box, nil) else { return Data() }
+        for (number, page) in BoardSample.schematicPages.enumerated() {
+            context.beginPDFPage(nil)
+            NSGraphicsContext.saveGraphicsState()
+            NSGraphicsContext.current = NSGraphicsContext(cgContext: context, flipped: false)
+            NSColor.black.setStroke()
+            NSBezierPath(rect: NSRect(x: 24, y: 24, width: 744, height: 564)).stroke()
+            NSAttributedString(string: "HAC-001-01  \(page.title.uppercased())  \(number + 1)/\(BoardSample.schematicPages.count)",
+                               attributes: [.font: NSFont.monospacedSystemFont(ofSize: 12, weight: .bold)])
+                .draw(at: NSPoint(x: 560, y: 36))
+            let font = NSFont.monospacedSystemFont(ofSize: 10, weight: .regular)
+            let parts = page.names.filter { !$0.contains("_") && $0 != "GND" }
+            let nets = page.names.filter { $0.contains("_") || $0 == "GND" }
+            for (i, name) in parts.enumerated() {
+                let x = 72 + CGFloat(i % 4) * 170, y = 470 - CGFloat(i / 4) * 130
+                NSBezierPath(rect: NSRect(x: x, y: y, width: 90, height: 70)).stroke() // grid: ok a printed page, in PDF points
+                NSAttributedString(string: name, attributes: [.font: NSFont.monospacedSystemFont(ofSize: 11, weight: .bold)])
+                    .draw(at: NSPoint(x: x + 4, y: y + 74))
+                // Each part's pins wired to the page's nets.
+                for pin in 0..<2 {
+                    let wireY = y + 20 + CGFloat(pin) * 30
+                    let path = NSBezierPath()
+                    path.move(to: NSPoint(x: x + 90, y: wireY))
+                    path.line(to: NSPoint(x: x + 150, y: wireY))
+                    path.stroke()
+                    let net = nets[(i * 2 + pin) % nets.count]
+                    NSAttributedString(string: net, attributes: [.font: font]).draw(at: NSPoint(x: x + 94, y: wireY + 2))
+                }
+            }
+            NSGraphicsContext.restoreGraphicsState()
+            context.endPDFPage()
+        }
+        context.closePDF()
+        return data as Data
     }
 
     /// A PDF with a title page and numbered pages, for the guide reader.

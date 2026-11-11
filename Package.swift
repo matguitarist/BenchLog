@@ -15,13 +15,16 @@ let package = Package(
         // Data and rules with no SwiftUI or AppKit, so tests run without the app
         // and a future iPhone/iPad app can use the same code.
         .target(name: "BenchLogKit", dependencies: [.product(name: "GRDB", package: "GRDB.swift")]),
+        // Boardview files (.brd) and the rules that link a board to its schematic. Foundation only,
+        // so a standalone viewer or the iPhone/iPad app can use it as is.
+        .target(name: "BoardViewKit"),
         // The sync server built into the app: the same API and data folder as server/ (Node).
         .target(name: "BenchLogServerKit", dependencies: [.product(name: "GRDB", package: "GRDB.swift")]),
         // Contents/MacOS/BenchLogServer: runs it, from Terminal or as the "Use This Mac as the Server" login item.
         .executableTarget(name: "BenchLogServer", dependencies: ["BenchLogServerKit"]),
         .executableTarget(
             name: "BenchLog",
-            dependencies: ["BenchLogKit", "BenchLogServerKit", .product(name: "Sparkle", package: "Sparkle"),
+            dependencies: ["BenchLogKit", "BoardViewKit", "BenchLogServerKit", .product(name: "Sparkle", package: "Sparkle"),
                            .product(name: "LogKitUI", package: "LogKit")],
             // BenchLog Help: Help/<language>/<topic>.md, read through Bundle.module.
             resources: [.copy("Help/en"), .copy("Help/fr")],
@@ -30,6 +33,6 @@ let package = Package(
             // Sparkle.framework sits in Contents/Frameworks (build.sh copies it).
             linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"])]
         ),
-        .testTarget(name: "BenchLogKitTests", dependencies: ["BenchLogKit", "BenchLogServerKit", .product(name: "GRDB", package: "GRDB.swift")]),
+        .testTarget(name: "BenchLogKitTests", dependencies: ["BenchLogKit", "BoardViewKit", "BenchLogServerKit", .product(name: "GRDB", package: "GRDB.swift")]),
     ]
 )

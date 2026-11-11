@@ -29,6 +29,9 @@
   - `PageLayout.swift`: cuts one tall PDF page into Letter pages between blocks (Core Graphics only, for the iOS app too).
   - `DocumentHTML.swift`: the intake slip, estimate, and invoice as printable HTML, in the customer's language, with French typography (`typo`). No WebKit: the app prints it.
   - `GuideImport.swift`: `GuideScanner` reads a folder or vault and guesses each guide's title, tags, images, and link from its path; `importGuides` adds or updates by source path.
+- **BoardViewKit**: boardview files and the rules that link a board to its schematic. Foundation only, no GRDB, so a standalone viewer or the iOS app can use it.
+  - `BoardFile.swift` reads `.brd` (OpenBoardView's Test_Link layout, plain or substitution-encoded), ported from BoardViewCraft (MIT or Apache-2.0). `Board.swift` holds parts, pins, nets, search, and hit testing. `Schematic.swift`: whole-name matches, picking the schematic PDF, a selection as a name. `BoardSample.swift`: a made-up board for sample data and tests.
+  - The window is in the app, `Board/`: `BoardViewer` (state, schematic linking), `BoardCanvas` (an NSView drawing the board with Core Graphics), `SchematicView` (PDFKit).
 - **BenchLog** (the app, main-actor by default):
   - `Models.swift`: `AppModel` holds the open `Library`, the page and selection, the sheet, history, and undo. Every change goes through its `write`, so it is logged, and pages reload when `dataVersion` changes.
   - `Models+Guides.swift`: adding, importing, and reading guides. Turning a PDF page saves the page without `write`, so the app does not reload.

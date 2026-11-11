@@ -44,5 +44,5 @@ Plain native Mac look with the system accent colour. Status colours: grey / yell
 
 ## Not in version one
 - Sync, the iPhone/iPad app and Android (planned: v2 adds a sync server evolved from the Node server, then iOS)
-- Boardview viewer (attachments accept the files now; the viewer comes later)
+- Boardview viewer: .brd boards open in a Board window beside their schematic (S-070); other formats one at a time
 - Customer SMS/email notifications, online booking, payments, multi-user accounts

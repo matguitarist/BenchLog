@@ -29,6 +29,9 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Passcode | The device's unlock code or pattern | password, PIN, unlock code |
 | Photo | An image attachment | picture, image |
 | File | A non-image attachment (PDF, boardview, …) | document, attachment |
+| Board | A boardview file opened in BenchLog's Board window: the board's parts, pins, and nets, top or bottom (Carte) | boardview viewer, PCB view |
+| Schematic | The circuit diagram PDF shown beside a board; BenchLog finds the selected part or net in it (Schéma) | guide, manual |
+| Net | A connection on a board: every pin wired to it, like PPBUS_G3H (Réseau) | signal, trace, rail |
 | Part | A component kept in stock or ordered for a repair | component, item, SKU |
 | Kind | What a part is: Part, Accessory, Cable, Controller, Game, Supply (Type : Pièce, Accessoire, Câble, Manette, Jeu, Fourniture) | type, category, class |
 | Condition (part) | The state a part is sold in: New, Used, Refurbished (Neuf, Usagé, Remis à neuf) | state, grade |

@@ -1,5 +1,6 @@
 import AppKit
 import BenchLogKit
+import BoardViewKit
 import PDFKit
 import IOKit.pwr_mgt
 import SwiftUI
@@ -197,6 +198,37 @@ enum Snapshot {
                     }
                 }
                 window?.close()
+            }
+            // The Board window: the sample board on the Switch repair (or APP_SNAPSHOT_BOARD=<.brd>),
+            // whole, then with a part selected and found in the schematic.
+            if only == nil || only?.contains("board") == true {
+                let env = ProcessInfo.processInfo.environment
+                let boardFile = model.read(nil) { library in
+                    try library.repairRows().first { $0.device.model == "Switch" }
+                        .flatMap { try library.attachments(for: .repair, id: $0.id).first { BoardFile.canRead(fileName: $0.originalName) } }?.id
+                }
+                let source: BoardSource? = env["APP_SNAPSHOT_BOARD"].map { .file(URL(fileURLWithPath: $0)) } ?? boardFile.map { .attachment($0) }
+                if let source {
+                    let before = Set(NSApp.windows.map(ObjectIdentifier.init))
+                    openWindow(id: "board", value: source)
+                    try? await Task.sleep(for: .seconds(2))
+                    let window = NSApp.windows.first { $0.isVisible && !before.contains(ObjectIdentifier($0)) }
+                    let part = env["APP_SNAPSHOT_BOARD_PART"] ?? "U2"
+                    for mode in ["light", "dark"] {
+                        NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                        BoardViewer.latest?.select(nil, from: .board)
+                        BoardViewer.latest?.side = .top
+                        BoardViewer.latest?.zoom(0)
+                        try? await Task.sleep(for: .seconds(1))
+                        capture(to: "\(dir)/board-\(mode).png", window: window)
+                        if let viewer = BoardViewer.latest, let index = viewer.board?.part(named: part) {
+                            viewer.select(.part(index), from: .search)
+                        }
+                        try? await Task.sleep(for: .seconds(1.2))
+                        capture(to: "\(dir)/board-part-\(mode).png", window: window)
+                    }
+                    window?.close()
+                }
             }
             print("SNAPSHOT done \(dir)")
             // An open sheet refuses terminate, and the run would wait forever.

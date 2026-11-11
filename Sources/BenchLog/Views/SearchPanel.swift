@@ -155,6 +155,7 @@ extension FocusedValues {
 struct FindCommands: Commands {
     let model: AppModel
     @FocusedValue(\.guideFind) private var guideFind
+    @FocusedValue(\.boardFind) private var boardFind
 
     var body: some Commands {
         CommandGroup(after: .textEditing) {
@@ -163,10 +164,14 @@ struct FindCommands: Commands {
                 model.searchText = ""
                 model.searching = true
             }
-                .keyboardShortcut(guideFind == nil ? KeyboardShortcut("f") : KeyboardShortcut("f", modifiers: [.command, .option]))
+                .keyboardShortcut(guideFind == nil && boardFind == nil ? KeyboardShortcut("f") : KeyboardShortcut("f", modifiers: [.command, .option]))
                 .disabled(model.library == nil || model.sheet != nil)
             if let guideFind {
                 Button("Find in Guide…") { guideFind() }
+                    .keyboardShortcut("f")
+            }
+            if let boardFind {
+                Button("Find Part or Net…") { boardFind() }
                     .keyboardShortcut("f")
             }
         }

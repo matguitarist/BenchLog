@@ -1,5 +1,6 @@
 import AppKit
 import BenchLogKit
+import BoardViewKit
 import PDFKit
 
 /// Self-test for agents: drives the app model on a library in /tmp,
@@ -471,6 +472,7 @@ enum SelfTest {
             await syncEndToEnd(model)
             await serverOnThisMac(model)
             dashboard(model)
+            await boardViewer(model)
 
             for tab in SettingsTab.allCases {
                 model.settingsTab = tab
@@ -619,6 +621,40 @@ enum SelfTest {
         check("a Dashboard parts row opens its Parts tab", model.sidebar == .parts && model.partsTab == .toOrder)
         model.partsTab = .inventory
         model.repairFilter = .open
+    }
+
+    /// S-070: a board and the schematic in its folder open together, and a name picked in the
+    /// schematic selects it on the board, turning to its side.
+    private static func boardViewer(_ model: AppModel) async {
+        let folder = URL(fileURLWithPath: "/tmp/BenchLog-selftest-board-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: folder) }
+        do {
+            try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
+            try BoardSample.data.write(to: folder.appending(path: BoardSample.fileName))
+            try Data("%PDF-1.4\n".utf8).write(to: folder.appending(path: "Datasheet.pdf"))
+            try SeedData.sampleSchematic().write(to: folder.appending(path: BoardSample.schematicName))
+        } catch {
+            check("the board check writes its files", false, error.localizedDescription)
+            return
+        }
+        let viewer = BoardViewer(source: .file(folder.appending(path: BoardSample.fileName)))
+        await viewer.load(model)
+        check("a .brd board opens", viewer.board?.parts.count == 16, viewer.failure ?? "")
+        check("the schematic beside it is picked", viewer.schematic?.lastPathComponent == BoardSample.schematicName && viewer.schematics.count == 2)
+        guard let board = viewer.board else { return }
+        viewer.pick(fromSchematic: "u2")
+        check("a part picked in the schematic is selected on the board", viewer.selection == board.part(named: "U2").map { .part($0) })
+        viewer.pick(fromSchematic: "USB_DP")
+        check("a net on the bottom turns the board over", viewer.selection == .net("USB_DP") && viewer.side == .bottom)
+        viewer.pick(fromSchematic: "NOT_ON_THIS_BOARD")
+        check("a name the board lacks changes nothing", viewer.selection == .net("USB_DP"))
+        let schematic = PDFDocument(data: SeedData.sampleSchematic())
+        check("the schematic has the names to find", schematic?.findString("PMIC_EN", withOptions: []).isEmpty == false)
+        let broken = folder.appending(path: "broken.brd")
+        try? Data("BRDOUT: 1".utf8).write(to: broken)
+        let failing = BoardViewer(source: .file(broken))
+        await failing.load(model)
+        check("a board BenchLog can't read says why", failing.board == nil && failing.failure?.contains("BRD2") == true, failing.failure ?? "")
     }
 
     static func finish(code: Int32) {

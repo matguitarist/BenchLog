@@ -855,10 +855,33 @@ UX:
 Built: `Library.counterSaleRows(matching:)` (`CounterSaleRow`), `Pages/CounterSalesPage.swift`, `SidebarItem.counterSales`, `Destination.counterSale`. A customer's page keeps its own Counter Sales section. In Reports, a counter sale's row opens the sale (it opened the customer, or the PDF for a walk-in). The other pages' shortcuts move down one (Repairs is ⌥⌘3). Snapshots: counterSales, counter-sale.
 Status: done
 
+## M14 Boards — a board and its schematic, side by side
+
+### S-070 Open a board beside its schematic
+As the user, I double-click a board file on a repair or device and see the board, top or bottom, beside its schematic. A part or net I pick on one side is found on the other.
+Depends: S-012
+Acceptance:
+- [unit] A .brd file, plain or encoded, reads into parts (side, through-hole), pins (numbered, with their net), the outline, and test points; other formats say they can't be read yet.
+- [unit] Search lists parts and nets, exact names first; a click finds the pin, else the smallest part, on the side shown; a pin lights its net, a part its pins.
+- [unit] A name in the schematic matches only whole ("C713" is not in "C7130"); the schematic picked is the PDF whose name says "sch" or shares the board's number.
+- [self] A board opens with the schematic in its folder; a part or net picked in the schematic is selected on the board, which turns over for a bottom net; a BRD2 file says why it can't open.
+- [snap] board, board-part: the board on the left (outline, parts, pins, names once they fit) and the schematic on the right with the match bar; with a part selected, its pins in the accent and its first match in the schematic.
+UX:
+- Flow: a repair or device > Files > double-click a .brd (or right-click > Open Board) -> the Board window; File > Open Board… (⌥⌘O) opens one from the Mac with the PDFs in its folder.
+- Surface: a window per board (a reference people keep open beside the repair).
+- Board: Top/Bottom (⌘1, ⌘2, Space), Zoom In/Out/to Fit (⌘+, ⌘−, ⌘0); two fingers pan, a pinch or Command-scroll zooms, a drag pans, a double-click zooms to the part, Esc or ⇧⌘A clears the selection.
+- Schematic: the selected part or net, "2 of 5", Previous/Next (⇧⌘G, ⌘G); for a pin, a choice of its net or its part; double-click a name in the schematic to select it on the board; Hide Schematic (⌥⌘S); a picker when the record has several PDFs.
+- Find: the toolbar's "Part or Net" field (⌘F), with suggestions.
+- States: reading: "Reading the board…"; unreadable: "Can't Open Board" with Open in Default App; no PDF: "No Schematic" with where to add it.
+- Words: "Board", "Schematic", "Net", "Open Board", "Open in Default App", "Part or Net"
+Built: `BoardViewKit` (Foundation only): `BoardFile` (the .brd reader, ported from BoardViewCraft, MIT or Apache-2.0), `Board`, `Schematic`, `BoardSample`. App: `Board/BoardViewer.swift` (`BoardSource`, `BoardWindow`, `BoardCommands`), `Board/BoardCanvas.swift` (an NSView), `Board/SchematicView.swift` (PDFKit). The schematic is a PDF on the same record or, for a repair, on its device. Sample data puts a made-up board on the Switch repair and its schematic on the Switch. `APP_SNAPSHOT_BOARD=<.brd>` snapshots a real board. Checked with an A1502 board (820-4924-A): 3,794 parts and 10,514 pins read in 40 ms, U7100 found in its 82-page schematic.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
-- Boardview viewer (OpenBoardView-style) for .brd/.bdv/.fz files.
+- More board formats in the Board window: .bdv, .fz, .cad (GenCAD), .tvw, … ported from BoardViewCraft one at a time.
+- Board notes and readings: a measurement on a pin or net (diode mode, voltage, resistance) saved on the repair.
 - French app UI (the String Catalog already holds every string).
 - Customer SMS or email "your device is ready".
 - Scan a barcode with the Mac's or iPhone's camera (Add by Barcode takes a scanner or typing today).

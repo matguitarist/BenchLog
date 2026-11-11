@@ -36,6 +36,8 @@ struct BenchLogApp: App {
                 ImportFromDevicesCommands()
                 ToolbarCommands()
                 FindCommands(model: model)
+                // Board: sides, zoom, the schematic's matches; File > Open Board….
+                BoardCommands()
             }
             CommandGroup(replacing: .newItem) {
                 Button("New Repair…") { model.newRepair() }
@@ -142,6 +144,16 @@ struct BenchLogApp: App {
                 .themed()
         }
         .defaultSize(width: 760, height: 860)
+
+        // A board and its schematic, from a file attached to a record or File > Open Board….
+        WindowGroup("Board", id: "board", for: BoardSource.self) { $source in
+            if let source {
+                BoardWindow(source: source)
+                    .environment(model)
+                    .themed()
+            }
+        }
+        .defaultSize(width: 1280, height: 800)
 
         Settings {
             SettingsView()

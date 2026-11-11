@@ -1,5 +1,6 @@
 import AppKit
 import BenchLogKit
+import BoardViewKit
 import QuickLook
 import QuickLookThumbnailing
 import SwiftUI
@@ -9,6 +10,7 @@ import UniformTypeIdentifiers
 /// Space or a double-click shows a photo in Quick Look; a double-click opens a file in its app.
 struct AttachmentsSection: View {
     @Environment(AppModel.self) private var model
+    @Environment(\.openWindow) private var openWindow
     let owner: NoteOwner
     let ownerID: UUID
 
@@ -48,7 +50,7 @@ struct AttachmentsSection: View {
             }
             ForEach(files) { file in
                 FileRow(attachment: file, url: url(file))
-                    .onTapGesture(count: 2) { NSWorkspace.shared.open(url(file)) }
+                    .onTapGesture(count: 2) { open(file) }
                     .contextMenu { menu(file) }
             }
             Button("Add Photo or File…") { choosing = true }
@@ -81,12 +83,26 @@ struct AttachmentsSection: View {
         model.library?.fileURL(for: attachment) ?? URL(fileURLWithPath: "/dev/null")
     }
 
+    /// A board BenchLog reads opens in a Board window; other files in their default app.
+    private func open(_ file: Attachment) {
+        if BoardFile.canRead(fileName: file.originalName) {
+            openWindow(id: "board", value: BoardSource.attachment(file.id))
+        } else {
+            NSWorkspace.shared.open(url(file))
+        }
+    }
+
     @ViewBuilder
     private func menu(_ attachment: Attachment) -> some View {
         if attachment.isImage {
             Button("Quick Look") { preview = url(attachment) }
         }
-        Button("Open") { NSWorkspace.shared.open(url(attachment)) }
+        if BoardFile.canRead(fileName: attachment.originalName) {
+            Button("Open Board") { open(attachment) }
+            Button("Open in Default App") { NSWorkspace.shared.open(url(attachment)) }
+        } else {
+            Button("Open") { NSWorkspace.shared.open(url(attachment)) }
+        }
         Button("Show in Finder") { NSWorkspace.shared.activateFileViewerSelecting([url(attachment)]) }
         Divider()
         Button(attachment.caption.isEmpty ? "Add Caption…" : "Edit Caption…") {
