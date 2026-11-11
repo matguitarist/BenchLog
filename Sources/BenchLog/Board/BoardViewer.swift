@@ -1,6 +1,7 @@
 import AppKit
 import BenchLogKit
 import BoardViewKit
+import PDFKit
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -57,7 +58,20 @@ final class BoardViewer {
     private(set) var hitNumber = 0
 
     /// The schematic page open large, as an index; nil when the panel is closed.
-    var enlargedPage: Int?
+    var enlargedPage: Int? { didSet { if enlargedPage == nil { pageQuery = ""; clearPageSearch() } } }
+    /// Find in the large page's panel: the words, their matches in the whole schematic, and
+    /// which one is shown (0-based, -1 for none).
+    var pageQuery = ""
+    private(set) var pageHits: [PDFSelection] = []
+    private(set) var pageHit = -1
+    /// The words `pageHits` were found for, so Return finds new words or shows the next match.
+    private var pageHitsQuery = ""
+    /// Return was pressed on these words and they are on no page.
+    var pageSearchFoundNothing: Bool {
+        pageHits.isEmpty && !pageHitsQuery.isEmpty && pageHitsQuery == pageQuery.trimmingCharacters(in: .whitespaces)
+    }
+    /// Bumped to put the cursor in the panel's find field (Edit > Find while the panel is open).
+    private(set) var pageFindRequest = 0
     @ObservationIgnored weak var canvas: BoardCanvasView?
     @ObservationIgnored weak var largePage: LargePagePDFView?
     @ObservationIgnored let pdf = SchematicController()
@@ -217,7 +231,11 @@ final class BoardViewer {
         hitNumber = pdf.current + 1
     }
 
+    /// Next or previous match: of the panel's find field while the large page is open, else of the selection.
+    var canStepSchematic: Bool { enlargedPage != nil && !pageHits.isEmpty || hits > 0 }
+
     func stepSchematic(_ delta: Int) {
+        if enlargedPage != nil, !pageHits.isEmpty { stepPageSearch(delta); return }
         pdf.step(delta)
         hitNumber = pdf.current + 1
     }
@@ -251,6 +269,48 @@ final class BoardViewer {
     func turnPage(_ delta: Int) {
         guard let page = enlargedPage else { return }
         enlargedPage = min(max(page + delta, 0), max(pageCount - 1, 0))
+    }
+
+    /// Edit > Find while the large page is open: the panel's find field.
+    func focusPageSearch() { pageFindRequest += 1 }
+
+    /// Return in the panel's find field: finds new words from the page in view, or shows the next match.
+    func submitPageSearch() {
+        let words = pageQuery.trimmingCharacters(in: .whitespaces)
+        if words == pageHitsQuery, !pageHits.isEmpty { stepPageSearch(1); return }
+        clearPageSearch()
+        guard !words.isEmpty, let document = pdf.document else { return }
+        pageHitsQuery = words
+        pageHits = document.findString(words, withOptions: [.caseInsensitive])
+        guard !pageHits.isEmpty else { NSSound.beep(); return }
+        for hit in pageHits { hit.color = .findHighlightColor }
+        // Start at the page in view.
+        let here = enlargedPage ?? 0
+        let first = pageHits.firstIndex { hit in hit.pages.first.map { document.index(for: $0) >= here } ?? false } ?? 0
+        pageHit = first - 1
+        stepPageSearch(1)
+    }
+
+    /// The next (1) or previous (-1) match of the panel's find field, turning the page to it.
+    func stepPageSearch(_ delta: Int) {
+        guard !pageHits.isEmpty, let document = pdf.document else { return }
+        pageHit = (pageHit + delta + pageHits.count) % pageHits.count
+        let hit = pageHits[pageHit]
+        if let page = hit.pages.first { enlargedPage = document.index(for: page) }
+        largePage?.show(hit)
+    }
+
+    func clearPageSearch() {
+        pageHits = []
+        pageHit = -1
+        pageHitsQuery = ""
+    }
+
+    /// What the large page highlights: the find field's matches, else the selection's.
+    func largePageHighlights(onPage index: Int) -> [PDFSelection] {
+        guard !pageHits.isEmpty else { return pdf.matches(onPage: index) }
+        guard let page = pdf.document?.page(at: index) else { return [] }
+        return pageHits.filter { $0.pages.contains(page) }
     }
 
     /// A name double-clicked on the large page: closes the panel and picks it on the board.
@@ -411,7 +471,9 @@ private struct BoardViewerView: View {
                 .frame(width: max(windowSize.width - 2 * Space.xl, 560), height: max(windowSize.height - 2 * Space.xl, 400))
         }
         .focusedSceneValue(\.boardViewer, viewer)
-        .focusedSceneValue(\.boardFind, BoardFindAction(id: ObjectIdentifier(viewer)) { searchFocused = true })
+        .focusedSceneValue(\.boardFind, BoardFindAction(id: ObjectIdentifier(viewer)) {
+            if viewer.enlargedPage != nil { viewer.focusPageSearch() } else { searchFocused = true }
+        })
     }
 }
 
@@ -421,20 +483,22 @@ private struct PageNumber: Identifiable {
     var id: Int { 0 } // one panel: turning the page keeps it open
 }
 
-/// A schematic page, large, over the Board window: Previous/Next page, zoom, Done.
+/// A schematic page, large, over the Board window: Previous/Next page, find, zoom, Done.
 private struct LargePagePanel: View {
     @Bindable var viewer: BoardViewer
+    @FocusState private var findFocused: Bool
 
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: Space.sm) {
                 ControlGroup {
                     Button("Previous Page", systemImage: "chevron.left") { viewer.turnPage(-1) }
-                        .keyboardShortcut(.leftArrow, modifiers: [])
+                        // ← and → move the cursor while it is in the find field.
+                        .keyboardShortcut(findFocused ? nil : KeyboardShortcut(.leftArrow, modifiers: []))
                         .disabled((viewer.enlargedPage ?? 0) == 0)
                         .help("Show the previous page (←)")
                     Button("Next Page", systemImage: "chevron.right") { viewer.turnPage(1) }
-                        .keyboardShortcut(.rightArrow, modifiers: [])
+                        .keyboardShortcut(findFocused ? nil : KeyboardShortcut(.rightArrow, modifiers: []))
                         .disabled((viewer.enlargedPage ?? 0) >= viewer.pageCount - 1)
                         .help("Show the next page (→)")
                 }
@@ -443,12 +507,10 @@ private struct LargePagePanel: View {
                 Text("Page \((viewer.enlargedPage ?? 0) + 1) of \(viewer.pageCount)")
                     .foregroundStyle(.secondary)
                     .monospacedDigit()
-                Spacer(minLength: 0)
-                Text("Double-click a name to find it on the board.")
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .lineLimit(1)
-                Spacer(minLength: 0)
+                    .fixedSize()
+                Spacer(minLength: Space.md)
+                find
+                Spacer(minLength: Space.md)
                 ControlGroup {
                     Button("Zoom Out", systemImage: "minus.magnifyingglass") { viewer.zoom(-1) }
                         .help("Zoom out (⌘−)")
@@ -460,18 +522,55 @@ private struct LargePagePanel: View {
                 .labelStyle(.iconOnly)
                 .fixedSize()
                 Button("Done") { viewer.enlargedPage = nil }
-                    .keyboardShortcut(.cancelAction)
+                    // Esc in the find field clears it first.
+                    .keyboardShortcut(findFocused && !viewer.pageQuery.isEmpty ? nil : .cancelAction)
             }
             .padding(.horizontal, Space.md)
             .frame(height: 48)
             .gridArea("page-bar", inset: Space.sm)
             Divider()
             if let document = viewer.pdf.document, let page = viewer.enlargedPage {
-                LargePagePDF(document: document, page: page, highlights: viewer.pdf.matches(onPage: page),
-                             onPick: { viewer.pickFromLargePage($0) }, onMake: { viewer.largePage = $0 })
+                LargePagePDF(document: document, page: page, highlights: viewer.largePageHighlights(onPage: page),
+                             onPick: { viewer.pickFromLargePage($0) },
+                             onPageChange: { if let shown = viewer.enlargedPage, shown != $0 { viewer.enlargedPage = $0 } },
+                             onMake: { viewer.largePage = $0 })
+                    .help("Double-click a name to find it on the board.")
             }
         }
         .noInitialFocus()
+        .onChange(of: viewer.pageFindRequest) { findFocused = true }
+    }
+
+    /// The find field, the match count, and the arrows to the previous and next match.
+    private var find: some View {
+        HStack(spacing: Space.sm) {
+            TextField("Find in Schematic", text: $viewer.pageQuery)
+                .textFieldStyle(.roundedBorder)
+                .frame(minWidth: 120, idealWidth: 220, maxWidth: 240)
+                .focused($findFocused)
+                .onSubmit { viewer.submitPageSearch() }
+                .onExitCommand { viewer.pageQuery = ""; viewer.clearPageSearch() }
+                .onChange(of: viewer.pageQuery) { if viewer.pageQuery.isEmpty { viewer.clearPageSearch() } }
+                .help("Find words on every page. Return shows the next match (⌘F)")
+            if !viewer.pageHits.isEmpty {
+                Text("\(viewer.pageHit + 1) of \(viewer.pageHits.count)")
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                    .fixedSize()
+                ControlGroup {
+                    Button("Previous Match", systemImage: "chevron.up") { viewer.stepPageSearch(-1) }
+                        .help("Show the previous match (⇧⌘G)")
+                    Button("Next Match", systemImage: "chevron.down") { viewer.stepPageSearch(1) }
+                        .help("Show the next match (⌘G)")
+                }
+                .labelStyle(.iconOnly)
+                .fixedSize()
+            } else if viewer.pageSearchFoundNothing {
+                Text("No matches")
+                    .foregroundStyle(.secondary)
+                    .fixedSize()
+            }
+        }
     }
 }
 
@@ -597,10 +696,10 @@ struct BoardCommands: Commands {
                 Divider()
                 Button("Next in Schematic") { viewer?.stepSchematic(1) }
                     .keyboardShortcut("g")
-                    .disabled((viewer?.hits ?? 0) == 0)
+                    .disabled(viewer?.canStepSchematic != true)
                 Button("Previous in Schematic") { viewer?.stepSchematic(-1) }
                     .keyboardShortcut("g", modifiers: [.command, .shift])
-                    .disabled((viewer?.hits ?? 0) == 0)
+                    .disabled(viewer?.canStepSchematic != true)
                 Button(viewer?.showsSchematic == false ? "Show Schematic" : "Hide Schematic") { viewer?.showsSchematic.toggle() }
                     .keyboardShortcut("s", modifiers: [.command, .option])
                 Button("Enlarge Page") { viewer?.enlargePage() }

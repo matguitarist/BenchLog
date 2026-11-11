@@ -238,6 +238,12 @@ enum Snapshot {
                             viewer.enlargePage()
                             try? await Task.sleep(for: .seconds(1.2))
                             capture(to: "\(dir)/board-page-\(mode).png", window: window)
+                            // Find on every page, from the panel.
+                            viewer.pageQuery = net
+                            viewer.submitPageSearch()
+                            viewer.submitPageSearch()
+                            try? await Task.sleep(for: .seconds(1))
+                            capture(to: "\(dir)/board-page-find-\(mode).png", window: window)
                             viewer.enlargedPage = nil
                             try? await Task.sleep(for: .seconds(0.6))
                         }

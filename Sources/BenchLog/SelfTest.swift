@@ -671,6 +671,33 @@ enum SelfTest {
         viewer.enlargedPage = 0
         viewer.turnPage(-1)
         check("the large page stops at the first page", viewer.enlargedPage == 0)
+        // The scroll wheel turns the page: the counter follows. Find searches every page from the one in view.
+        let pane = SchematicPDFView(), large = LargePagePDFView()
+        pane.document = PDFDocument(data: SeedData.sampleSchematic())
+        large.document = pane.document
+        viewer.pdf.view = pane
+        viewer.largePage = large
+        large.onPageChange = { if let shown = viewer.enlargedPage, shown != $0 { viewer.enlargedPage = $0 } }
+        if let second = pane.document?.page(at: 1) { large.go(to: second) }
+        check("a page turned in the large view moves the page counter", viewer.enlargedPage == 1, "\(viewer.enlargedPage ?? -1)")
+        viewer.pageQuery = "hac-001"
+        viewer.submitPageSearch()
+        check("find on the large page matches every page, from the one in view",
+              viewer.pageHits.count == viewer.pageCount && viewer.pageHit == 1 && viewer.enlargedPage == 1,
+              "\(viewer.pageHits.count) hits, hit \(viewer.pageHit), page \(viewer.enlargedPage ?? -1)")
+        viewer.submitPageSearch()
+        check("Return shows the next match, on its page", viewer.pageHit == 2 && viewer.enlargedPage == 2)
+        viewer.stepSchematic(-1)
+        check("Previous in Schematic steps the panel's matches while it is open", viewer.pageHit == 1 && viewer.enlargedPage == 1)
+        viewer.pageQuery = "NOWHERE_IN_IT"
+        viewer.submitPageSearch()
+        check("words on no page say No matches", viewer.pageSearchFoundNothing && viewer.pageHits.isEmpty)
+        viewer.pageQuery = "hac-001"
+        viewer.submitPageSearch()
+        viewer.enlargedPage = nil
+        check("closing the large page clears its find", viewer.pageQuery.isEmpty && viewer.pageHits.isEmpty)
+        viewer.pdf.view = nil
+        viewer.enlargedPage = 0
         viewer.pickFromLargePage("NOT_ON_THIS_BOARD")
         check("a name the board lacks keeps the large page open", viewer.enlargedPage == 0)
         viewer.pickFromLargePage("L1")

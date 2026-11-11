@@ -938,6 +938,20 @@ UX:
 Built: `SchematicPDFView` opens the clicked page (`SchematicController.onOpenPage`); `LargePagePDFView` and `LargePagePanel`; `BoardViewer.enlargedPage`, `turnPage`, `pickFromLargePage`; the Board menu's zoom acts on the large page while it is open.
 Status: done
 
+### S-076 Find words in the large page, and a page counter that follows the scroll wheel
+As the user, I type words in the large page's find field and step through every match in the schematic, and the page counter stays right however I turn the page.
+Depends: S-075
+Acceptance:
+- [self] A page turned in the large view (scroll wheel, swipe) moves the counter; find matches every page starting from the one in view; Return and Previous/Next in Schematic step the matches, turning the page; words on no page say "No matches"; closing the panel clears the find.
+- [snap] board-page-find: the net's name in the find field, "2 of 4", its matches highlighted.
+- [manual] The scroll wheel turns the page and the counter follows.
+UX:
+- Find field "Find in Schematic" in the panel's bar, case-insensitive, any words (not only whole names). Return finds, then shows the next match; ⌘G and ⇧⌘G (Board > Next/Previous in Schematic) and the up/down arrows beside the count step it. Edit > Find (⌘F) puts the cursor in it while the panel is open.
+- While the cursor is in the field, ← and → move the cursor instead of turning the page, and Esc clears the words before it closes the panel.
+- "Double-click a name to find it on the board." moves to the page's help tag.
+Built: `LargePagePDFView` posts `PDFViewPageChanged` to `onPageChange`; `BoardViewer.pageQuery`, `submitPageSearch`, `stepPageSearch`, `largePageHighlights`, `canStepSchematic`.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

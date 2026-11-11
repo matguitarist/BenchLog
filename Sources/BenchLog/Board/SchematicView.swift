@@ -142,6 +142,26 @@ struct SchematicPDF: NSViewRepresentable {
 final class LargePagePDFView: PDFView {
     /// A name double-clicked or selected on the page.
     var onPick: ((String) -> Void)?
+    /// The page in view changed (the scroll wheel, a swipe, or the arrows): its index.
+    var onPageChange: ((Int) -> Void)?
+
+    override init(frame: NSRect) {
+        super.init(frame: frame)
+        NotificationCenter.default.addObserver(self, selector: #selector(pageChanged), name: .PDFViewPageChanged, object: self)
+    }
+
+    required init?(coder: NSCoder) { fatalError("init(coder:) is not used") }
+
+    @objc private func pageChanged() {
+        guard let document, let page = currentPage else { return }
+        onPageChange?(document.index(for: page))
+    }
+
+    /// Selects a find match and scrolls to it.
+    func show(_ match: PDFSelection) {
+        setCurrentSelection(match, animate: true)
+        go(to: match)
+    }
 
     override func mouseUp(with event: NSEvent) {
         super.mouseUp(with: event)
@@ -154,6 +174,7 @@ struct LargePagePDF: NSViewRepresentable {
     let page: Int
     let highlights: [PDFSelection]
     let onPick: (String) -> Void
+    let onPageChange: (Int) -> Void
     let onMake: (LargePagePDFView) -> Void
 
     func makeNSView(context: Context) -> LargePagePDFView {
@@ -169,6 +190,7 @@ struct LargePagePDF: NSViewRepresentable {
 
     func updateNSView(_ view: LargePagePDFView, context: Context) {
         view.onPick = onPick
+        view.onPageChange = onPageChange
         if let target = document.page(at: page), view.currentPage != target {
             view.go(to: target)
             view.autoScales = true
