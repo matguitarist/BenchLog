@@ -63,12 +63,12 @@ final class ThemeStore {
     static let brand: Theme? = nil
 
     var themeID: String {
-        didSet { UserDefaults.standard.set(themeID, forKey: "appearance.accent") }
+        didSet { Self.save(themeID, forKey: "appearance.accent") }
     }
 
     /// The board colors in the Board window (BoardColors.swift).
     var boardColorsID: String {
-        didSet { UserDefaults.standard.set(boardColorsID, forKey: "appearance.boardColors") }
+        didSet { Self.save(boardColorsID, forKey: "appearance.boardColors") }
     }
     var boardColors: BoardColors { BoardColors.named(boardColorsID) }
 
@@ -92,6 +92,13 @@ final class ThemeStore {
                                                object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.macIsMulticolor = ThemeStore.readMulticolor() }
         }
+    }
+
+    /// Saves a choice, except in test runs (APP_STORE): snapshots and the self-test change the
+    /// colors, and must leave the owner's settings as they were.
+    private static func save(_ value: String, forKey key: String) {
+        guard (ProcessInfo.processInfo.environment["APP_STORE"] ?? "").isEmpty else { return }
+        UserDefaults.standard.set(value, forKey: key)
     }
 
     /// The Mac stores no accent number while the accent is Multicolor.

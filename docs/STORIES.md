@@ -912,6 +912,18 @@ UX:
 Built: `UI/BoardColors.swift` (tokens), `ThemeStore.boardColorsID` (`appearance.boardColors`, `APP_BOARD_COLORS`). The canvas now clips to its bounds (macOS 14 views draw past their edges otherwise).
 Status: done
 
+### S-074 Test points on the board
+As the user, I see the board's test points, and the ones on a net light with it, so I know where to put the probe.
+Depends: S-070
+Acceptance:
+- [unit] A net lights its test points, a pin its net's; a click on a test point selects it (on its side only) and lights its net's pins; its net is the schematic term.
+- [snap] board: a test point is a ring with a dot in the pad color; board-net: a net with its pins and test point lit, and "6 pins on the net, 1 test point" under the board.
+UX:
+- A selected test point gets a ring, like a pin; one on the other side shows as an outlined ring when its net is lit; the board turns over when all of a picked net is on the other side.
+- Words: "Test point 3, bottom: PP3V3_S0, 12 pins on the net"
+Built: `BoardSelection.testPoint`, `Board.testPoints(onNet:)`, `highlightedTestPoints(for:)`, `testPointRadius` (the median pin radius); hit test: pin, then test point, then part. Test runs no longer save the accent or board colors to the owner's settings.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

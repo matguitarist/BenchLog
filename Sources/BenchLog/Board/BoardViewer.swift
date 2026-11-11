@@ -160,9 +160,14 @@ final class BoardViewer {
         case .part(let index):
             if !board.parts[index].isThroughHole { side = board.parts[index].side }
             canvas?.zoom(to: board.parts[index].bounds, minimumSize: 400)
-        case .pin, .net:
-            if !pins.contains(where: { board.shows(pin: $0, on: side) }) { side = side.flipped }
+        case .pin, .net, .testPoint:
+            let points = board.highlightedTestPoints(for: selection).map { board.testPoints[$0] }
+            func isShown(_ s: BoardSide) -> Bool {
+                pins.contains { board.shows(pin: $0, on: s) } || points.contains { $0.side == s }
+            }
+            if !isShown(side), isShown(side.flipped) { side = side.flipped }
             let shown = pins.filter { board.shows(pin: $0, on: side) }.map { board.pins[$0].position }
+                + points.filter { $0.side == side }.map(\.position)
             if let rect = BoardRect(around: shown) { canvas?.zoom(to: rect, minimumSize: 400) }
         }
     }
@@ -180,9 +185,24 @@ final class BoardViewer {
             let pin = board.pins[index]
             let part = board.parts[pin.part].name
             if pin.net.isEmpty { return String(localized: "\(part) pin \(pin.number), no net") }
-            return String(localized: "\(part) pin \(pin.number): \(pin.net), \(board.pins(onNet: pin.net).count) pins on the net")
+            return String(localized: "\(part) pin \(pin.number): \(pin.net), \(board.pins(onNet: pin.net).count) pins on the net") + testPointNote(pin.net, board)
         case .net(let name):
-            return String(localized: "\(name): \(board.pins(onNet: name).count) pins on the net")
+            return String(localized: "\(name): \(board.pins(onNet: name).count) pins on the net") + testPointNote(name, board)
+        case .testPoint(let index):
+            let point = board.testPoints[index]
+            let side = point.side == .top ? String(localized: "top") : String(localized: "bottom")
+            if point.net.isEmpty { return String(localized: "Test point \(point.probe), \(side), no net") }
+            return String(localized: "Test point \(point.probe), \(side): \(point.net), \(board.pins(onNet: point.net).count) pins on the net")
+        }
+    }
+
+    /// ", 2 test points" after a net's pin count, when it has any.
+    private func testPointNote(_ net: String, _ board: Board) -> String {
+        let count = board.testPoints(onNet: net).count
+        switch count {
+        case 0: return ""
+        case 1: return String(localized: ", 1 test point")
+        default: return String(localized: ", \(count) test points")
         }
     }
 

@@ -228,6 +228,13 @@ enum Snapshot {
                         try? await Task.sleep(for: .seconds(1))
                         capture(to: "\(dir)/board-full-\(mode).png", window: window)
                         BoardViewer.latest?.toggleFullBoard()
+                        // A net with a test point on it, lit.
+                        if let viewer = BoardViewer.latest, let board = viewer.board,
+                           let net = env["APP_SNAPSHOT_BOARD_NET"] ?? board.testPoints.first(where: { !$0.net.isEmpty })?.net {
+                            viewer.select(.net(net), from: .search)
+                            try? await Task.sleep(for: .seconds(1))
+                            capture(to: "\(dir)/board-net-\(mode).png", window: window)
+                        }
                     }
                     window?.close()
                 }

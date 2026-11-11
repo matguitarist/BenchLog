@@ -39,6 +39,7 @@ final class BoardCanvasView: NSView {
         didSet {
             guard selection != oldValue else { return }
             highlighted = Set(board?.highlightedPins(for: selection) ?? [])
+            highlightedTestPoints = Set(board?.highlightedTestPoints(for: selection) ?? [])
             needsDisplay = true
         }
     }
@@ -53,6 +54,7 @@ final class BoardCanvasView: NSView {
     private var scale: CGFloat = 0
     private var center = BoardPoint(x: 0, y: 0)
     private var highlighted: Set<Int> = []
+    private var highlightedTestPoints: Set<Int> = []
     private var dragStart: NSPoint?
     private var dragged = false
     /// What the last zoom fitted, and its margin: kept in view when the view changes size
@@ -239,6 +241,36 @@ final class BoardCanvasView: NSView {
             context.setFillColor(color.cgColor)
             context.fillPath()
         }
+        // Test points: a ring with a dot on this side, filled when lit; lit ones behind, a ring.
+        let rings = CGMutablePath(), pointDots = CGMutablePath()
+        let tpRadius = max(board.testPointRadius * scale, 2.5)
+        for (index, point) in board.testPoints.enumerated() where visible.insetBy(-board.testPointRadius).contains(point.position) {
+            let isLit = highlightedTestPoints.contains(index)
+            guard point.side == side || isLit else { continue }
+            let p = toView(point.position)
+            let circle = CGRect(x: p.x - tpRadius, y: p.y - tpRadius, width: tpRadius * 2, height: tpRadius * 2)
+            if point.side != side {
+                litBehind.addEllipse(in: circle)
+            } else if isLit {
+                lit.addEllipse(in: circle)
+                if tpRadius >= 14, !point.net.isEmpty { netLabels.append((point.net, circle, true)) }
+            } else {
+                rings.addEllipse(in: circle.insetBy(dx: 0.75, dy: 0.75))
+                let dot = max(tpRadius * 0.3, 1)
+                pointDots.addEllipse(in: CGRect(x: p.x - dot, y: p.y - dot, width: dot * 2, height: dot * 2))
+            }
+        }
+        context.addPath(rings)
+        context.setStrokeColor(colors.pin.cgColor)
+        context.setLineWidth(1.5)
+        context.strokePath()
+        context.addPath(pointDots)
+        context.setFillColor(colors.pin.cgColor)
+        context.fillPath()
+        context.addPath(lit)
+        context.setFillColor(accent.cgColor)
+        context.fillPath()
+
         context.addPath(litBehind)
         context.setStrokeColor(accent.withAlphaComponent(0.6).cgColor)
         context.setLineWidth(1.5)
@@ -249,6 +281,13 @@ final class BoardCanvasView: NSView {
             context.setStrokeColor(accent.cgColor)
             context.setLineWidth(2)
             context.stroke(toView(board.parts[selectedPart].bounds).insetBy(dx: -2, dy: -2))
+        }
+        if case .testPoint(let index) = selection, board.testPoints[index].side == side {
+            let p = toView(board.testPoints[index].position)
+            let r = tpRadius + 4
+            context.setStrokeColor(colors.label.cgColor)
+            context.setLineWidth(2)
+            context.strokeEllipse(in: CGRect(x: p.x - r, y: p.y - r, width: r * 2, height: r * 2))
         }
         if case .pin(let index) = selection, board.shows(pin: index, on: side) {
             let part = board.parts[board.pins[index].part]
@@ -313,7 +352,7 @@ final class BoardCanvasView: NSView {
             let part: Int = switch hit {
             case .part(let index): index
             case .pin(let index): board.pins[index].part
-            case .net: -1
+            case .net, .testPoint: -1
             }
             if part >= 0 { zoom(to: board.parts[part].bounds, minimumSize: 200) }
         }

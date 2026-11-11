@@ -86,6 +86,20 @@ import Testing
         #expect(board.hitTest(board.pins[j1Pin].position, side: .bottom, tolerance: 1) == .pin(j1Pin))
     }
 
+    // S-074
+    @Test func testPointsLightWithTheirNetAndAreHit() throws {
+        let tp = try #require(board.testPoints.firstIndex { $0.net == "PPBUS_MAIN" })
+        let point = board.testPoints[tp]
+        #expect(board.testPoints(onNet: "PPBUS_MAIN") == [tp])
+        #expect(board.highlightedTestPoints(for: .net("PPBUS_MAIN")) == [tp])
+        #expect(board.highlightedTestPoints(for: .testPoint(tp)) == [tp])
+        #expect(board.highlightedPins(for: .testPoint(tp)) == board.pins(onNet: "PPBUS_MAIN"))
+        #expect(board.schematicTerms(for: .testPoint(tp)) == ["PPBUS_MAIN"])
+        #expect(board.hitTest(point.position, side: point.side, tolerance: 1) == .testPoint(tp))
+        #expect(board.hitTest(point.position, side: point.side.flipped, tolerance: 1) != .testPoint(tp))
+        #expect(board.testPointRadius > 0)
+    }
+
     @Test func pinRadiusFollowsThePitch() throws {
         let u1 = try #require(board.part(named: "U1"))
         #expect(board.parts[u1].pinRadius == 12)

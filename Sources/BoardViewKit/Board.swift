@@ -112,6 +112,8 @@ public enum BoardSelection: Hashable, Sendable {
     case part(Int)
     case pin(Int)
     case net(String)
+    /// A test point, as an index into `Board.testPoints`.
+    case testPoint(Int)
 }
 
 /// A search result: a part or a net, by name.
@@ -150,6 +152,9 @@ public struct Board: Sendable {
     public let bounds: BoardRect
     private let partByName: [String: Int]
     private let pinsByNet: [String: [Int]]
+    private let testPointsByNet: [String: [Int]]
+    /// A test point's drawn radius: the median pin radius, so it reads beside the pads.
+    public let testPointRadius: Double
     /// Every named net, sorted.
     public let nets: [String]
 
@@ -192,6 +197,12 @@ public struct Board: Sendable {
             byName[part.name.uppercased()] = part.id
         }
 
+        var tpByNet: [String: [Int]] = [:]
+        for (index, point) in testPoints.enumerated() where !point.net.isEmpty {
+            tpByNet[point.net, default: []].append(index)
+        }
+        let radii = built.filter { !$0.pins.isEmpty }.map(\.pinRadius).sorted()
+
         let everything = outline + grouped.map(\.position) + testPoints.map(\.position)
         self.outline = outline
         self.parts = built
@@ -200,7 +211,9 @@ public struct Board: Sendable {
         self.bounds = BoardRect(around: everything) ?? BoardRect(minX: 0, minY: 0, maxX: 1, maxY: 1)
         self.partByName = byName
         self.pinsByNet = byNet
-        self.nets = byNet.keys.sorted()
+        self.testPointsByNet = tpByNet
+        self.testPointRadius = radii.isEmpty ? 10 : radii[radii.count / 2]
+        self.nets = Set(byNet.keys).union(tpByNet.keys).sorted()
     }
 
     /// Three tenths of the shortest distance between two of a part's pins, so pads
@@ -231,10 +244,25 @@ public struct Board: Sendable {
         pinsByNet[net] ?? []
     }
 
+    /// The test points on a net, as indexes into `testPoints`.
+    public func testPoints(onNet net: String) -> [Int] {
+        testPointsByNet[net] ?? []
+    }
+
+    /// The test points a selection lights: those on the selected net, or the selected pin's.
+    public func highlightedTestPoints(for selection: BoardSelection?) -> [Int] {
+        switch selection {
+        case .pin(let index): pins[index].net.isEmpty ? [] : testPoints(onNet: pins[index].net)
+        case .net(let name): testPoints(onNet: name)
+        case .testPoint(let index): testPoints[index].net.isEmpty ? [index] : testPoints(onNet: testPoints[index].net)
+        case .part, nil: []
+        }
+    }
+
     /// A net by its name as the file spells it, ignoring case.
     public func net(named name: String) -> String? {
         let wanted = name.trimmingCharacters(in: .whitespacesAndNewlines)
-        if pinsByNet[wanted] != nil { return wanted }
+        if pinsByNet[wanted] != nil || testPointsByNet[wanted] != nil { return wanted }
         return nets.first { $0.caseInsensitiveCompare(wanted) == .orderedSame }
     }
 
@@ -256,6 +284,7 @@ public struct Board: Sendable {
         case .part(let index): Array(parts[index].pins)
         case .pin(let index): pins[index].net.isEmpty ? [index] : pins(onNet: pins[index].net)
         case .net(let name): pins(onNet: name)
+        case .testPoint(let index): testPoints[index].net.isEmpty ? [] : pins(onNet: testPoints[index].net)
         case nil: []
         }
     }
@@ -267,6 +296,7 @@ public struct Board: Sendable {
         case .pin(let index):
             [pins[index].net, parts[pins[index].part].name].filter { !$0.isEmpty }
         case .net(let name): [name]
+        case .testPoint(let index): [testPoints[index].net].filter { !$0.isEmpty }
         case nil: []
         }
     }
@@ -293,8 +323,8 @@ public struct Board: Sendable {
         return found.prefix(limit).map(\.1)
     }
 
-    /// What is under a point seen from `side`: a pin within `tolerance` of its edge, else the
-    /// smallest part around the point, else nothing.
+    /// What is under a point seen from `side`: a pin within `tolerance` of its edge, else a test
+    /// point, else the smallest part around the point, else nothing.
     public func hitTest(_ point: BoardPoint, side: BoardSide, tolerance: Double) -> BoardSelection? {
         var best: (index: Int, distance: Double)?
         for part in parts where part.isThroughHole || part.side == side {
@@ -306,6 +336,12 @@ public struct Board: Sendable {
             }
         }
         if let best { return .pin(best.index) }
+        var nearest: (index: Int, distance: Double)?
+        for (index, nail) in testPoints.enumerated() where nail.side == side {
+            let d = hypot(nail.position.x - point.x, nail.position.y - point.y)
+            if d <= testPointRadius + tolerance, d < nearest?.distance ?? .infinity { nearest = (index, d) }
+        }
+        if let nearest { return .testPoint(nearest.index) }
         let around = parts.filter { ($0.isThroughHole || $0.side == side) && $0.bounds.contains(point) }
         if let smallest = around.min(by: { $0.bounds.width * $0.bounds.height < $1.bounds.width * $1.bounds.height }) {
             return .part(smallest.id)
