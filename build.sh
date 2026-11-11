@@ -30,7 +30,7 @@ bin="$scratch/$config/$name"
 # build again: real errors show up there; none means the binary is current.
 stale=$(find "$here/Sources" -name '*.swift' -newer "$bin" | head -1)
 if [[ -n "$stale" ]]; then
-  errors=$(swift build -c $config --package-path "$here" --scratch-path "$scratch" 2>&1 | grep -E "error" | head -20)
+  errors=$(swift build -c $config --package-path "$here" --scratch-path "$scratch" 2>&1 | grep -E "error" | head -20 || true)
   if [[ -n "$errors" ]]; then
     echo "build failed: binary is older than $stale"
     echo "$errors"
