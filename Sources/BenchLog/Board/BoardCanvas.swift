@@ -5,6 +5,7 @@ import SwiftUI
 /// The board, drawn by hand: thousands of pins pan and zoom smoothly in one view.
 struct BoardCanvas: NSViewRepresentable {
     let viewer: BoardViewer
+    let colors: BoardColors
 
     func makeNSView(context: Context) -> BoardCanvasView {
         let view = BoardCanvasView()
@@ -21,6 +22,7 @@ struct BoardCanvas: NSViewRepresentable {
         view.accent = NSColor(Palette.accent)
         view.accentText = NSColor(Palette.accentText)
         view.onAccent = NSColor(Palette.onAccent)
+        view.colors = colors
     }
 }
 
@@ -43,6 +45,7 @@ final class BoardCanvasView: NSView {
     var accent: NSColor = .controlAccentColor { didSet { if accent != oldValue { needsDisplay = true } } }
     var accentText: NSColor = .controlAccentColor { didSet { if accentText != oldValue { needsDisplay = true } } }
     var onAccent: NSColor = .white { didSet { if onAccent != oldValue { needsDisplay = true } } }
+    var colors = BoardColors.standard { didSet { if colors != oldValue { needsDisplay = true } } }
     var onSelect: ((BoardSelection?) -> Void)?
     var onFlip: (() -> Void)?
 
@@ -59,6 +62,8 @@ final class BoardCanvasView: NSView {
     override init(frame: NSRect) {
         super.init(frame: frame)
         wantsLayer = true
+        // Since macOS 14 a view draws past its edges unless told not to.
+        clipsToBounds = true
         layerContentsRedrawPolicy = .onSetNeedsDisplay
         setAccessibilityElement(true)
         setAccessibilityRole(.image)
@@ -182,10 +187,10 @@ final class BoardCanvasView: NSView {
         outline.addLines(between: points.map(toView))
         outline.closeSubpath()
         context.addPath(outline)
-        context.setFillColor(NSColor.textBackgroundColor.cgColor)
+        context.setFillColor(colors.board.cgColor)
         context.fillPath()
         context.addPath(outline)
-        context.setStrokeColor(NSColor.separatorColor.cgColor)
+        context.setStrokeColor(colors.edge.cgColor)
         context.setLineWidth(1)
         context.strokePath()
 
@@ -226,10 +231,10 @@ final class BoardCanvasView: NSView {
             }
         }
         context.addPath(parts)
-        context.setStrokeColor(NSColor.tertiaryLabelColor.cgColor)
+        context.setStrokeColor(colors.part.cgColor)
         context.setLineWidth(1)
         context.strokePath()
-        for (path, color) in [(ground, NSColor.tertiaryLabelColor), (pins, NSColor.secondaryLabelColor), (lit, accent)] {
+        for (path, color) in [(ground, colors.ground), (pins, colors.pin), (lit, accent)] {
             context.addPath(path)
             context.setFillColor(color.cgColor)
             context.fillPath()
@@ -249,17 +254,19 @@ final class BoardCanvasView: NSView {
             let part = board.parts[board.pins[index].part]
             let p = toView(board.pins[index].position)
             let r = max(part.pinRadius * scale, 1) + 4
-            context.setStrokeColor(NSColor.labelColor.cgColor)
+            context.setStrokeColor(colors.label.cgColor)
             context.setLineWidth(2)
             context.strokeEllipse(in: CGRect(x: p.x - r, y: p.y - r, width: r * 2, height: r * 2))
         }
 
-        // Names, once a part is big enough to hold one; net names inside large pins.
+        // Names, once a part is big enough to hold one; net names inside large pins. On a
+        // colored board the selected name is the accent itself, which reads on the mask.
+        let selectedLabel = colors == .standard ? accentText : accent
         for (name, rect, isSelected) in labels {
             let size = min(max(min(rect.width / CGFloat(max(name.count, 2)) * 1.4, rect.height * 0.5), 9), 15)
             let text = NSAttributedString(string: name, attributes: [
                 .font: NSFont.systemFont(ofSize: size, weight: isSelected ? .semibold : .regular),
-                .foregroundColor: isSelected ? accentText : NSColor.secondaryLabelColor,
+                .foregroundColor: isSelected ? selectedLabel : colors.label,
             ])
             let textSize = text.size()
             guard textSize.width <= rect.width + 8 else { continue }
@@ -268,7 +275,7 @@ final class BoardCanvasView: NSView {
         for (net, circle, isLit) in netLabels.prefix(400) {
             let text = NSAttributedString(string: net, attributes: [
                 .font: NSFont.systemFont(ofSize: min(max(circle.width / 5, 8), 12)),
-                .foregroundColor: isLit ? onAccent : NSColor.labelColor,
+                .foregroundColor: isLit ? onAccent : colors.pinText,
             ])
             let size = text.size()
             guard size.width <= circle.width * 0.92 else { continue }

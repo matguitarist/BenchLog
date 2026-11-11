@@ -284,7 +284,7 @@ private struct BoardViewerView: View {
     var body: some View {
         HSplitView {
             VStack(spacing: 0) {
-                BoardCanvas(viewer: viewer)
+                BoardCanvas(viewer: viewer, colors: ThemeStore.shared.boardColors)
                 Divider()
                 Text(viewer.summary)
                     .font(.callout)
@@ -479,6 +479,10 @@ struct BoardCommands: Commands {
                     .disabled((viewer?.hits ?? 0) == 0)
                 Button(viewer?.showsSchematic == false ? "Show Schematic" : "Hide Schematic") { viewer?.showsSchematic.toggle() }
                     .keyboardShortcut("s", modifiers: [.command, .option])
+                Divider()
+                Picker("Board Colors", selection: Bindable(ThemeStore.shared).boardColorsID) {
+                    ForEach(BoardColors.all) { Text($0.name).tag($0.id) }
+                }
                 Divider()
                 Button("Clear Selection") { viewer?.select(nil, from: .board) }
                     .keyboardShortcut("a", modifiers: [.command, .shift])

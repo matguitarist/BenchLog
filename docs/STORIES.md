@@ -901,6 +901,17 @@ UX:
 Built: `BoardViewer.showsSchematic` starts off, `toggleFullBoard()`, `reset()`; `BoardCanvasView` keeps its last fit across a resize (`fitted`), `shownRect` and `show(_:)`.
 Status: done
 
+### S-073 Board colors
+As the user, I pick how the Board window paints a board: Standard (light or dark with the Mac), or a green, blue, or black solder mask, or high contrast.
+Depends: S-070
+Acceptance:
+- [self] A scheme picked by name reaches the board; an unknown one falls back to Standard.
+- [snap] settings-appearance: Board colors under the accent; board and board-part with APP_BOARD_COLORS=green or black: the mask, gold pads, white names, the lit part in the accent.
+UX:
+- Settings > Appearance > Board colors (swatches, the mask with a pad), and Board > Board Colors. The lit net and the selection always use the accent.
+Built: `UI/BoardColors.swift` (tokens), `ThemeStore.boardColorsID` (`appearance.boardColors`, `APP_BOARD_COLORS`). The canvas now clips to its bounds (macOS 14 views draw past their edges otherwise).
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

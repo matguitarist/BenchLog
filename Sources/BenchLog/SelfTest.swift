@@ -659,6 +659,14 @@ enum SelfTest {
         check("a pick in Full Board keeps the board full", viewer.isFullBoard && !viewer.showsSchematic)
         viewer.toggleFullBoard()
         check("leaving Full Board after a pick opens the schematic", viewer.showsSchematic)
+        // S-073: board colors, from Settings or the Board menu, reach the canvas.
+        let store = ThemeStore.shared, savedColors = store.boardColorsID
+        store.boardColorsID = "green"
+        let canvas = BoardCanvasView()
+        canvas.colors = store.boardColors
+        check("a board color scheme is picked by name", canvas.colors.id == "green" && BoardColors.all.count == 5)
+        check("an unknown board color scheme falls back to Standard", BoardColors.named("nope") == .standard)
+        store.boardColorsID = savedColors
         viewer.pick(fromSchematic: "u2")
         check("a part picked in the schematic is selected on the board", viewer.selection == board.part(named: "U2").map { .part($0) })
         viewer.pick(fromSchematic: "USB_DP")

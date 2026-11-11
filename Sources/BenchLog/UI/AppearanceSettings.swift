@@ -23,6 +23,26 @@ struct AppearanceSettings: View {
                 }
             }
         }
+        Section {
+            LabeledContent("Board colors") {
+                VStack(alignment: .trailing, spacing: Space.xs) {
+                    HStack(spacing: Space.sm) {
+                        ForEach(BoardColors.all) { colors in
+                            BoardSwatch(colors: colors, selected: store.boardColorsID == colors.id) {
+                                store.boardColorsID = colors.id
+                            }
+                        }
+                    }
+                    Text(store.boardColors.name)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } footer: {
+            Text("How the Board window paints a board. A lit net always uses the accent color.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
     }
 }
 
@@ -165,5 +185,33 @@ private struct AccentSwatch: View {
             AnyShapeStyle(AngularGradient(colors: [.red, .orange, .yellow, .green, .blue, .purple, .pink, .red],
                                           center: .center))
         }
+    }
+}
+
+/// One board color: the mask with a pad on it.
+private struct BoardSwatch: View {
+    let colors: BoardColors
+    let selected: Bool
+    let choose: () -> Void
+
+    var body: some View {
+        Button(action: choose) {
+            Circle()
+                .fill(Color(nsColor: colors.board))
+                .frame(width: 16, height: 16)
+                .overlay {
+                    Circle().fill(Color(nsColor: colors.pin)).frame(width: 6, height: 6) // grid: ok
+                }
+                .overlay(Circle().strokeBorder(.primary.opacity(0.15), lineWidth: 1))
+                .overlay {
+                    // A ring outside the dot, so the row lines up with the accent colors.
+                    if selected { Circle().strokeBorder(.tint, lineWidth: 2).padding(-3) } // grid: ok
+                }
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .help(colors.name)
+        .accessibilityLabel(colors.name)
+        .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

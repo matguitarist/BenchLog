@@ -6,6 +6,7 @@ import SwiftUI
 /// People pick the accent in Settings > Appearance (AppearanceSettings.swift).
 /// Light and dark mode follow the Mac: there is no app-specific mode setting.
 ///   APP_ACCENT=mint BenchLog     run with another accent, to compare
+///   APP_BOARD_COLORS=green       the same for the board colors
 struct Theme: Identifiable, Hashable {
     struct Shades: Hashable {
         let light: UInt32
@@ -65,6 +66,12 @@ final class ThemeStore {
         didSet { UserDefaults.standard.set(themeID, forKey: "appearance.accent") }
     }
 
+    /// The board colors in the Board window (BoardColors.swift).
+    var boardColorsID: String {
+        didSet { UserDefaults.standard.set(boardColorsID, forKey: "appearance.boardColors") }
+    }
+    var boardColors: BoardColors { BoardColors.named(boardColorsID) }
+
     /// True while the Mac's accent is Multicolor.
     private(set) var macIsMulticolor = ThemeStore.readMulticolor()
 
@@ -79,6 +86,8 @@ final class ThemeStore {
     private init() {
         themeID = ProcessInfo.processInfo.environment["APP_ACCENT"]
             ?? UserDefaults.standard.string(forKey: "appearance.accent") ?? Self.defaultID
+        boardColorsID = ProcessInfo.processInfo.environment["APP_BOARD_COLORS"]
+            ?? UserDefaults.standard.string(forKey: "appearance.boardColors") ?? BoardColors.standard.id
         NotificationCenter.default.addObserver(forName: NSColor.systemColorsDidChangeNotification,
                                                object: nil, queue: .main) { [weak self] _ in
             MainActor.assumeIsolated { self?.macIsMulticolor = ThemeStore.readMulticolor() }
