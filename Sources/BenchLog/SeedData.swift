@@ -318,6 +318,11 @@ enum SeedData {
                 NSBezierPath(rect: NSRect(x: x, y: y, width: 90, height: 70)).stroke() // grid: ok a printed page, in PDF points
                 NSAttributedString(string: name, attributes: [.font: NSFont.monospacedSystemFont(ofSize: 11, weight: .bold)])
                     .draw(at: NSPoint(x: x + 4, y: y + 74))
+                // Its value and ratings in a column under the name, as Apple prints them.
+                for (line, attribute) in Self.sampleAttributes(name).enumerated() {
+                    NSAttributedString(string: attribute, attributes: [.font: NSFont.monospacedSystemFont(ofSize: 7, weight: .regular)])
+                        .draw(at: NSPoint(x: x + 4, y: y + 58 - CGFloat(line) * 9))
+                }
                 // Each part's pins wired to the page's nets.
                 for pin in 0..<2 {
                     let wireY = y + 20 + CGFloat(pin) * 30
@@ -334,6 +339,17 @@ enum SeedData {
         }
         context.closePDF()
         return data as Data
+    }
+
+    /// The attribute column printed under a part's name in the sample schematic.
+    static func sampleAttributes(_ name: String) -> [String] {
+        switch name.first {
+        case "C": ["10UF", "20%", "6.3V", "X5R", "0402"]
+        case "R": ["10K", "5%", "1/20W", "MF", "201"]
+        case "L": ["2.2UH-20%-2.0A", "2520"]
+        case "U": ["TPS62180", "QFN"]
+        default: []
+        }
     }
 
     /// A PDF with a title page and numbered pages, for the guide reader.

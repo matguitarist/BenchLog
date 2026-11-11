@@ -972,7 +972,8 @@ Acceptance:
 - [manual] On the A1502 schematic, most capacitors and resistors show a value.
 UX:
 - Read when the schematic loads, off the main thread, and kept for the window. The bar adds the value: "C713: capacitor, 10 µF 6.3 V X5R 0402, top".
-Status: to do
+Built: `PartValue.parse` and `SchematicValues.read` in BoardViewKit (the column under a name, else its row for parts drawn sideways; a pin number glued to the name is left out); `SchematicFacts.read` takes the words off the PDF with PDFKit; `BoardViewer.facts`. On the A1502 (820-4924): 1077 of 1077 capacitors, 923 of 924 resistors, 106 of 115 chips, every transistor.
+Status: done
 
 ### S-079 Part Info
 As the user, I open Part Info (⌘I) for the selected part and see its type, value and ratings, package, side, its pins with their nets and voltages, and the schematic pages it is on.

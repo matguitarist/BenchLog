@@ -703,9 +703,16 @@ enum SelfTest {
         viewer.pickFromLargePage("L1")
         check("a name picked on the large page closes it and selects it", viewer.enlargedPage == nil
               && viewer.selection == board.part(named: "L1").map { .part($0) })
+        // S-078: values read from the words under each name in the schematic.
+        await viewer.factsTask?.value
+        check("the schematic's values are read for the board's parts",
+              viewer.board.flatMap { b in b.part(named: "C1").flatMap { viewer.value(ofPart: $0)?.summary } } == "10 µF 20% 6.3 V X5R 0402"
+              && viewer.board.flatMap { b in b.part(named: "U2").flatMap { viewer.value(ofPart: $0)?.summary } } == "TPS62180 QFN",
+              "\(viewer.facts.values.count) values")
+        check("each part's pages are known", viewer.facts.pages["C1"] == [0])
         // S-077: the bar says what a part is and a net's voltage.
         viewer.select(board.part(named: "C1").map { .part($0) }, from: .board)
-        check("the bar names a part's type", viewer.summary.hasPrefix("C1: capacitor, 2 pins"), viewer.summary)
+        check("the bar names a part's type and value", viewer.summary.hasPrefix("C1: capacitor, 10 µF 20% 6.3 V X5R 0402, 2 pins"), viewer.summary)
         viewer.select(.net("PP3V3_S0"), from: .board)
         let volts = 3.3.formatted(.number.precision(.fractionLength(0...2)))
         check("the bar gives a net's voltage and power state", viewer.summary.hasPrefix("PP3V3_S0, \(volts) V in S0: "), viewer.summary)

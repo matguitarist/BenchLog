@@ -12,7 +12,7 @@ public enum PartType: String, Sendable, CaseIterable {
     private static let prefixes: [(String, PartType)] = [
         ("LED", .led), ("OSC", .oscillator),
         ("RP", .resistorNetwork), ("RN", .resistorNetwork), ("FB", .ferriteBead), ("FL", .ferriteBead),
-        ("IC", .chip), ("CR", .diode), ("CN", .connector), ("SW", .switchPart), ("TP", .testPoint),
+        ("IC", .chip), ("CR", .diode), ("DZ", .diode), ("ZD", .diode), ("CN", .connector), ("SW", .switchPart), ("TP", .testPoint),
         ("PP", .testPoint), ("XW", .jumper),
         ("C", .capacitor), ("R", .resistor), ("L", .inductor), ("U", .chip), ("Q", .transistor),
         ("D", .diode), ("F", .fuse), ("J", .connector), ("Y", .crystal), ("X", .crystal), ("T", .transformer),
@@ -21,8 +21,10 @@ public enum PartType: String, Sendable, CaseIterable {
     /// "C713" → capacitor, "FB7101" → ferrite bead; nil for names like "MH1" or "ZZ".
     public init?(partName: String) {
         let letters = String(partName.uppercased().prefix { $0.isLetter })
-        guard !letters.isEmpty, partName.dropFirst(letters.count).first?.isNumber == true,
-              let match = Self.prefixes.first(where: { $0.0 == letters }) else { return nil }
+        guard !letters.isEmpty, partName.dropFirst(letters.count).first?.isNumber == true else { return nil }
+        // Apple's test points: PP7801, PPA400.
+        if letters.hasPrefix("PP") { self = .testPoint; return }
+        guard let match = Self.prefixes.first(where: { $0.0 == letters }) else { return nil }
         self = match.1
     }
 }

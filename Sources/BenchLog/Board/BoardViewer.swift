@@ -1,6 +1,7 @@
 import AppKit
 import BenchLogKit
 import BoardViewKit
+import LogKitUI
 import PDFKit
 import SwiftUI
 import UniformTypeIdentifiers
@@ -32,8 +33,17 @@ final class BoardViewer {
     private(set) var schematics: [SchematicChoice] = []
     /// The schematic PDF in use. Choosing another one shows it.
     var schematic: URL? {
-        didSet { if oldValue != nil, schematic != oldValue, schematic != nil { showsSchematic = true } }
+        didSet {
+            if oldValue != nil, schematic != oldValue, schematic != nil { showsSchematic = true }
+            if schematic != oldValue { readFacts() }
+        }
     }
+    /// What the schematic says about the board's parts (values, pages); empty until read.
+    private(set) var facts = SchematicFacts()
+    private(set) var isReadingFacts = false
+    /// The reading under way, for the self-test to wait on.
+    @ObservationIgnored private(set) var factsTask: Task<Void, Never>?
+    @ObservationIgnored private weak var log: LogStore?
     /// The board opens alone; the schematic opens beside it on the first pick.
     var showsSchematic = false {
         didSet {
@@ -127,11 +137,35 @@ final class BoardViewer {
         do {
             let read = try await Task.detached(priority: .userInitiated) { try BoardFile.read(Data(contentsOf: url)) }.value
             board = read
+            log = model.log
+            readFacts()
             model.log.post(.info, "Opened the board \(title): \(read.parts.count) parts, \(read.pins.count) pins", source: "Board")
         } catch {
             failure = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             model.log.post(.warning, "Unable to open the board \(title): \(failure ?? "")", source: "Board")
         }
+    }
+
+    /// Reads each part's value and pages from the schematic, off the main thread.
+    func readFacts() {
+        factsTask?.cancel()
+        facts = SchematicFacts()
+        guard let board, let url = schematic else { isReadingFacts = false; return }
+        let names = Set(board.parts.map { $0.name.uppercased() })
+        isReadingFacts = true
+        factsTask = Task { [weak self] in
+            let facts = await Task.detached(priority: .utility) { SchematicFacts.read(url, partNames: names) }.value
+            guard !Task.isCancelled, let self, self.schematic == url else { return }
+            self.facts = facts
+            self.isReadingFacts = false
+            self.log?.post(.info, "Read \(facts.values.count) part values from the schematic \(url.lastPathComponent)", source: "Board")
+        }
+    }
+
+    /// What the schematic says about a part, nil when it says nothing.
+    func value(ofPart index: Int) -> PartValue? {
+        guard let board, let value = facts.values[board.parts[index].name.uppercased()], !value.isEmpty else { return nil }
+        return value
     }
 
     /// Opens the file in the app macOS picks for it (FlexBV, OpenBoardView, …).
@@ -199,7 +233,8 @@ final class BoardViewer {
         case .part(let index):
             let part = board.parts[index]
             let type = PartType(partName: part.name).map { "\(Self.word(for: $0)), " } ?? ""
-            return "\(part.name): \(type)" + String(localized: "\(part.pins.count) pins, \(part.side == .top ? String(localized: "top") : String(localized: "bottom"))")
+            let value = value(ofPart: index).map { "\($0.summary), " } ?? ""
+            return "\(part.name): \(type)\(value)" + String(localized: "\(part.pins.count) pins, \(part.side == .top ? String(localized: "top") : String(localized: "bottom"))")
         case .pin(let index):
             let pin = board.pins[index]
             let part = board.parts[pin.part].name

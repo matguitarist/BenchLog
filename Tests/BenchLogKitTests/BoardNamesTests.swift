@@ -9,7 +9,7 @@ import Testing
         ("Q7055", .transistor), ("D7101", .diode), ("CR2", .diode), ("LED1", .led), ("F7000", .fuse),
         ("J9000", .connector), ("CN1", .connector), ("Y5110", .crystal), ("X1", .crystal), ("OSC1", .oscillator),
         ("SW1", .switchPart), ("TP12", .testPoint), ("PP7801", .testPoint), ("XW7000", .jumper), ("T1", .transformer),
-        ("c12", .capacitor),
+        ("c12", .capacitor), ("PPA400", .testPoint), ("DZ6601", .diode),
     ])
     func aPartsLettersGiveItsType(name: String, type: PartType) {
         #expect(PartType(partName: name) == type)
