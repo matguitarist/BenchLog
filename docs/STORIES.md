@@ -924,6 +924,20 @@ UX:
 Built: `BoardSelection.testPoint`, `Board.testPoints(onNet:)`, `highlightedTestPoints(for:)`, `testPointRadius` (the median pin radius); hit test: pin, then test point, then part. Test runs no longer save the accent or board colors to the owner's settings.
 Status: done
 
+### S-075 Click a schematic page to see it large
+As the user, I click a page in the schematic and it opens large over the Board window, so I can read it without hiding the board.
+Depends: S-070
+Acceptance:
+- [self] The large page stops at the first and last page; a name picked there closes it and selects it on the board; a name the board lacks leaves it open.
+- [snap] board-page: the page with the net's matches highlighted, Page 1 of 3, the arrows, zoom, and Done.
+- [manual] One click on a page opens it; a double-click on a name still picks it without opening the page; a drag still selects text.
+UX:
+- Open: one click on a page (after the double-click time, so a double-click doesn't open it), or Board > Enlarge Page (⌥⌘E) for the page in view.
+- Surface: a sheet as large as the window less a margin; Previous/Next Page (← →), Zoom In/Out/to Fit (⌘+, ⌘−, ⌘0, or a pinch), Done (Esc).
+- Words: "Enlarge Page", "Page 3 of 82", "Double-click a name to find it on the board."
+Built: `SchematicPDFView` opens the clicked page (`SchematicController.onOpenPage`); `LargePagePDFView` and `LargePagePanel`; `BoardViewer.enlargedPage`, `turnPage`, `pickFromLargePage`; the Board menu's zoom acts on the large page while it is open.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.

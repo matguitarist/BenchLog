@@ -234,6 +234,12 @@ enum Snapshot {
                             viewer.select(.net(net), from: .search)
                             try? await Task.sleep(for: .seconds(1))
                             capture(to: "\(dir)/board-net-\(mode).png", window: window)
+                            // The page with the net, large.
+                            viewer.enlargePage()
+                            try? await Task.sleep(for: .seconds(1.2))
+                            capture(to: "\(dir)/board-page-\(mode).png", window: window)
+                            viewer.enlargedPage = nil
+                            try? await Task.sleep(for: .seconds(0.6))
                         }
                     }
                     window?.close()

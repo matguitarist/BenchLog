@@ -11,6 +11,8 @@ final class SchematicController {
     var onPick: ((String) -> Void)?
     /// A schematic finished loading.
     var onLoad: (() -> Void)?
+    /// People clicked a page once: open it large (its index).
+    var onOpenPage: ((Int) -> Void)?
     private var results: [PDFSelection] = []
     private(set) var current = -1
 
@@ -54,6 +56,20 @@ final class SchematicController {
         return Schematic.isWholeName(before: before, after: after)
     }
 
+    var document: PDFDocument? { view?.document }
+
+    /// The page shown in the pane, as an index.
+    var currentPage: Int? {
+        guard let view, let document = view.document, let page = view.currentPage else { return nil }
+        return document.index(for: page)
+    }
+
+    /// The highlighted matches on a page, for the large view.
+    func matches(onPage index: Int) -> [PDFSelection] {
+        guard let page = document?.page(at: index) else { return [] }
+        return results.filter { $0.pages.contains(page) }
+    }
+
     /// People finished a click or a drag in the schematic.
     func selectionEnded() {
         guard let text = view?.currentSelection?.string, let name = Schematic.name(fromSelection: text) else { return }
@@ -67,9 +83,31 @@ final class SchematicPDFView: PDFView {
     /// True while the controller selects a match, so it isn't taken for a person's pick.
     var isSelectingForSearch = false
 
+    private var downAt: NSPoint?
+    private var pendingPage: Task<Void, Never>?
+
+    override func mouseDown(with event: NSEvent) {
+        pendingPage?.cancel()
+        downAt = event.locationInWindow
+        super.mouseDown(with: event)
+    }
+
     override func mouseUp(with event: NSEvent) {
         super.mouseUp(with: event)
         if !isSelectingForSearch { controller?.selectionEnded() }
+        // One click that didn't move or select text opens the page large, once it's clear no
+        // second click (a double-click on a name) follows.
+        guard event.clickCount == 1, let downAt,
+              hypot(event.locationInWindow.x - downAt.x, event.locationInWindow.y - downAt.y) < 4,
+              (currentSelection?.string ?? "").isEmpty,
+              let document, let page = page(for: convert(event.locationInWindow, from: nil), nearest: false)
+        else { return }
+        let index = document.index(for: page)
+        pendingPage = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(NSEvent.doubleClickInterval))
+            guard !Task.isCancelled else { return }
+            self?.controller?.onOpenPage?(index)
+        }
     }
 }
 
@@ -95,5 +133,46 @@ struct SchematicPDF: NSViewRepresentable {
         view.autoScales = true
         // After this update: the search it runs changes what SwiftUI shows.
         Task { @MainActor in controller.onLoad?() }
+    }
+}
+
+// MARK: Large page
+
+/// One schematic page, large: the panel people open by clicking a page.
+final class LargePagePDFView: PDFView {
+    /// A name double-clicked or selected on the page.
+    var onPick: ((String) -> Void)?
+
+    override func mouseUp(with event: NSEvent) {
+        super.mouseUp(with: event)
+        if let text = currentSelection?.string, let name = Schematic.name(fromSelection: text) { onPick?(name) }
+    }
+}
+
+struct LargePagePDF: NSViewRepresentable {
+    let document: PDFDocument
+    let page: Int
+    let highlights: [PDFSelection]
+    let onPick: (String) -> Void
+    let onMake: (LargePagePDFView) -> Void
+
+    func makeNSView(context: Context) -> LargePagePDFView {
+        let view = LargePagePDFView()
+        view.displayMode = .singlePage
+        view.displaysPageBreaks = false
+        view.backgroundColor = .underPageBackgroundColor
+        view.document = document
+        view.autoScales = true
+        onMake(view)
+        return view
+    }
+
+    func updateNSView(_ view: LargePagePDFView, context: Context) {
+        view.onPick = onPick
+        if let target = document.page(at: page), view.currentPage != target {
+            view.go(to: target)
+            view.autoScales = true
+        }
+        view.highlightedSelections = highlights.isEmpty ? nil : highlights
     }
 }

@@ -667,6 +667,15 @@ enum SelfTest {
         check("a board color scheme is picked by name", canvas.colors.id == "green" && BoardColors.all.count == 5)
         check("an unknown board color scheme falls back to Standard", BoardColors.named("nope") == .standard)
         store.boardColorsID = savedColors
+        // S-075: a page open large; a name picked there closes it and selects on the board.
+        viewer.enlargedPage = 0
+        viewer.turnPage(-1)
+        check("the large page stops at the first page", viewer.enlargedPage == 0)
+        viewer.pickFromLargePage("NOT_ON_THIS_BOARD")
+        check("a name the board lacks keeps the large page open", viewer.enlargedPage == 0)
+        viewer.pickFromLargePage("L1")
+        check("a name picked on the large page closes it and selects it", viewer.enlargedPage == nil
+              && viewer.selection == board.part(named: "L1").map { .part($0) })
         viewer.pick(fromSchematic: "u2")
         check("a part picked in the schematic is selected on the board", viewer.selection == board.part(named: "U2").map { .part($0) })
         viewer.pick(fromSchematic: "USB_DP")

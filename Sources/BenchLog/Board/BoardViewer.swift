@@ -56,7 +56,10 @@ final class BoardViewer {
     private(set) var hits = 0
     private(set) var hitNumber = 0
 
+    /// The schematic page open large, as an index; nil when the panel is closed.
+    var enlargedPage: Int?
     @ObservationIgnored weak var canvas: BoardCanvasView?
+    @ObservationIgnored weak var largePage: LargePagePDFView?
     @ObservationIgnored let pdf = SchematicController()
     /// The last Board window opened, for snapshots and the self-test.
     static weak var latest: BoardViewer?
@@ -65,6 +68,7 @@ final class BoardViewer {
         self.source = source
         pdf.onPick = { [weak self] name in self?.pick(fromSchematic: name) }
         pdf.onLoad = { [weak self] in self?.findInSchematic(reveal: true) }
+        pdf.onOpenPage = { [weak self] index in self?.enlargedPage = index }
     }
 
     var term: String? { terms.indices.contains(termIndex) ? terms[termIndex] : nil }
@@ -221,7 +225,40 @@ final class BoardViewer {
     // MARK: View
 
     func flip() { side = side.flipped }
-    func zoom(_ direction: Int) { canvas?.zoom(direction) }
+
+    /// Zooms the board, or the large page while it is open.
+    func zoom(_ direction: Int) {
+        guard enlargedPage != nil, let largePage else { canvas?.zoom(direction); return }
+        switch direction {
+        case 0: largePage.autoScales = true
+        case 1: largePage.zoomIn(nil)
+        default: largePage.zoomOut(nil)
+        }
+    }
+
+    // MARK: Large page
+
+    var canEnlargePage: Bool { showsSchematic && pdf.document != nil }
+    var pageCount: Int { pdf.document?.pageCount ?? 0 }
+
+    /// Opens the schematic page shown in the pane, large.
+    func enlargePage() {
+        guard canEnlargePage else { return }
+        enlargedPage = pdf.currentPage ?? 0
+    }
+
+    /// The previous (-1) or next (1) page in the large panel.
+    func turnPage(_ delta: Int) {
+        guard let page = enlargedPage else { return }
+        enlargedPage = min(max(page + delta, 0), max(pageCount - 1, 0))
+    }
+
+    /// A name double-clicked on the large page: closes the panel and picks it on the board.
+    func pickFromLargePage(_ name: String) {
+        guard let board, board.part(named: name) != nil || board.net(named: name) != nil else { return }
+        enlargedPage = nil
+        pick(fromSchematic: name)
+    }
 
     /// Back to how the window opens: the top, the whole board, no selection, no schematic.
     func reset() {
@@ -300,6 +337,7 @@ struct BoardWindow: View {
 private struct BoardViewerView: View {
     @Bindable var viewer: BoardViewer
     @FocusState private var searchFocused: Bool
+    @State private var windowSize = CGSize(width: 1200, height: 800)
 
     var body: some View {
         HSplitView {
@@ -367,8 +405,73 @@ private struct BoardViewerView: View {
             }
         }
         .onSubmit(of: .search) { viewer.submitSearch() }
+        .onGeometryChange(for: CGSize.self) { $0.size } action: { windowSize = $0 }
+        .sheet(item: Binding(get: { viewer.enlargedPage.map(PageNumber.init) }, set: { viewer.enlargedPage = $0?.index })) { _ in
+            LargePagePanel(viewer: viewer)
+                .frame(width: max(windowSize.width - 2 * Space.xl, 560), height: max(windowSize.height - 2 * Space.xl, 400))
+        }
         .focusedSceneValue(\.boardViewer, viewer)
         .focusedSceneValue(\.boardFind, BoardFindAction(id: ObjectIdentifier(viewer)) { searchFocused = true })
+    }
+}
+
+/// The page open large, for `sheet(item:)`.
+private struct PageNumber: Identifiable {
+    let index: Int
+    var id: Int { 0 } // one panel: turning the page keeps it open
+}
+
+/// A schematic page, large, over the Board window: Previous/Next page, zoom, Done.
+private struct LargePagePanel: View {
+    @Bindable var viewer: BoardViewer
+
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: Space.sm) {
+                ControlGroup {
+                    Button("Previous Page", systemImage: "chevron.left") { viewer.turnPage(-1) }
+                        .keyboardShortcut(.leftArrow, modifiers: [])
+                        .disabled((viewer.enlargedPage ?? 0) == 0)
+                        .help("Show the previous page (←)")
+                    Button("Next Page", systemImage: "chevron.right") { viewer.turnPage(1) }
+                        .keyboardShortcut(.rightArrow, modifiers: [])
+                        .disabled((viewer.enlargedPage ?? 0) >= viewer.pageCount - 1)
+                        .help("Show the next page (→)")
+                }
+                .labelStyle(.iconOnly)
+                .fixedSize()
+                Text("Page \((viewer.enlargedPage ?? 0) + 1) of \(viewer.pageCount)")
+                    .foregroundStyle(.secondary)
+                    .monospacedDigit()
+                Spacer(minLength: 0)
+                Text("Double-click a name to find it on the board.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+                Spacer(minLength: 0)
+                ControlGroup {
+                    Button("Zoom Out", systemImage: "minus.magnifyingglass") { viewer.zoom(-1) }
+                        .help("Zoom out (⌘−)")
+                    Button("Zoom to Fit", systemImage: "arrow.up.left.and.down.right.magnifyingglass") { viewer.zoom(0) }
+                        .help("Fit the page (⌘0)")
+                    Button("Zoom In", systemImage: "plus.magnifyingglass") { viewer.zoom(1) }
+                        .help("Zoom in (⌘+)")
+                }
+                .labelStyle(.iconOnly)
+                .fixedSize()
+                Button("Done") { viewer.enlargedPage = nil }
+                    .keyboardShortcut(.cancelAction)
+            }
+            .padding(.horizontal, Space.md)
+            .frame(height: 48)
+            .gridArea("page-bar", inset: Space.sm)
+            Divider()
+            if let document = viewer.pdf.document, let page = viewer.enlargedPage {
+                LargePagePDF(document: document, page: page, highlights: viewer.pdf.matches(onPage: page),
+                             onPick: { viewer.pickFromLargePage($0) }, onMake: { viewer.largePage = $0 })
+            }
+        }
+        .noInitialFocus()
     }
 }
 
@@ -382,6 +485,7 @@ private struct SchematicPane: View {
             Divider()
             if let url = viewer.schematic {
                 SchematicPDF(url: url, controller: viewer.pdf)
+                    .help("Click a page to see it large. Double-click a name to find it on the board.")
             } else {
                 ContentUnavailableView {
                     Label("No Schematic", systemImage: "doc.text.magnifyingglass")
@@ -499,6 +603,9 @@ struct BoardCommands: Commands {
                     .disabled((viewer?.hits ?? 0) == 0)
                 Button(viewer?.showsSchematic == false ? "Show Schematic" : "Hide Schematic") { viewer?.showsSchematic.toggle() }
                     .keyboardShortcut("s", modifiers: [.command, .option])
+                Button("Enlarge Page") { viewer?.enlargePage() }
+                    .keyboardShortcut("e", modifiers: [.command, .option])
+                    .disabled(viewer?.canEnlargePage != true)
                 Divider()
                 Picker("Board Colors", selection: Bindable(ThemeStore.shared).boardColorsID) {
                     ForEach(BoardColors.all) { Text($0.name).tag($0.id) }
