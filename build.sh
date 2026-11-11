@@ -26,11 +26,17 @@ swift build -c $config --package-path "$here" --scratch-path "$scratch" 2>&1 | g
 bin="$scratch/$config/$name"
 [[ -x "$bin" ]] || { echo "build failed"; exit 1; }
 # swift build can report success while an edited file failed to compile. Catch that.
+# A change that compiles to the same code (a comment) leaves the binary older too, so
+# build again: real errors show up there; none means the binary is current.
 stale=$(find "$here/Sources" -name '*.swift' -newer "$bin" | head -1)
 if [[ -n "$stale" ]]; then
-  echo "build failed: binary is older than $stale"
-  swift build -c $config --package-path "$here" --scratch-path "$scratch" 2>&1 | grep -E "error" | head -20
-  exit 1
+  errors=$(swift build -c $config --package-path "$here" --scratch-path "$scratch" 2>&1 | grep -E "error" | head -20)
+  if [[ -n "$errors" ]]; then
+    echo "build failed: binary is older than $stale"
+    echo "$errors"
+    exit 1
+  fi
+  touch "$bin"
 fi
 
 app="$HOME/Applications/$name.app"
