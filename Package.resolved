@@ -1,5 +1,5 @@
 {
-  "originHash" : "1508b6d4f4e55d6fb59c539813c169d933aba4123dced548408eebb520858f48",
+  "originHash" : "24c5f2e499541639827b70e318bbb2d562f9621f5adc6c83cec2fea1081458ca",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/matguitarist/LogKit",
       "state" : {
-        "revision" : "3d1e30e1ea5b69c69026af8893d1d98b677926fd",
-        "version" : "0.5.0"
+        "revision" : "0f7ee59ae05dc81eed6bef56b4d910fd8b83e97f",
+        "version" : "0.6.0"
       }
     },
     {

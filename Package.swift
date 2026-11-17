@@ -7,7 +7,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/sparkle-project/Sparkle", from: "2.6.0"),
         // The Log page's viewer, shared by my Mac apps.
-        .package(url: "https://github.com/matguitarist/LogKit", from: "0.5.0"),
+        .package(url: "https://github.com/matguitarist/LogKit", from: "0.6.0"),
         // SQLite: a plain, documented schema that a future iOS app, Android app, or sync server can share.
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.12.0"),
     ],
