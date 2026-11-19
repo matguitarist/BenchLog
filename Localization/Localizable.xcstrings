@@ -8285,6 +8285,1696 @@
           }
         }
       }
+    },
+    "%@ %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ (%lld pins)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ (%2$lld broches)"
+          }
+        }
+      }
+    },
+    "%@ pin %lld, no net": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ broche %2$lld, aucun réseau"
+          }
+        }
+      }
+    },
+    "%@ pin %lld: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@ broche %2$lld : %3$@"
+          }
+        }
+      }
+    },
+    "%lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld"
+          }
+        }
+      }
+    },
+    "%lld matches": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld résultats"
+          }
+        }
+      }
+    },
+    "%lld parts, %lld nets. Click a part or a pin.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld pièces, %2$lld réseaux. Cliquez sur une pièce ou une broche."
+          }
+        }
+      }
+    },
+    "%lld pins": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld broches"
+          }
+        }
+      }
+    },
+    "%lld pins, %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld broches, %2$@"
+          }
+        }
+      }
+    },
+    ", %lld pins on the net": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", %lld broches sur le réseau"
+          }
+        }
+      }
+    },
+    ", %lld test points": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", %lld points de test"
+          }
+        }
+      }
+    },
+    ", 1 test point": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": ", 1 point de test"
+          }
+        }
+      }
+    },
+    "0.452, OL": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "0,452, OL"
+          }
+        }
+      }
+    },
+    "12k, OL": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "12k, OL"
+          }
+        }
+      }
+    },
+    "3.3": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3,3"
+          }
+        }
+      }
+    },
+    ": %lld pins on the net": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": " : %lld broches sur le réseau"
+          }
+        }
+      }
+    },
+    "Add Reading": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter la mesure"
+          }
+        }
+      }
+    },
+    "Add a Claude API Key…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une clé d’API Claude…"
+          }
+        }
+      }
+    },
+    "Add a Claude API key in Settings > Board first.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez d’abord une clé d’API Claude dans Réglages > Carte."
+          }
+        }
+      }
+    },
+    "Add a meter reading on the selected pin or net, and see this repair's readings (⌘R)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajouter une mesure sur la broche ou le réseau sélectionné, et voir les mesures de cette réparation (⌘R)"
+          }
+        }
+      }
+    },
+    "Add the schematic PDF to this repair or its device, then open the board again.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajoutez le PDF du schéma à cette réparation ou à son appareil, puis rouvrez la carte."
+          }
+        }
+      }
+    },
+    "Ask Again": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redemander"
+          }
+        }
+      }
+    },
+    "Ask Claude again about this part": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Redemander à Claude au sujet de cette pièce"
+          }
+        }
+      }
+    },
+    "Ask Claude what this part does. Sends its schematic page and pin nets (⌥⌘I)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demander à Claude à quoi sert cette pièce. Envoie sa page du schéma et les réseaux de ses broches (⌥⌘I)"
+          }
+        }
+      }
+    },
+    "Asking Claude…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Question à Claude…"
+          }
+        }
+      }
+    },
+    "BenchLog can't read %@ boards yet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BenchLog ne lit pas encore les cartes %@."
+          }
+        }
+      }
+    },
+    "BenchLog couldn't reach Claude: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "BenchLog n’a pas pu joindre Claude : %@"
+          }
+        }
+      }
+    },
+    "Black": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Noir"
+          }
+        }
+      }
+    },
+    "Blue": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bleu"
+          }
+        }
+      }
+    },
+    "Board": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carte"
+          }
+        }
+      }
+    },
+    "Board Colors": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleurs de la carte"
+          }
+        }
+      }
+    },
+    "Board colors": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Couleurs de la carte"
+          }
+        }
+      }
+    },
+    "Board, bottom side": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carte, côté dessous"
+          }
+        }
+      }
+    },
+    "Board, top side": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carte, côté dessus"
+          }
+        }
+      }
+    },
+    "Bottom": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dessous"
+          }
+        }
+      }
+    },
+    "Can't Open Board": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Impossible d’ouvrir la carte"
+          }
+        }
+      }
+    },
+    "Choose a board file. A schematic PDF in the same folder opens beside it.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisissez un fichier de carte. Un PDF de schéma dans le même dossier s’ouvre à côté."
+          }
+        }
+      }
+    },
+    "Choose the schematic PDF": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choisir le PDF du schéma"
+          }
+        }
+      }
+    },
+    "Claude API key": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clé d’API Claude"
+          }
+        }
+      }
+    },
+    "Claude couldn't answer: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude n’a pas pu répondre : %@"
+          }
+        }
+      }
+    },
+    "Claude declined to answer about this part.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude a refusé de répondre au sujet de cette pièce."
+          }
+        }
+      }
+    },
+    "Claude didn't accept the API key. Check it in Settings > Board.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude n’a pas accepté la clé d’API. Vérifiez-la dans Réglages > Carte."
+          }
+        }
+      }
+    },
+    "Claude is busy. Try again in a minute.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Claude est occupé. Réessayez dans une minute."
+          }
+        }
+      }
+    },
+    "Claude's answer, from the schematic page. Check it against the board.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réponse de Claude, d’après la page du schéma. Vérifiez-la sur la carte."
+          }
+        }
+      }
+    },
+    "Clear Selection": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Effacer la sélection"
+          }
+        }
+      }
+    },
+    "Click a page to see it large. Double-click a name to find it on the board.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cliquez sur une page pour l’agrandir. Double-cliquez sur un nom pour le trouver sur la carte."
+          }
+        }
+      }
+    },
+    "Current": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Courant"
+          }
+        }
+      }
+    },
+    "Delete Reading": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Supprimer la mesure"
+          }
+        }
+      }
+    },
+    "Dielectric": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diélectrique"
+          }
+        }
+      }
+    },
+    "Double-click a name to find it on the board.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Double-cliquez sur un nom pour le trouver sur la carte."
+          }
+        }
+      }
+    },
+    "Enlarge Page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agrandir la page"
+          }
+        }
+      }
+    },
+    "Exit Full Board": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Quitter Carte entière"
+          }
+        }
+      }
+    },
+    "Explain This Part": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Expliquer cette pièce"
+          }
+        }
+      }
+    },
+    "Find Part or Net…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouver une pièce ou un réseau…"
+          }
+        }
+      }
+    },
+    "Find in Schematic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouver dans le schéma"
+          }
+        }
+      }
+    },
+    "Find words on every page. Return shows the next match (⌘F)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Trouver des mots sur chaque page. Retour affiche le résultat suivant (⌘F)"
+          }
+        }
+      }
+    },
+    "Fit the page (⌘0)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajuster la page (⌘0)"
+          }
+        }
+      }
+    },
+    "Full Board": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Carte entière"
+          }
+        }
+      }
+    },
+    "Get a key at console.anthropic.com": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obtenez une clé sur console.anthropic.com"
+          }
+        }
+      }
+    },
+    "Green": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vert"
+          }
+        }
+      }
+    },
+    "Hide Schematic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer le schéma"
+          }
+        }
+      }
+    },
+    "Hide the schematic (⌥⌘S)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Masquer le schéma (⌥⌘S)"
+          }
+        }
+      }
+    },
+    "High Contrast": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Contraste élevé"
+          }
+        }
+      }
+    },
+    "How the Board window paints a board. A lit net always uses the accent color.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comment la fenêtre Carte peint une carte. Un réseau allumé prend toujours la couleur d’accentuation."
+          }
+        }
+      }
+    },
+    "In Part Info, Explain This Part asks Claude what a part does. Only that part's schematic page, its value, and its pin nets are sent to Anthropic, never a customer or a repair. Each answer is kept with the schematic and costs a few cents on your Anthropic account.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dans Infos sur la pièce, Expliquer cette pièce demande à Claude à quoi sert une pièce. Seuls la page du schéma de cette pièce, sa valeur et les réseaux de ses broches sont envoyés à Anthropic, jamais un client ni une réparation. Chaque réponse est gardée avec le schéma et coûte quelques cents sur votre compte Anthropic."
+          }
+        }
+      }
+    },
+    "LED": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DEL"
+          }
+        }
+      }
+    },
+    "Look for the net or the part in the schematic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Chercher le réseau ou la pièce dans le schéma"
+          }
+        }
+      }
+    },
+    "Mode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mode"
+          }
+        }
+      }
+    },
+    "Net %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réseau %@"
+          }
+        }
+      }
+    },
+    "Next Match": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Résultat suivant"
+          }
+        }
+      }
+    },
+    "Next Page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page suivante"
+          }
+        }
+      }
+    },
+    "Next in Schematic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Suivant dans le schéma"
+          }
+        }
+      }
+    },
+    "No Repair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune réparation"
+          }
+        }
+      }
+    },
+    "No Schematic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun schéma"
+          }
+        }
+      }
+    },
+    "No matches": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun résultat"
+          }
+        }
+      }
+    },
+    "No net": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun réseau"
+          }
+        }
+      }
+    },
+    "No readings on this board yet.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucune mesure sur cette carte pour l’instant."
+          }
+        }
+      }
+    },
+    "No schematic is open beside the board.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aucun schéma n’est ouvert à côté de la carte."
+          }
+        }
+      }
+    },
+    "Note (optional)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Note (facultative)"
+          }
+        }
+      }
+    },
+    "Open Board": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir la carte"
+          }
+        }
+      }
+    },
+    "Open Board…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir une carte…"
+          }
+        }
+      }
+    },
+    "Open in Default App": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir dans l’app par défaut"
+          }
+        }
+      }
+    },
+    "Package": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Boîtier"
+          }
+        }
+      }
+    },
+    "Page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page"
+          }
+        }
+      }
+    },
+    "Page %lld of %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page %1$lld sur %2$lld"
+          }
+        }
+      }
+    },
+    "Pages": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pages"
+          }
+        }
+      }
+    },
+    "Part Info": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Infos sur la pièce"
+          }
+        }
+      }
+    },
+    "Part Number": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Numéro de pièce"
+          }
+        }
+      }
+    },
+    "Part or Net": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pièce ou réseau"
+          }
+        }
+      }
+    },
+    "Pin %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Broche %@"
+          }
+        }
+      }
+    },
+    "Pin %lld": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Broche %lld"
+          }
+        }
+      }
+    },
+    "Pins": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Broches"
+          }
+        }
+      }
+    },
+    "Power": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Puissance"
+          }
+        }
+      }
+    },
+    "Previous Match": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Résultat précédent"
+          }
+        }
+      }
+    },
+    "Previous Page": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Page précédente"
+          }
+        }
+      }
+    },
+    "Previous in Schematic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Précédent dans le schéma"
+          }
+        }
+      }
+    },
+    "Put the schematic PDF in the board's folder, then open the board again.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Placez le PDF du schéma dans le dossier de la carte, puis rouvrez la carte."
+          }
+        }
+      }
+    },
+    "Put the schematic and the view back (⇧⌘F)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Remettre le schéma et la vue (⇧⌘F)"
+          }
+        }
+      }
+    },
+    "Reading the board…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lecture de la carte…"
+          }
+        }
+      }
+    },
+    "Readings": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mesures"
+          }
+        }
+      }
+    },
+    "Readings are kept on a repair. Open this board from a repair, or from a device with a repair in progress.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les mesures sont gardées sur une réparation. Ouvrez cette carte depuis une réparation, ou depuis un appareil qui a une réparation en cours."
+          }
+        }
+      }
+    },
+    "Readings…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mesures…"
+          }
+        }
+      }
+    },
+    "Save Key": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrer la clé"
+          }
+        }
+      }
+    },
+    "Saved in the Keychain": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enregistrée dans le trousseau"
+          }
+        }
+      }
+    },
+    "Schematic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Schéma"
+          }
+        }
+      }
+    },
+    "See page %lld large": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Agrandir la page %lld"
+          }
+        }
+      }
+    },
+    "Select %@ on the board": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionner %@ sur la carte"
+          }
+        }
+      }
+    },
+    "Select a part or a net to find it here.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez une pièce ou un réseau pour le trouver ici."
+          }
+        }
+      }
+    },
+    "Select a pin, a net, or a test point to add a reading.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sélectionnez une broche, un réseau ou un point de test pour ajouter une mesure."
+          }
+        }
+      }
+    },
+    "Sends only this part's schematic page, its value, and its pin nets to Anthropic.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "N’envoie à Anthropic que la page du schéma de cette pièce, sa valeur et les réseaux de ses broches."
+          }
+        }
+      }
+    },
+    "Show Bottom": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le dessous"
+          }
+        }
+      }
+    },
+    "Show Schematic": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le schéma"
+          }
+        }
+      }
+    },
+    "Show Top": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le dessus"
+          }
+        }
+      }
+    },
+    "Show the next page (→)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher la page suivante (→)"
+          }
+        }
+      }
+    },
+    "Show the part's value, pages, and pins (⌘I)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher la valeur, les pages et les broches de la pièce (⌘I)"
+          }
+        }
+      }
+    },
+    "Show the previous page (←)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher la page précédente (←)"
+          }
+        }
+      }
+    },
+    "Show the schematic (⌥⌘S)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le schéma (⌥⌘S)"
+          }
+        }
+      }
+    },
+    "Show the top or the bottom of the board (⌘1, ⌘2, or Space)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le dessus ou le dessous de la carte (⌘1, ⌘2 ou Espace)"
+          }
+        }
+      }
+    },
+    "Show the whole board (⌘0)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher toute la carte (⌘0)"
+          }
+        }
+      }
+    },
+    "Show the whole board in the whole window (⇧⌘F)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher toute la carte dans toute la fenêtre (⇧⌘F)"
+          }
+        }
+      }
+    },
+    "Side": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Côté"
+          }
+        }
+      }
+    },
+    "Standard": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Standard"
+          }
+        }
+      }
+    },
+    "Test point %lld, %@, no net": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Point de test %1$lld, %2$@, aucun réseau"
+          }
+        }
+      }
+    },
+    "Test point %lld, %@: %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Point de test %1$lld, %2$@ : %3$@"
+          }
+        }
+      }
+    },
+    "The board file is damaged: %@.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fichier de la carte est endommagé : %@."
+          }
+        }
+      }
+    },
+    "The board file is no longer in the library.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le fichier de la carte n’est plus dans la bibliothèque."
+          }
+        }
+      }
+    },
+    "The schematic gives no value for this part.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Le schéma ne donne aucune valeur pour cette pièce."
+          }
+        }
+      }
+    },
+    "This .fz board is scrambled, and BenchLog doesn't have its key.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette carte .fz est brouillée, et BenchLog n’a pas sa clé."
+          }
+        }
+      }
+    },
+    "This part isn't in the schematic, so there is no page to send.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette pièce n’est pas dans le schéma, il n’y a donc aucune page à envoyer."
+          }
+        }
+      }
+    },
+    "Tolerance": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tolérance"
+          }
+        }
+      }
+    },
+    "Top": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dessus"
+          }
+        }
+      }
+    },
+    "Type": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Type"
+          }
+        }
+      }
+    },
+    "Type a number, with k or M for ohms, or OL.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tapez un nombre, avec k ou M pour les ohms, ou OL."
+          }
+        }
+      }
+    },
+    "Unknown": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inconnu"
+          }
+        }
+      }
+    },
+    "Value": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Valeur"
+          }
+        }
+      }
+    },
+    "Voltage": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tension"
+          }
+        }
+      }
+    },
+    "Zoom in (⌘+)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom avant (⌘+)"
+          }
+        }
+      }
+    },
+    "Zoom out (⌘−)": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Zoom arrière (⌘−)"
+          }
+        }
+      }
+    },
+    "Zoom to Fit": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ajuster à la fenêtre"
+          }
+        }
+      }
+    },
+    "a part line is cut short": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "une ligne de pièce est tronquée"
+          }
+        }
+      }
+    },
+    "always on": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "toujours actif"
+          }
+        }
+      }
+    },
+    "an empty answer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "une réponse vide"
+          }
+        }
+      }
+    },
+    "bottom": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dessous"
+          }
+        }
+      }
+    },
+    "capacitor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "condensateur"
+          }
+        }
+      }
+    },
+    "chip": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "puce"
+          }
+        }
+      }
+    },
+    "connector": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "connecteur"
+          }
+        }
+      }
+    },
+    "crystal": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "quartz"
+          }
+        }
+      }
+    },
+    "diode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "diode"
+          }
+        }
+      }
+    },
+    "ferrite bead": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ferrite"
+          }
+        }
+      }
+    },
+    "fuse": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "fusible"
+          }
+        }
+      }
+    },
+    "in %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "en %@"
+          }
+        }
+      }
+    },
+    "inductor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "inductance"
+          }
+        }
+      }
+    },
+    "its compressed data": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ses données compressées"
+          }
+        }
+      }
+    },
+    "jumper": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "cavalier"
+          }
+        }
+      }
+    },
+    "no part and pin counts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aucun nombre de pièces et de broches"
+          }
+        }
+      }
+    },
+    "no parts": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aucune pièce"
+          }
+        }
+      }
+    },
+    "no pins": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "aucune broche"
+          }
+        }
+      }
+    },
+    "oscillator": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "oscillateur"
+          }
+        }
+      }
+    },
+    "resistor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "résistance"
+          }
+        }
+      }
+    },
+    "resistor network": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "réseau de résistances"
+          }
+        }
+      }
+    },
+    "sk-ant-…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "sk-ant-…"
+          }
+        }
+      }
+    },
+    "switch": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "interrupteur"
+          }
+        }
+      }
+    },
+    "test point": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "point de test"
+          }
+        }
+      }
+    },
+    "this kind of board file": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ce type de fichier de carte"
+          }
+        }
+      }
+    },
+    "top": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "dessus"
+          }
+        }
+      }
+    },
+    "transformer": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "transformateur"
+          }
+        }
+      }
+    },
+    "transistor": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "transistor"
+          }
+        }
+      }
+    },
+    "Diode": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diode"
+          }
+        }
+      }
+    },
+    "Resistance": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Résistance"
+          }
+        }
+      }
     }
   },
   "version": "1.0"

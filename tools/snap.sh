@@ -3,6 +3,7 @@
 # Usage: tools/snap.sh            all pages
 #        APP_SNAPSHOT_PAGES=all,settings tools/snap.sh
 #        APP_SEED=0 APP_SHOTS=/tmp/BenchLog-shots-empty tools/snap.sh   the empty states
+#        APP_LANGUAGE=fr tools/snap.sh   in French
 set -u
 app=~/Applications/BenchLog.app/Contents/MacOS/BenchLog
 store=/tmp/BenchLog-test.sqlite
@@ -12,4 +13,4 @@ rm -rf ~/Library/Saved\ Application\ State/com.mathieuares.benchlog.savedState
 # Seed data only fills an empty store, so start from nothing.
 rm -rf $store $store-wal $store-shm ${store:r}.log ${store:r}-files ${store:r}-server
 rm -rf $shots
-APP_STORE=$store APP_SEED=${APP_SEED:-1} APP_SNAPSHOT=$shots $app
+APP_STORE=$store APP_SEED=${APP_SEED:-1} APP_SNAPSHOT=$shots $app ${APP_LANGUAGE:+-AppleLanguages "(${APP_LANGUAGE})"}
