@@ -11,8 +11,8 @@ import SwiftUI
 //   BenchLog --selftest               run the self-test on a /tmp library and quit with 0 or 1 (tools/selftest.sh)
 //   APP_ACCENT=<id> BenchLog          run with another accent from Theme.all (UI/Theme.swift)
 //   APP_GRID=1 BenchLog               draw the 8 pt grid and the layout probes over the window
+//   BenchLog <command> [--json]       run an agent command in the running app (benchlog help; Agent/)
 
-@main
 struct BenchLogApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var delegate
     @State private var model = AppModel(library: Store.openLibrary(), log: Store.log)

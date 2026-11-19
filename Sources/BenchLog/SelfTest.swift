@@ -474,6 +474,7 @@ enum SelfTest {
             dashboard(model)
             await boardViewer(model)
             warranty(model)
+            agentCLI(model)
 
             for tab in SettingsTab.allCases {
                 model.settingsTab = tab
@@ -622,6 +623,30 @@ enum SelfTest {
         check("a Dashboard parts row opens its Parts tab", model.sidebar == .parts && model.partsTab == .toOrder)
         model.partsTab = .inventory
         model.repairFilter = .open
+    }
+
+    /// S-086: the agent CLI's commands run in the app through the socket's router.
+    private static func agentCLI(_ model: AppModel) {
+        func call(_ command: String, _ args: [String: String] = [:]) -> [String: Any] {
+            let reply = AgentRouter.handle(JSON.data(["command": command, "args": args]))
+            return (try? JSONSerialization.jsonObject(with: reply)) as? [String: Any] ?? [:]
+        }
+        AgentRouter.model = model
+        let list = call("repair list", ["open": "true"])
+        let items = (list["result"] as? [String: Any])?["items"] as? [[String: Any]] ?? []
+        check("benchlog repair list --open lists the open repairs", list["ok"] as? Bool == true
+              && items.count == model.read(0) { try $0.openRepairCount() }, "\(items.count)")
+        guard let ticket = items.first?["ticket"] as? String else { return }
+        let note = call("repair note", ["ticket": ticket, "text": "From the agent CLI"])
+        let notes = model.read([]) { library -> [Note] in
+            guard let row = try library.repairRows().first(where: { $0.repair.ticket.text == ticket }) else { return [] }
+            return try library.notes(for: .repair, id: row.id)
+        }
+        check("benchlog repair note adds to the timeline", note["ok"] as? Bool == true && notes.contains { $0.text == "From the agent CLI" })
+        let missing = call("repair show", ["ticket": "9999"])
+        check("an unknown ticket is not_found", (missing["error"] as? [String: Any])?["code"] as? String == "not_found")
+        let unknown = call("repair fly")
+        check("an unknown command is a usage error", (unknown["error"] as? [String: Any])?["code"] as? String == "usage")
     }
 
     /// S-085: a repair opened as the warranty of an earlier one links both ways.

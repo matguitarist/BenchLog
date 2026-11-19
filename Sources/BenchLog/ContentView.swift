@@ -72,6 +72,8 @@ struct ContentView: View {
         }
         .onChange(of: undoManager, initial: true) { _, manager in model.undoManager = manager }
         .task {
+            AgentRouter.model = model
+            AgentSocket.listen { AgentRouter.handle($0) }
             SeedData.fillIfRequested(model: model)
             SelfTest.runIfRequested(model: model)
             Snapshot.runIfRequested(model: model, openSettings: openSettings, openWindow: openWindow)

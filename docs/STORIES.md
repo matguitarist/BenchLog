@@ -1055,6 +1055,18 @@ UX:
 Built: `repair.warrantyOfId` (migration v19), `Warranty.swift` (BenchLogKit), `WarrantyBadge`. Billing is unchanged: a free warranty repair has no labour lines or a discount.
 Status: done
 
+### S-086 Agent command line and MCP server
+As the user, I let Claude Code (or Claude Desktop) look up and move my repairs: `benchlog repair list --open`, through the running app, so the window shows each change.
+Depends: S-005, S-006, S-008
+Acceptance:
+- [self] `repair list --open` matches the open count; `repair note` lands on the timeline; an unknown ticket is `not_found`, an unknown command `usage`.
+- [cli] `check-agent-cli.sh benchlog` prints PASS agent CLI (help, JSON errors and exit codes, every read command, MCP tools/list).
+UX:
+- Commands: status, repair list/show/add/status/note, customer list, device list, part list, search, open. A repair goes by its ticket (42, #0042). `repair status` will not start unapproved work without `--force`; `repair add --warranty-of 42` opens a warranty repair.
+- The app binary is the CLI (`Main.swift`); `build.sh` links `~/.local/bin/benchlog`. `benchlog mcp` serves the same commands as MCP tools, read-only ones marked.
+Built: `Sources/BenchLog/Agent/` (socket at `~/Library/Application Support/BenchLog/agent.sock`, or `<APP_STORE>.sock`), `.claude/skills/benchlog/SKILL.md`.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
@@ -1062,7 +1074,6 @@ Status: done
 - Customer SMS or email "your device is ready".
 - Scan a barcode with the Mac's or iPhone's camera (Add by Barcode takes a scanner or typing today).
 - Game prices from PriceCharting (a paid API) when adding by barcode.
-- Agent CLI/MCP (`benchlog repair list --open`).
 
 ## Dropped
 - Accounts and login: a single user on their own Mac.

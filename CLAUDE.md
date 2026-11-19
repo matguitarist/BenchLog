@@ -16,6 +16,7 @@ Shared rules for how every project is laid out and named:
 - `Sources/BenchLog/` the app. `App.swift` has the window, menus, and the database location.
 - `Sources/BenchLogKit/` data and rules with no SwiftUI or AppKit: the SQLite library (GRDB), models, pricing, document wording. A future iOS app reuses it as is. Tests in `Tests/BenchLogKitTests/`.
 - The library: `~/Library/Application Support/BenchLog/benchlog.sqlite` plus `Files/` for photos and attachments (the database stores paths relative to it). Schema changes are new migrations in `Migrations.swift`, never edits of old ones; keep `docs/SCHEMA.md` in step. A new table either syncs (add it to `Library.syncedTables` with `queueTriggers`) or is listed in `Library.localTables`; SyncTests fails until it is. The sync server exists twice, `server/` (Node) and `Sources/BenchLogServerKit` (Swift, built into the app): an API change goes into both, and `ServerTests` runs against both. Every row has a UUID id, `createdAt`, `updatedAt`, and a nullable `deletedAt`, for sync later.
+- Drive the app with `benchlog` (the app binary, linked into `~/.local/bin` by `build.sh`; commands in `Agent/AgentCommands.swift`, run in the app over a socket). See `.claude/skills/benchlog/SKILL.md`.
 - The app's log: `~/Library/Logs/BenchLog/BenchLog.log` (LogKit `LogStore`), shown on the Log page.
 - `Package.swift` a Swift package. There is no Xcode project.
 - `build.sh` builds, signs, and installs `~/Applications/BenchLog.app`.
