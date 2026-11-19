@@ -159,6 +159,8 @@ public struct Repair: BenchRecord {
     public var approvalRule: ApprovalRule = .go
     /// With `upTo`: the most the work may cost without an approved estimate, before taxes.
     public var approvalLimitCents: Int?
+    /// The earlier repair on the same device this one is the warranty of (S-085).
+    public var warrantyOfId: UUID?
     public var createdAt: Date
     public var updatedAt: Date
     public var deletedAt: Date?

@@ -275,7 +275,8 @@ enum SheetKind: Identifiable, Hashable {
     case editCustomer(UUID)
     case addDevice(customer: UUID)
     case editDevice(UUID)
-    case newRepair(customer: UUID?, device: UUID?)
+    /// `warrantyOf`: the earlier repair the new one is the warranty of.
+    case newRepair(customer: UUID?, device: UUID?, warrantyOf: UUID? = nil)
     case newPart
     case editPart(UUID)
     /// `scanned` parts show as already added and `review` as just looked up (snapshots).

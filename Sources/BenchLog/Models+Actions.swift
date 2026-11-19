@@ -29,10 +29,10 @@ extension AppModel {
     // MARK: Repairs
 
     func createRepair(deviceID: UUID, complaint: String, promisedAt: Date?,
-                      approval: ApprovalRule = .go, approvalLimitCents: Int? = nil) -> Repair? {
+                      approval: ApprovalRule = .go, approvalLimitCents: Int? = nil, warrantyOf: UUID? = nil) -> Repair? {
         guard let repair = write("Opened a repair for device \(deviceID.stored)", {
             try $0.createRepair(deviceID: deviceID, complaint: complaint, promisedAt: promisedAt,
-                                approval: approval, approvalLimitCents: approvalLimitCents)
+                                approval: approval, approvalLimitCents: approvalLimitCents, warrantyOf: warrantyOf)
         }) else { return nil }
         log.post(.info, "Repair \(repair.ticket.text) is in Intake", source: "Repairs")
         return repair

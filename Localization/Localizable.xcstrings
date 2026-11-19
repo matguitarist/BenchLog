@@ -9975,6 +9975,116 @@
           }
         }
       }
+    },
+    "%@, %@, done %lld days ago": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$@, %2$@, terminée il y a %3$lld jours"
+          }
+        }
+      }
+    },
+    "Check the device in again under the warranty of this repair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reprendre l’appareil sous la garantie de cette réparation"
+          }
+        }
+      }
+    },
+    "Not a warranty repair": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pas une réparation sous garantie"
+          }
+        }
+      }
+    },
+    "Open a Warranty Repair…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir une réparation sous garantie…"
+          }
+        }
+      }
+    },
+    "Open this repair as the warranty of an earlier repair of the same device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrir cette réparation sous la garantie d’une réparation antérieure du même appareil"
+          }
+        }
+      }
+    },
+    "Opened as the warranty of an earlier repair of this device": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouverte sous la garantie d’une réparation antérieure de cet appareil"
+          }
+        }
+      }
+    },
+    "Warranty": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garantie"
+          }
+        }
+      }
+    },
+    "Warranty Repairs": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Réparations sous garantie"
+          }
+        }
+      }
+    },
+    "Warranty of": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Garantie de"
+          }
+        }
+      }
+    },
+    "done %lld days before": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "terminée %lld jours avant"
+          }
+        }
+      }
+    },
+    "A warranty repair must follow an earlier repair of the same device.": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Une réparation sous garantie doit suivre une réparation antérieure du même appareil."
+          }
+        }
+      }
     }
   },
   "version": "1.0"

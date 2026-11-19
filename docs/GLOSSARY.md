@@ -21,6 +21,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Catalog | The tree of Category → Brand → Model → Revision | database, list, library |
 | Repair | One job on one device, from check-in to pickup | ticket, project, job, work order |
 | Ticket Number | The repair's number, shown as #0042 | ID, job number, RMA |
+| Warranty Repair | A repair opened as the warranty of an earlier repair of the same device: "Warranty of #0042" (Réparation sous garantie, Garantie de) | RMA, return, redo, comeback |
 | Status | Where a repair is: Intake … Picked Up | state, stage, phase |
 | Complaint | What the customer says is wrong | problem, issue, symptom |
 | Diagnosis | What the technician found | finding, cause |
@@ -34,6 +35,7 @@ One name per idea, in the app UI (English). Document terms (French) are in the s
 | Net | A connection on a board: every pin wired to it, like PPBUS_G3H (Réseau) | signal, trace, rail |
 | Part Info | A board part's type, value and ratings from the schematic, its pages, and its pins with their nets (Infos sur la pièce, ⌘I) | inspector, details, properties |
 | Explain This Part | Asks Claude what a board part does, from its schematic page; the answer is kept with the schematic (Expliquer cette pièce) | AI, assistant, analyze |
+| Reading | A meter reading on a board's pin or net (diode mode, voltage, resistance, or OL), kept on the repair (Mesure) | measurement, probe, value |
 | Part | A component kept in stock or ordered for a repair | component, item, SKU |
 | Kind | What a part is: Part, Accessory, Cable, Controller, Game, Supply (Type : Pièce, Accessoire, Câble, Manette, Jeu, Fourniture) | type, category, class |
 | Condition (part) | The state a part is sold in: New, Used, Refurbished (Neuf, Usagé, Remis à neuf) | state, grade |

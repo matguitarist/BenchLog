@@ -7,8 +7,15 @@ extension Library {
 
     /// Opens a repair with the next ticket number, in Intake.
     public func createRepair(deviceID: UUID, complaint: String, promisedAt: Date? = nil,
-                             approval: ApprovalRule = .go, approvalLimitCents: Int? = nil, now: Date = .now) throws -> Repair {
+                             approval: ApprovalRule = .go, approvalLimitCents: Int? = nil, warrantyOf: UUID? = nil,
+                             now: Date = .now) throws -> Repair {
         try db.write { db in
+            // A warranty repair follows an earlier repair of the same device.
+            if let warrantyOf {
+                let device = try String.fetchOne(db, sql: "SELECT deviceId FROM repair WHERE id = ? AND deletedAt IS NULL",
+                                                 arguments: [warrantyOf.stored])
+                guard device == deviceID.stored else { throw RepairError.warrantyOfAnotherDevice }
+            }
             let stored = try String.fetchOne(db, sql: "SELECT value FROM meta WHERE key = 'nextTicketNumber'")
             // Never reuse a number, even if the counter was edited by hand.
             let highest = try Int.fetchOne(db, sql: "SELECT MAX(ticketNumber) FROM repair") ?? 0
@@ -19,6 +26,7 @@ extension Library {
                                 completedAt: nil, pickedUpAt: nil, createdAt: now, updatedAt: now, deletedAt: nil)
             repair.approvalRule = approval
             repair.approvalLimitCents = approval == .upTo ? max(approvalLimitCents ?? 0, 0) : nil
+            repair.warrantyOfId = warrantyOf
             try repair.insert(db)
             try db.execute(sql: "UPDATE meta SET value = ? WHERE key = 'nextTicketNumber'", arguments: [String(number + 1)])
             return repair

@@ -116,11 +116,15 @@ enum Snapshot {
             }
             // The sheets, each over the page it opens from.
             let customer = model.selectedCustomer
+            let finished = model.read(nil) { try $0.repairRows(statuses: [.pickedUp]).first }
             let sheets: [(String, SidebarItem, SheetKind)] = [
                 ("customer-new-sheet", .customers, .newCustomer),
                 ("device-new-sheet", .customers, customer.map { .addDevice(customer: $0) } ?? .newCustomer),
                 ("repair-new-sheet", .repairs, .newRepair(customer: nil, device: nil)),
                 ("repair-new-for-customer-sheet", .customers, .newRepair(customer: customer, device: nil)),
+                ("repair-warranty-sheet", .repairs, finished.map {
+                    .newRepair(customer: $0.customer.id, device: $0.device.id, warrantyOf: $0.id)
+                } ?? .newRepair(customer: nil, device: nil)),
                 ("part-edit-sheet", .parts, firstPart.map { .editPart($0) } ?? .newPart),
                 ("part-barcode-sheet", .parts, .addByBarcode(scanned: [scannedGame, firstPart].compactMap { $0 })),
                 ("part-barcode-review-sheet", .parts, .addByBarcode(

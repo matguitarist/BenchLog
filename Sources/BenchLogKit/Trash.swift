@@ -33,7 +33,7 @@ extension Library {
         "device.customerId", "repair.deviceId",
         "partUse.repairId", "partUse.partId", "labourLine.repairId", "invoice.repairId",
         "partFit.partId", "guideLink.guideId", "guide.fileId", "invoice.fileId",
-        "stockMove.partId", "stockMove.repairId", "restockLine.partId", "boardReading.repairId",
+        "stockMove.partId", "stockMove.repairId", "restockLine.partId", "boardReading.repairId", "repair.warrantyOfId",
         "invoice.customerId",   // a customer with a counter sale is never purged   // a part's history goes with it; a repair's moves keep their part
         "invoice.deviceId",   // a device with a sale invoice is never emptied: invoices are tax records
     ]
@@ -101,6 +101,7 @@ extension Library {
                 DELETE FROM partUse WHERE repairId IN (\(Self.list(repairs)));
                 DELETE FROM labourLine WHERE repairId IN (\(Self.list(repairs)));
                 DELETE FROM boardReading WHERE repairId IN (\(Self.list(repairs)));
+                UPDATE repair SET warrantyOfId = NULL WHERE warrantyOfId IN (\(Self.list(repairs)));
                 UPDATE stockMove SET repairId = NULL WHERE repairId IN (\(Self.list(repairs)));
                 DELETE FROM repair WHERE id IN (\(Self.list(repairs)));
                 """)

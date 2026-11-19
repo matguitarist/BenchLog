@@ -8,6 +8,7 @@ struct NewRepairSheet: View {
     @Environment(\.dismiss) private var dismiss
     let customerID: UUID?
     let deviceID: UUID?
+    var warrantyOf: UUID? = nil
 
     @State private var customer: Customer?
     @State private var search = ""
@@ -20,6 +21,8 @@ struct NewRepairSheet: View {
     @State private var deviceDraft = DeviceDraft()
 
     @State private var complaint = ""
+    /// The earlier repair this one is the warranty of (S-085).
+    @State private var warranty: UUID?
     @State private var hasPromise = false
     @State private var promised = Calendar.current.date(byAdding: .day, value: 3, to: .now) ?? .now
     @State private var showErrors = false
@@ -39,6 +42,7 @@ struct NewRepairSheet: View {
             Form {
                 customerSection
                 if customer != nil || addingCustomer { deviceSection }
+                warrantySection
                 Section("Complaint") {
                     TextField("Complaint", text: $complaint, prompt: Text("What the customer says is wrong"), axis: .vertical)
                         .labelsHidden()
@@ -162,12 +166,47 @@ struct NewRepairSheet: View {
         }
     }
 
+    // MARK: Warranty
+
+    /// The chosen device's finished repairs this one can be the warranty of.
+    private var warrantyCandidates: [Repair] {
+        guard !addingDevice, let device else { return [] }
+        return model.read([]) { try $0.warrantyCandidates(deviceID: device) }
+    }
+
+    @ViewBuilder
+    private var warrantySection: some View {
+        let candidates = warrantyCandidates
+        if !candidates.isEmpty {
+            Section("Warranty") {
+                Picker("Warranty of", selection: $warranty) {
+                    Text("Not a warranty repair").tag(UUID?.none)
+                    ForEach(candidates) { repair in
+                        Text(Self.describe(repair)).tag(Optional(repair.id))
+                    }
+                }
+                .help("Open this repair as the warranty of an earlier repair of the same device")
+            }
+            .onChange(of: device) { if !candidates.contains(where: { $0.id == warranty }) { warranty = nil } }
+        }
+    }
+
+    /// "#0042, USB-C port, done 19 days ago".
+    static func describe(_ repair: Repair) -> String {
+        let complaint = (repair.complaint.split(whereSeparator: \.isNewline).first.map(String.init) ?? "")
+            .trimmingCharacters(in: CharacterSet(charactersIn: ".… "))
+        let short = complaint.count > 40 ? String(complaint.prefix(39)) + "…" : complaint
+        guard let days = Library.daysSinceDone(repair) else { return "\(repair.ticket.text), \(short)" }
+        return String(localized: "\(repair.ticket.text), \(short), done \(days) days ago")
+    }
+
     // MARK: Actions
 
     private func start() {
         if let customerID, let found = model.read(nil, { try $0.customer(customerID) }) {
             pick(found)
             if let deviceID { device = deviceID }
+            warranty = warrantyOf
             focus = .complaint
         } else {
             focus = .search
@@ -211,7 +250,8 @@ struct NewRepairSheet: View {
         guard let deviceID,
               let repair = model.createRepair(deviceID: deviceID, complaint: text, promisedAt: hasPromise ? promised : nil,
                                                    approval: customer?.isShop == true ? .go : approval,
-                                                   approvalLimitCents: Money.cents(approvalLimit)) else { return }
+                                                   approvalLimitCents: Money.cents(approvalLimit),
+                                                   warrantyOf: addingDevice ? nil : warranty) else { return }
         model.open(.repair(repair.id))
         dismiss()
     }

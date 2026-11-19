@@ -12,6 +12,8 @@ struct RepairDetail: View {
     @State private var diagnosis = ""
     @State private var loaded = false
     @State private var approval: ApprovalState = .notNeeded
+    @State private var warrantyOf: Repair?
+    @State private var warranties: [Repair] = []
 
     var body: some View {
         Group {
@@ -39,6 +41,8 @@ struct RepairDetail: View {
     private func load() {
         row = model.read(nil) { try $0.repairRow(repairID) }
         approval = model.read(.notNeeded) { try $0.approvalState(of: repairID) }
+        warrantyOf = row?.repair.warrantyOfId.flatMap { id in model.read(nil) { try $0.repair(id) } }
+        warranties = model.read([]) { try $0.warrantyRepairs(of: repairID) }
         if !loaded, let repair = row?.repair {
             complaint = repair.complaint
             diagnosis = repair.diagnosis
@@ -58,6 +62,7 @@ struct RepairDetail: View {
                     StatusMenu(repairID: row.id, status: row.repair.status, isInternal: row.customer.isShop)
                     if row.customer.isShop { InternalBadge() }
                     ApprovalBadge(state: approval)
+                    if warrantyOf != nil { WarrantyBadge() }
                     Spacer()
                 }
                 if row.customer.isShop {
@@ -74,6 +79,7 @@ struct RepairDetail: View {
                         .buttonStyle(.link)
                         .help("Open device \(row.device.title)")
                 }
+                warrantyRows(row)
                 if !row.customer.isShop {
                     RepairApprovalRow(repair: row.repair)
                         .id(row.id)
@@ -136,6 +142,41 @@ struct RepairDetail: View {
             }
         }
         .acceptsAttachments(owner: .repair, id: row.id, model: model)
+    }
+
+    /// "Warranty of #0042, done 19 days before", the warranty repairs opened since, and a
+    /// button to open one once the repair is done.
+    @ViewBuilder
+    private func warrantyRows(_ row: RepairRow) -> some View {
+        if let first = warrantyOf {
+            LabeledContent("Warranty of") {
+                HStack(spacing: Space.sm) {
+                    Button(first.ticket.text) { model.open(.repair(first.id)) }
+                        .buttonStyle(.link)
+                        .help("Open repair \(first.ticket.text)")
+                    if let days = Library.daysSinceDone(first, now: row.repair.receivedAt) {
+                        Text("done \(days) days before").foregroundStyle(.secondary)
+                    }
+                }
+            }
+        }
+        if !warranties.isEmpty {
+            LabeledContent("Warranty Repairs") {
+                HStack(spacing: Space.sm) {
+                    ForEach(warranties) { repair in
+                        Button(repair.ticket.text) { model.open(.repair(repair.id)) }
+                            .buttonStyle(.link)
+                            .help("Open repair \(repair.ticket.text)")
+                    }
+                }
+            }
+        }
+        if [.ready, .pickedUp].contains(row.repair.status) {
+            Button("Open a Warranty Repair…") {
+                model.sheet = .newRepair(customer: row.customer.id, device: row.device.id, warrantyOf: row.id)
+            }
+            .help("Check the device in again under the warranty of this repair")
+        }
     }
 
     private func photos(_ row: RepairRow) -> some View {

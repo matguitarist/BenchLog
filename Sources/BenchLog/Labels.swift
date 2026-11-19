@@ -341,6 +341,16 @@ extension RepairStatus {
 }
 
 /// "Internal": a job on a device the shop owns.
+/// A repair opened as the warranty of an earlier one (S-085).
+struct WarrantyBadge: View {
+    var body: some View {
+        Label("Warranty", systemImage: "checkmark.shield")
+            .font(.caption.weight(.medium))
+            .foregroundStyle(.teal)
+            .help("Opened as the warranty of an earlier repair of this device")
+    }
+}
+
 struct InternalBadge: View {
     var body: some View {
         Label("Internal", systemImage: "building.2")

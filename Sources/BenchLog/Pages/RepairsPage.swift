@@ -124,6 +124,7 @@ struct RepairListRow: View {
             VStack(alignment: .trailing, spacing: Space.xs) {
                 StatusPill(status: row.repair.status, isInternal: row.customer.isShop)
                 if row.customer.isShop { InternalBadge() }
+                if row.repair.warrantyOfId != nil { WarrantyBadge() }
                 if toCollect {
                     Label("To Collect", systemImage: "dollarsign.circle")
                         .font(.caption.weight(.medium))

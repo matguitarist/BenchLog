@@ -1042,16 +1042,27 @@ UX:
 Built: `BoardReading` and `ReadingMode` (BenchLogKit), migration v18 (`boardReading`, synced), `BoardReadings.swift` (viewer extension, `ReadingsView`), `ReadingTag` drawn by the canvas.
 Status: done
 
+### S-085 Warranty tracking
+As the user, I check a device in again under the warranty of an earlier repair ("warranty of #0042"), so I see what came back and how long after.
+Depends: S-005
+Acceptance:
+- [unit] A repair can be the warranty of a Ready or Picked Up repair of the same device, never another device's; the first lists its warranty repairs; days since done count from pickup (or Ready); emptying the first from the Trash keeps the warranty repair, unlinked.
+- [self] A picked-up repair is offered; the sheet names it "#0042, complaint, done 19 days ago"; the warranty repair opens linked both ways.
+- [snap] repair-warranty-sheet: New Repair from a picked-up repair, Warranty of filled in.
+UX:
+- A finished repair's page: Open a Warranty Repair… opens New Repair for its device with Warranty of set. New Repair shows a Warranty section when the device has finished repairs ("Not a warranty repair" by default).
+- A warranty repair: a Warranty badge (page and list), "Warranty of #0042, done 19 days before" as a link; the first repair lists its Warranty Repairs.
+Built: `repair.warrantyOfId` (migration v19), `Warranty.swift` (BenchLogKit), `WarrantyBadge`. Billing is unchanged: a free warranty repair has no labour lines or a discount.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
 - More board formats in the Board window (.bv, .asc, .cst, .gr, .f2b, .bvr, …), ported from BoardViewCraft one at a time.
-- French app UI (the String Catalog already holds every string).
 - Customer SMS or email "your device is ready".
 - Scan a barcode with the Mac's or iPhone's camera (Add by Barcode takes a scanner or typing today).
 - Game prices from PriceCharting (a paid API) when adding by barcode.
 - Agent CLI/MCP (`benchlog repair list --open`).
-- Warranty tracking: open a repair as "warranty of #0042".
 
 ## Dropped
 - Accounts and login: a single user on their own Mac.

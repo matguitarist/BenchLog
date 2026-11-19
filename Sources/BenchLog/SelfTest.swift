@@ -473,6 +473,7 @@ enum SelfTest {
             await serverOnThisMac(model)
             dashboard(model)
             await boardViewer(model)
+            warranty(model)
 
             for tab in SettingsTab.allCases {
                 model.settingsTab = tab
@@ -621,6 +622,32 @@ enum SelfTest {
         check("a Dashboard parts row opens its Parts tab", model.sidebar == .parts && model.partsTab == .toOrder)
         model.partsTab = .inventory
         model.repairFilter = .open
+    }
+
+    /// S-085: a repair opened as the warranty of an earlier one links both ways.
+    private static func warranty(_ model: AppModel) {
+        _ = model.write("Self-test: a picked-up repair") { library -> Repair? in
+            guard let device = try library.repairRows().first?.device else { return nil }
+            let done = try library.createRepair(deviceID: device.id, complaint: "USB-C port", now: .now.addingTimeInterval(-30 * 86_400))
+            return try library.setStatus(.pickedUp, of: done.id, now: .now.addingTimeInterval(-19 * 86_400))
+        }
+        guard let first = model.read(nil, { try $0.repairRows(statuses: [.pickedUp]).first }) else {
+            check("the warranty check finds a picked-up repair", false)
+            return
+        }
+        let candidates = model.read([]) { try $0.warrantyCandidates(deviceID: first.device.id) }
+        check("a picked-up repair can be warrantied", candidates.contains { $0.id == first.id })
+        check("the sheet names the earlier repair by ticket and age",
+              NewRepairSheet.describe(first.repair).hasPrefix(first.repair.ticket.text) && NewRepairSheet.describe(first.repair).contains("days ago"),
+              NewRepairSheet.describe(first.repair))
+        guard let again = model.createRepair(deviceID: first.device.id, complaint: "Same fault again", promisedAt: nil,
+                                             warrantyOf: first.id) else {
+            check("a warranty repair opens", false)
+            return
+        }
+        check("a warranty repair opens", again.warrantyOfId == first.id)
+        check("the first repair lists its warranty repair", model.read([]) { try $0.warrantyRepairs(of: first.id) }.map(\.id) == [again.id])
+        model.setStatus(.cancelled, for: again.id, force: true)
     }
 
     /// S-070: a board and the schematic in its folder open together, and a name picked in the

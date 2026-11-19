@@ -486,6 +486,13 @@ extension Library {
                 """)
             try db.execute(sql: Library.queueTriggers("boardReading"))
         }
+        migrator.registerMigration("v19-warranty") { db in
+            // A repair opened as the warranty of an earlier one on the same device (S-085).
+            try db.execute(sql: """
+                ALTER TABLE repair ADD COLUMN warrantyOfId TEXT REFERENCES repair(id);
+                CREATE INDEX repair_warrantyOf ON repair(warrantyOfId) WHERE warrantyOfId IS NOT NULL;
+                """)
+        }
         return migrator
     }
 }
