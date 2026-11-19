@@ -268,6 +268,28 @@ enum Snapshot {
                             viewer.enlargedPage = nil
                             try? await Task.sleep(for: .seconds(0.6))
                         }
+                        // Readings: two on the board (added once, in the /tmp store), and the popover.
+                        if let viewer = BoardViewer.latest, let board = viewer.board, viewer.readingRepair != nil,
+                           let index = board.part(named: part) {
+                            if viewer.readings.isEmpty {
+                                viewer.select(.pin(board.parts[index].pins.lowerBound), from: .search)
+                                viewer.addReading(mode: .diode, text: "0.452", note: "")
+                                if let net = board.testPoints.first(where: { !$0.net.isEmpty })?.net {
+                                    viewer.select(.net(net), from: .search)
+                                    viewer.addReading(mode: .voltage, text: "3.31", note: "")
+                                }
+                            }
+                            viewer.select(.pin(board.parts[index].pins.lowerBound), from: .search)
+                            viewer.zoom(0)
+                            try? await Task.sleep(for: .seconds(1))
+                            capture(to: "\(dir)/board-readings-\(mode).png", window: window)
+                            viewer.showsReadings = true
+                            try? await Task.sleep(for: .seconds(1.5))
+                            let popover = NSApp.windows.first { $0.isVisible && String(describing: type(of: $0)).contains("Popover") }
+                            capture(to: "\(dir)/board-readings-popover-\(mode).png", window: popover ?? window)
+                            viewer.showsReadings = false
+                            try? await Task.sleep(for: .seconds(0.4))
+                        }
                     }
                     window?.close()
                 }

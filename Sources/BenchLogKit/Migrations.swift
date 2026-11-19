@@ -466,6 +466,26 @@ extension Library {
                 CREATE INDEX part_barcode ON part(barcode) WHERE barcode <> '';
                 """)
         }
+        migrator.registerMigration("v18-board-readings") { db in
+            // A meter reading on a pin or net of a board, taken during a repair (S-084).
+            try db.execute(sql: """
+                CREATE TABLE boardReading (
+                    id TEXT PRIMARY KEY NOT NULL,
+                    repairId TEXT NOT NULL REFERENCES repair(id),
+                    board TEXT NOT NULL,
+                    target TEXT NOT NULL,
+                    isPin INTEGER NOT NULL DEFAULT 0,
+                    mode TEXT NOT NULL,
+                    value REAL,
+                    note TEXT NOT NULL DEFAULT '',
+                    createdAt DATETIME NOT NULL,
+                    updatedAt DATETIME NOT NULL,
+                    deletedAt DATETIME
+                );
+                CREATE INDEX boardReading_repair ON boardReading(repairId);
+                """)
+            try db.execute(sql: Library.queueTriggers("boardReading"))
+        }
         return migrator
     }
 }

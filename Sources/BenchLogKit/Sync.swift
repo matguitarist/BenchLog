@@ -89,7 +89,7 @@ extension Library {
     /// triggers that queue local changes. A new table must be added here and get
     /// `queueTriggers`, or be listed in `localTables`; SyncTests fails until it is.
     public static let syncedTables = ["customer", "device", "repair", "note", "attachment", "labourLine", "invoice", "part",
-                                      "partUse", "guide", "restock", "restockLine", "stockMove"]
+                                      "partUse", "guide", "restock", "restockLine", "stockMove", "boardReading"]
     /// Tables that never sync: derived on each device, carried inside another row, or sync state.
     static let localTables: Set<String> = ["meta", "catalog", "partFit", "guideLink", "syncQueue", "syncFlag", "grdb_migrations"]
     /// The `meta` keys that sync, as rows of the `meta` table.

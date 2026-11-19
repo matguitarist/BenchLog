@@ -33,7 +33,7 @@ extension Library {
         "device.customerId", "repair.deviceId",
         "partUse.repairId", "partUse.partId", "labourLine.repairId", "invoice.repairId",
         "partFit.partId", "guideLink.guideId", "guide.fileId", "invoice.fileId",
-        "stockMove.partId", "stockMove.repairId", "restockLine.partId",
+        "stockMove.partId", "stockMove.repairId", "restockLine.partId", "boardReading.repairId",
         "invoice.customerId",   // a customer with a counter sale is never purged   // a part's history goes with it; a repair's moves keep their part
         "invoice.deviceId",   // a device with a sale invoice is never emptied: invoices are tax records
     ]
@@ -100,6 +100,7 @@ extension Library {
                 DELETE FROM invoice WHERE repairId IN (\(Self.list(repairs)));
                 DELETE FROM partUse WHERE repairId IN (\(Self.list(repairs)));
                 DELETE FROM labourLine WHERE repairId IN (\(Self.list(repairs)));
+                DELETE FROM boardReading WHERE repairId IN (\(Self.list(repairs)));
                 UPDATE stockMove SET repairId = NULL WHERE repairId IN (\(Self.list(repairs)));
                 DELETE FROM repair WHERE id IN (\(Self.list(repairs)));
                 """)
@@ -137,7 +138,7 @@ extension Library {
             paths += try Self.deleteOwned(by: "guide", guideIDs, db)
             paths += try Self.deleteAttachments(where: "id IN (\(Self.list(guideFiles)))", db)
             // Single notes, files, and lines moved to the Trash on their own.
-            for table in ["note", "partUse", "labourLine"] {
+            for table in ["note", "partUse", "labourLine", "boardReading"] {
                 try db.execute(sql: "DELETE FROM \(table) WHERE deletedAt < ?", arguments: [cutoff])
             }
             paths += try Self.deleteAttachments(where: """

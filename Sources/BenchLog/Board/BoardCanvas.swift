@@ -23,6 +23,7 @@ struct BoardCanvas: NSViewRepresentable {
         view.accentText = NSColor(Palette.accentText)
         view.onAccent = NSColor(Palette.onAccent)
         view.colors = colors
+        view.readingTags = viewer.readingTags
     }
 }
 
@@ -47,6 +48,8 @@ final class BoardCanvasView: NSView {
     var accentText: NSColor = .controlAccentColor { didSet { if accentText != oldValue { needsDisplay = true } } }
     var onAccent: NSColor = .white { didSet { if onAccent != oldValue { needsDisplay = true } } }
     var colors = BoardColors.standard { didSet { if colors != oldValue { needsDisplay = true } } }
+    /// Readings drawn on the board: where, on which side (nil for both), and the value.
+    var readingTags: [ReadingTag] = [] { didSet { if readingTags != oldValue { needsDisplay = true } } }
     var onSelect: ((BoardSelection?) -> Void)?
     var onFlip: (() -> Void)?
 
@@ -315,6 +318,24 @@ final class BoardCanvasView: NSView {
             let textSize = text.size()
             guard textSize.width <= rect.width + 8 else { continue }
             text.draw(at: CGPoint(x: rect.midX - textSize.width / 2, y: rect.maxY + 2))
+        }
+        // Readings: a tag in the accent beside the pin or test point they were taken on.
+        for tag in readingTags where (tag.side == nil || tag.side == side) && visible.contains(tag.position) {
+            let text = NSAttributedString(string: tag.text, attributes: [
+                .font: NSFont.systemFont(ofSize: 11, weight: .medium), .foregroundColor: onAccent,
+            ])
+            let size = text.size()
+            let p = toView(tag.position)
+            let box = CGRect(x: p.x + 6, y: p.y + 6, width: size.width + 8, height: size.height + 2)
+            context.setFillColor(accent.cgColor)
+            context.addPath(CGPath(roundedRect: box, cornerWidth: box.height / 2, cornerHeight: box.height / 2, transform: nil))
+            context.fillPath()
+            context.setStrokeColor(accent.cgColor)
+            context.setLineWidth(1.5)
+            context.move(to: p)
+            context.addLine(to: CGPoint(x: box.minX + 2, y: box.minY + 2))
+            context.strokePath()
+            text.draw(at: CGPoint(x: box.minX + 4, y: box.minY + 1))
         }
         for (net, circle, isLit) in netLabels.prefix(400) {
             let text = NSAttributedString(string: net, attributes: [

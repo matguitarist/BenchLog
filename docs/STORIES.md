@@ -1028,11 +1028,24 @@ Acceptance:
 Built: `BoardFile+TVW.swift` (ported from BoardViewCraft's tvw.rs, a reader that looks for known records, since the layout isn't published). Each part is drawn by its box. Unlike BoardViewCraft, an inductor named L1…L15 is kept when it has pins. Copper surfaces aren't read: a box around the parts is the outline. No real .tvw was at hand.
 Status: done
 
+### S-084 Board notes and readings
+As the user, I note a meter reading (diode mode, voltage, resistance) on a pin or net while I work, and it stays on the repair and shows on the board the next time I open it.
+Depends: S-070
+Acceptance:
+- [unit] A reading reads as typed: "0.452", "452" (millivolts in diode mode), "3.3V", "12k", "1.2 MΩ", "OL" (kept as no value); other text is refused. It shows as a meter does: "0.452 V", "12 kΩ", "OL".
+- [unit] Readings are kept per repair and board file; a board on a device files them on the device's repair in progress; Empty Trash takes a repair's readings with it; the table syncs.
+- [self] A board from the Mac keeps none; a pin is named "U2.3"; a part takes none; readings come back when the board opens again, a click on one selects its pin or net, and Delete removes it.
+- [snap] board-readings, board-readings-popover: tags in the accent beside the pin and the net's test point; the popover with the target, the mode, the value, a note, and the board's readings.
+UX:
+- Board > Readings… (⌘R) or the gauge in the toolbar: a popover with the selected pin or net, Diode / Voltage / Resistance (remembered), Value and Note, Add Reading (Return); below, this board's readings, newest first (click to select, right-click > Delete Reading).
+- The bar under the board ends with the selection's last readings: ". Diode 0.452 V".
+Built: `BoardReading` and `ReadingMode` (BenchLogKit), migration v18 (`boardReading`, synced), `BoardReadings.swift` (viewer extension, `ReadingsView`), `ReadingTag` drawn by the canvas.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
 - More board formats in the Board window (.bv, .asc, .cst, .gr, .f2b, .bvr, …), ported from BoardViewCraft one at a time.
-- Board notes and readings: a measurement on a pin or net (diode mode, voltage, resistance) saved on the repair.
 - French app UI (the String Catalog already holds every string).
 - Customer SMS or email "your device is ready".
 - Scan a barcode with the Mac's or iPhone's camera (Add by Barcode takes a scanner or typing today).

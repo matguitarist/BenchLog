@@ -85,6 +85,14 @@ final class BoardViewer {
     }
     /// Bumped to put the cursor in the panel's find field (Edit > Find while the panel is open).
     private(set) var pageFindRequest = 0
+    /// The repair readings are kept on (S-084): the board's repair, or its device's open one.
+    private(set) var readingRepair: UUID?
+    /// The board's file name, which readings are filed under.
+    private(set) var boardName = ""
+    /// The readings on this board for that repair, oldest first.
+    var readings: [BoardReading] = []
+    var showsReadings = false
+    @ObservationIgnored weak var model: AppModel?
     @ObservationIgnored weak var canvas: BoardCanvasView?
     @ObservationIgnored weak var largePage: LargePagePDFView?
     @ObservationIgnored let pdf = SchematicController()
@@ -106,6 +114,7 @@ final class BoardViewer {
     func load(_ model: AppModel) async {
         // SwiftUI makes throwaway viewers; the window's own is the one that loads.
         Self.latest = self
+        self.model = model
         var pdfs: [SchematicChoice] = []
         switch source {
         case .attachment(let id):
@@ -115,6 +124,8 @@ final class BoardViewer {
             }
             title = file.caption.isEmpty ? file.originalName : file.caption
             boardURL = library.fileURL(for: file)
+            boardName = file.originalName
+            readingRepair = try? library.readingRepair(forAttachment: id)
             // The schematic is a PDF on the same record, or on the repair's device.
             var owners = [(file.ownerType, file.ownerId)]
             if file.ownerType == .repair, let repair = try? library.repair(file.ownerId) {
@@ -128,6 +139,7 @@ final class BoardViewer {
         case .file(let url):
             title = url.lastPathComponent
             boardURL = url
+            boardName = url.lastPathComponent
             let folder = url.deletingLastPathComponent()
             let names = (try? FileManager.default.contentsOfDirectory(atPath: folder.path)) ?? []
             pdfs = names.filter { $0.lowercased().hasSuffix(".pdf") }.sorted()
@@ -141,6 +153,7 @@ final class BoardViewer {
             let read = try await Task.detached(priority: .userInitiated) { try BoardFile.read(Data(contentsOf: url), fileName: url.lastPathComponent) }.value
             board = read
             log = model.log
+            reloadReadings()
             readFacts()
             model.log.post(.info, "Opened the board \(title): \(read.parts.count) parts, \(read.pins.count) pins", source: "Board")
         } catch {
@@ -591,7 +604,7 @@ private struct BoardViewerView: View {
                 BoardCanvas(viewer: viewer, colors: ThemeStore.shared.boardColors)
                 Divider()
                 HStack(spacing: Space.sm) {
-                    Text(viewer.summary)
+                    Text(viewer.summary + viewer.readingNote)
                         .font(.callout)
                         .foregroundStyle(.secondary)
                         .lineLimit(1)
@@ -638,6 +651,16 @@ private struct BoardViewerView: View {
                     Button("Zoom In", systemImage: "plus.magnifyingglass") { viewer.zoom(1) }
                         .help("Zoom in (⌘+)")
                 }
+            }
+            ToolbarItem {
+                Button("Readings", systemImage: "gauge.with.dots.needle.33percent") { viewer.showsReadings.toggle() }
+                    .help("Add a meter reading on the selected pin or net, and see this repair's readings (⌘R)")
+                    .popover(isPresented: $viewer.showsReadings, arrowEdge: .bottom) {
+                        ReadingsView(viewer: viewer)
+                            .frame(width: 400)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .noInitialFocus()
+                    }
             }
             ToolbarItem {
                 Toggle(isOn: Binding(get: { viewer.isFullBoard }, set: { _ in viewer.toggleFullBoard() })) {
@@ -908,6 +931,8 @@ struct BoardCommands: Commands {
                 Button("Explain This Part") { viewer?.explainSelectedPart() }
                     .keyboardShortcut("i", modifiers: [.command, .option])
                     .disabled(viewer?.infoPart == nil)
+                Button("Readings…") { viewer?.showsReadings = true }
+                    .keyboardShortcut("r")
                 Button("Enlarge Page") { viewer?.enlargePage() }
                     .keyboardShortcut("e", modifiers: [.command, .option])
                     .disabled(viewer?.canEnlargePage != true)

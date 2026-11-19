@@ -801,6 +801,45 @@ enum SelfTest {
         let locked = BoardViewer(source: .file(scrambled))
         await locked.load(model)
         check("a scrambled .fz says it needs its key", locked.failure?.contains("key") == true, locked.failure ?? "")
+
+        // S-084: readings on a pin or net are kept on the repair and drawn on the board.
+        let onFile = viewer
+        onFile.showsReadings = true
+        check("a board from the Mac keeps no readings", onFile.readingRepair == nil && !onFile.addReading(mode: .diode, text: "0.4", note: ""))
+        onFile.showsReadings = false
+        let attached = model.write("Self-test: a board on a repair") { library -> UUID? in
+            guard let row = try library.repairRows().first else { return nil }
+            return try library.addAttachment(data: BoardSample.data, originalName: BoardSample.fileName, to: .repair, id: row.repair.id).id
+        }
+        guard let attachedID = attached ?? nil else {
+            check("the readings check finds a repair", false)
+            return
+        }
+        let bench = BoardViewer(source: .attachment(attachedID))
+        await bench.load(model)
+        check("a board on a repair keeps readings on it", bench.readingRepair != nil)
+        bench.select(board.part(named: "U2").map { .part($0) }, from: .board)
+        check("a part takes no reading", bench.readingTarget == nil)
+        if let u2 = board.part(named: "U2") {
+            bench.select(.pin(board.parts[u2].pins.lowerBound + 2), from: .board)
+        }
+        check("a pin is named by its part and number", bench.readingTarget?.name == "U2.3" && bench.readingTarget?.isPin == true)
+        check("a value that isn't a reading is refused", !bench.addReading(mode: .voltage, text: "high", note: ""))
+        check("a diode reading in millivolts is kept in volts", bench.addReading(mode: .diode, text: "452", note: "low side")
+              && bench.readings.last?.value == 0.452 && bench.readings.last?.note == "low side")
+        check("the bar shows the pin's reading", bench.readingNote.contains("0.452"), bench.readingNote)
+        bench.select(.net("PP3V3_S0"), from: .board)
+        check("OL is kept on a net", bench.addReading(mode: .resistance, text: "OL", note: "") && bench.readings.last?.value == nil)
+        check("each reading is drawn on the board", bench.readingTags.count >= 2 && bench.readingTags.contains { $0.text == "OL" })
+        let reopened = BoardViewer(source: .attachment(attachedID))
+        await reopened.load(model)
+        check("readings are there when the board opens again", reopened.readings.count == 2)
+        if let first = reopened.readings.first {
+            reopened.select(reading: first)
+            check("a reading selects what it was taken on", reopened.readingTarget?.name == "U2.3")
+            reopened.deleteReading(first.id)
+            check("a deleted reading goes", reopened.readings.count == 1)
+        }
     }
 
     static func finish(code: Int32) {

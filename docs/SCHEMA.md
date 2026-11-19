@@ -27,6 +27,7 @@ Migrations live in `Sources/BenchLogKit/Migrations.swift`. They are only ever ad
 | `stockMove` | v12. One change to a part's stock: `partId` → part, `delta` (units in, or out when negative), `quantityAfter`, `reason` (`opening` `installed` `returned` `received` `counted` `damaged` `sold` `adjusted`), `repairId` → repair, `invoiceId` → invoice, `restockId`, `note`. A part's `quantity` equals the sum of its moves. |
 | `restock` | v13. An order of stock for the shelf: `vendor`, `status` (`draft` `ordered` `received`), `orderedAt`, `receivedAt`. |
 | `restockLine` | v13. `restockId` → restock, `partId` → part, `quantity`, `costCents` (what the vendor charges; receiving copies it to the part). Receiving adds a `received` stock move with `restockId`. |
+| `boardReading` | v18. A meter reading on a board during a repair: `repairId` → repair, `board` (the board file's name), `target` (a net's name, or a pin as `U7100.3`), `isPin`, `mode` (`diode` `voltage` `resistance`), `value` REAL (volts or ohms; NULL is OL, open loop), `note`. |
 | `search` | FTS5, derived: never edit it by hand. `kind`, `itemId`, `targetKind`, `targetId` (what opens), `title`, `subtitle`, `keys` (ticket digits, phone digits, diagnosis, note text). Triggers named `search_<table>_*` keep it current. A sync client can rebuild it. |
 | `catalog` | `category`, `brand`, `model`, `revision` ('' for the model itself). PK is all four. No id: it is reference data that grows from what people enter. |
 
