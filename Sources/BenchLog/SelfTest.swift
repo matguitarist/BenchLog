@@ -784,6 +784,23 @@ enum SelfTest {
             await other.load(model)
             check("a .\(url.pathExtension) board opens", other.board?.parts.count == 16, other.failure ?? "")
         }
+
+        // S-081 to S-083: .fz, GenCAD, and .tvw boards open too; a scrambled .fz asks for its key.
+        let samples: [(String, Data)] = [("board.fz", BoardSample.fzData), ("board.cad", Data(BoardSample.gencadText.utf8)),
+                                         ("board.tvw", BoardSample.tvwData)]
+        for (name, data) in samples {
+            let url = folder.appending(path: name)
+            try? data.write(to: url)
+            let other = BoardViewer(source: .file(url))
+            await other.load(model)
+            check("a .\(url.pathExtension) board opens", other.board?.parts.count == 16 && other.board?.pins.count == board.pins.count,
+                  other.failure ?? "")
+        }
+        let scrambled = folder.appending(path: "scrambled.fz")
+        try? Data(repeating: 0xA7, count: 256).write(to: scrambled)
+        let locked = BoardViewer(source: .file(scrambled))
+        await locked.load(model)
+        check("a scrambled .fz says it needs its key", locked.failure?.contains("key") == true, locked.failure ?? "")
     }
 
     static func finish(code: Int32) {

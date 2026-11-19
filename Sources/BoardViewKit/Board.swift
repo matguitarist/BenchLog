@@ -87,6 +87,9 @@ public struct BoardPart: Hashable, Sendable, Identifiable {
     public var bounds: BoardRect
     /// A pin's drawn radius: a little under half the closest two pins' distance.
     public var pinRadius: Double
+    /// The part's body as the file draws it (GenCAD artwork, a .tvw box); empty when the
+    /// file has none, and the viewer draws `bounds`.
+    public var outline: [BoardPoint] = []
 }
 
 public struct BoardPin: Hashable, Sendable {
@@ -160,8 +163,9 @@ public struct Board: Sendable {
 
     /// Builds the indexes. Pins must be grouped by part, in the order of `parts`; each part
     /// gets its range, bounds, and pin radius here.
+    /// `partOutlines`, when given, holds each part's body in the order of `parts`.
     public init(outline: [BoardPoint], parts: [(name: String, side: BoardSide, isThroughHole: Bool)],
-                pins: [BoardPin], testPoints: [BoardTestPoint]) {
+                pins: [BoardPin], testPoints: [BoardTestPoint], partOutlines: [[BoardPoint]] = []) {
         // Group pins by part, keeping their order within a part, and number them.
         var grouped = pins.enumerated().sorted { ($0.element.part, $0.offset) < ($1.element.part, $1.offset) }.map(\.element)
         var ranges = Array(repeating: 0..<0, count: parts.count)
@@ -183,9 +187,17 @@ public struct Board: Sendable {
             let range = ranges[index]
             let positions = grouped[range].map(\.position)
             let radius = Self.pinRadius(positions)
-            let bounds = BoardRect(around: positions)?.insetBy(-radius) ?? BoardRect(minX: 0, minY: 0, maxX: 0, maxY: 0)
+            let body = partOutlines.indices.contains(index) ? partOutlines[index] : []
+            let around = BoardRect(around: positions)?.insetBy(-radius)
+            let bodyBounds = BoardRect(around: body)
+            let bounds = switch (around, bodyBounds) {
+            case let (pins?, body?): pins.union(body)
+            case let (pins?, nil): pins
+            case let (nil, body?): body
+            case (nil, nil): BoardRect(minX: 0, minY: 0, maxX: 0, maxY: 0)
+            }
             built.append(BoardPart(id: index, name: part.name, side: part.side, isThroughHole: part.isThroughHole,
-                                   pins: range, bounds: bounds, pinRadius: radius))
+                                   pins: range, bounds: bounds, pinRadius: radius, outline: body))
         }
 
         var byNet: [String: [Int]] = [:]
@@ -203,7 +215,7 @@ public struct Board: Sendable {
         }
         let radii = built.filter { !$0.pins.isEmpty }.map(\.pinRadius).sorted()
 
-        let everything = outline + grouped.map(\.position) + testPoints.map(\.position)
+        let everything = outline + grouped.map(\.position) + testPoints.map(\.position) + partOutlines.joined()
         self.outline = outline
         self.parts = built
         self.pins = grouped

@@ -138,7 +138,7 @@ final class BoardViewer {
 
         guard let url = boardURL else { return }
         do {
-            let read = try await Task.detached(priority: .userInitiated) { try BoardFile.read(Data(contentsOf: url)) }.value
+            let read = try await Task.detached(priority: .userInitiated) { try BoardFile.read(Data(contentsOf: url), fileName: url.lastPathComponent) }.value
             board = read
             log = model.log
             readFacts()

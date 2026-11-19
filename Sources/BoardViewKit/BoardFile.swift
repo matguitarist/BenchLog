@@ -18,6 +18,8 @@ import Foundation
 public enum BoardFileError: Error, Equatable, LocalizedError {
     /// A format BenchLog does not read yet.
     case unsupported(String)
+    /// A scrambled .fz, and no key to read it.
+    case needsFZKey
     /// The file says it is a .brd but its sections are missing or broken.
     case malformed(String)
 
@@ -27,13 +29,15 @@ public enum BoardFileError: Error, Equatable, LocalizedError {
             String(localized: "BenchLog can't read \(format) boards yet.")
         case .malformed(let detail):
             String(localized: "The board file is damaged: \(detail).")
+        case .needsFZKey:
+            String(localized: "This .fz board is scrambled, and BenchLog doesn't have its key.")
         }
     }
 }
 
 public enum BoardFile {
     /// Extensions the viewer opens. Other boardview files open in their default app.
-    public static let readableExtensions: Set<String> = ["brd", "brd2", "bdv"]
+    public static let readableExtensions: Set<String> = ["brd", "brd2", "bdv", "fz", "cad", "tvw"]
 
     public static func canRead(fileName: String) -> Bool {
         readableExtensions.contains((fileName as NSString).pathExtension.lowercased())
@@ -42,8 +46,14 @@ public enum BoardFile {
     /// The first bytes of a substitution-encoded .brd.
     static let encodedMagic: [UInt8] = [0x23, 0xE2, 0x63, 0x28]
 
-    public static func read(_ data: Data) throws -> Board {
+    /// `fileName`, when known, lets a scrambled .fz say it needs its key.
+    public static func read(_ data: Data, fileName: String? = nil) throws -> Board {
         let bytes = [UInt8](data)
+        if FZ.isCompressed(bytes) {
+            guard let text = FZ.inflate(bytes) else { throw BoardFileError.malformed(String(localized: "its compressed data")) }
+            return try readFZ(text)
+        }
+        if TVW.isBinary(bytes) { return try readTVW(bytes) }
         let text: String
         if bytes.starts(with: encodedMagic) {
             text = String(decoding: decode(bytes), as: UTF8.self)
@@ -52,11 +62,22 @@ public enum BoardFile {
         }
         if text.contains("var_data:") { return try readTestLink(text) }
         if text.hasPrefix("BRDOUT:") { return try readBRD2(text) }
+        if text.contains("$HEADER"), text.uppercased().contains("GENCAD") { return try readGenCAD(text) }
         if bytes.starts(with: BDV.lineKeyedMagic) {
             return try readBDVFixture(String(decoding: BDV.decodeByLine(bytes), as: UTF8.self))
         }
         let bdv = String(decoding: BDV.decodeByByte(bytes), as: UTF8.self)
         if bdv.contains("var_data:") { return try readTestLink(bdv) }
+        let tvw = String(decoding: TVW.unrotate(bytes.prefix(4096)), as: UTF8.self)
+        if tvw.contains("var_data:") { return try readTestLink(String(decoding: TVW.unrotate(bytes), as: UTF8.self)) }
+        let isFZ = fileName.map { ($0 as NSString).pathExtension.lowercased() == "fz" } ?? false
+        if isFZ || bytes.count >= 8 {
+            if let key = FZ.storedKey() {
+                let plain = FZ.unscramble(bytes, key: key)
+                if FZ.isCompressed(plain), let text = FZ.inflate(plain) { return try readFZ(text) }
+            }
+            if isFZ { throw BoardFileError.needsFZKey }
+        }
         throw BoardFileError.unsupported(String(localized: "this kind of board file"))
     }
 
@@ -75,6 +96,13 @@ public enum BoardFile {
             let inverted = ~b
             return (inverted >> 2) | (inverted << 6)
         })
+    }
+
+    /// A box 20 mils around the points, for files with no board outline.
+    static func boxOutline(around points: [BoardPoint]) -> [BoardPoint] {
+        guard let r = BoardRect(around: points)?.insetBy(-20) else { return [] }
+        return [BoardPoint(x: r.minX, y: r.minY), BoardPoint(x: r.maxX, y: r.minY),
+                BoardPoint(x: r.maxX, y: r.maxY), BoardPoint(x: r.minX, y: r.maxY)]
     }
 
     private static let sections = ["str_length:", "var_data:", "Format:", "Parts:", "Pins:", "Nails:"]

@@ -997,10 +997,41 @@ UX:
 Built: `PartExplainer` (raw HTTP to the Messages API: `claude-opus-5-5`, effort medium, `fallbacks: "default"` with the `server-side-fallback-2026-07-01` beta; the page goes as a one-page PDF document block); the key in the Keychain (service com.mathieuares.benchlog.claude, in memory in test runs); answers in Explanations/<schematic>-<size>.json next to the library; `BoardSettings` (Settings > Board); Board > Explain This Part (⌥⌘I).
 Status: done
 
+### S-081 Open .fz boards
+As the user, I double-click a Foxconn .fz board, and it opens in the Board window like a .brd.
+Depends: S-070
+Acceptance:
+- [unit] A compressed .fz (length, then zlib) reads its parts (REFDES, mirrored is the bottom), pins (NET_NAME), and test points (TESTVIA); millimeters and inches become mils.
+- [unit] The sample board as .fz reads the same parts and pins as its .brd; a scrambled .fz without its key says it needs one, and the key reads as 44 words or 352 hex digits.
+- [self] A .fz opens in the Board window; a scrambled one says it needs its key.
+Built: `BoardFile+FZ.swift` (ported from BoardViewCraft's fz.rs and fz_zlib.rs). The scrambling key isn't public: it is read from `BENCHLOG_FZ_KEY` in the environment or in BenchLog's defaults (`defaults write com.mathieuares.benchlog BENCHLOG_FZ_KEY "…"`). .fz files have no outline: a box 20 mils around the pins stands in. No real .fz was at hand.
+Status: done
+
+### S-082 Open GenCAD .cad boards
+As the user, I double-click a GenCAD .cad board, and it opens in the Board window with each part's drawn body.
+Depends: S-070
+Acceptance:
+- [unit] UNITS (INCH, THOU, MM, MM100, USER…) become mils; a shape's pins are mirrored, turned, and placed per component; a drilled padstack makes the part through-hole; SIGNAL/NODE give the nets; a second copy at the same place is skipped.
+- [unit] The board's edge and a shape's artwork (LINE, ARC, CIRCLE, RECTANGLE) join into the largest closed outline; the sample as GenCAD reads the same parts, sides, through-hole parts, pins, and outline as its .brd.
+- [self] A .cad opens in the Board window.
+- [snap] board with APP_SNAPSHOT_BOARD=<sample .cad>: the same board as the .brd, U1 drawn by its body.
+Built: `BoardFile+GenCAD.swift` (ported from BoardViewCraft's gencad.rs and gencad_geometry.rs); `BoardPart.outline`, drawn by the canvas in place of the box around the pins. Pad sizes and routed vias are left out.
+Status: done
+
+### S-083 Open .tvw boards
+As the user, I double-click a TestView .tvw board, and it opens in the Board window.
+Depends: S-070
+Acceptance:
+- [unit] A text .tvw is a .brd with digits turned by 3 and letters by 10.
+- [unit] A binary .tvw: the TOP and BOTTOM pin tables, the components (box, side 2 top or 11 bottom, pads as table index × 8, the closer side's pin), and the net names; the sample as .tvw reads the same parts, sides, pins, and nets as its .brd.
+- [self] A .tvw opens in the Board window.
+Built: `BoardFile+TVW.swift` (ported from BoardViewCraft's tvw.rs, a reader that looks for known records, since the layout isn't published). Each part is drawn by its box. Unlike BoardViewCraft, an inductor named L1…L15 is kept when it has pins. Copper surfaces aren't read: a box around the parts is the outline. No real .tvw was at hand.
+Status: done
+
 ## Later
 - **v2 iPhone/iPad app** on `BenchLogKit`: camera-first intake and photos at the bench.
 - **Android app** on the same sync API and `docs/SCHEMA.md`.
-- More board formats in the Board window: .fz, .cad (GenCAD), .tvw, … ported from BoardViewCraft one at a time.
+- More board formats in the Board window (.bv, .asc, .cst, .gr, .f2b, .bvr, …), ported from BoardViewCraft one at a time.
 - Board notes and readings: a measurement on a pin or net (diode mode, voltage, resistance) saved on the repair.
 - French app UI (the String Catalog already holds every string).
 - Customer SMS or email "your device is ready".

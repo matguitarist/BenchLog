@@ -211,7 +211,12 @@ final class BoardCanvasView: NSView {
             let radius = max(part.pinRadius * scale, 1)
             if onThisSide {
                 let rect = toView(part.bounds)
-                parts.addRect(rect)
+                if part.outline.count >= 3 {
+                    parts.addLines(between: part.outline.map(toView))
+                    parts.closeSubpath()
+                } else {
+                    parts.addRect(rect)
+                }
                 if rect.width >= 28, rect.height >= 12 { labels.append((part.name, rect, part.id == selectedPart)) }
             }
             for index in part.pins {

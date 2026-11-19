@@ -112,7 +112,7 @@ import Testing
         #expect(throws: BoardFileError.malformed("no parts")) { try BoardFile.read(Data("BRDOUT: 0 0 0\nNETS: 0\nPARTS: 0\n".utf8)) }
         #expect(BoardFile.canRead(fileName: "820-4924-A.BRD"))
         #expect(BoardFile.canRead(fileName: "board.bdv") && BoardFile.canRead(fileName: "board.brd2"))
-        #expect(!BoardFile.canRead(fileName: "board.fz"))
+        #expect(!BoardFile.canRead(fileName: "board.asc"))
     }
 
     // S-071
