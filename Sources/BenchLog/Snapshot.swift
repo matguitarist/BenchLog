@@ -1,8 +1,8 @@
 import AppKit
+import AppTestKit
 import BenchLogKit
 import BoardViewKit
 import PDFKit
-import IOKit.pwr_mgt
 import PictureKitUI
 import SwiftUI
 
@@ -26,46 +26,15 @@ enum Snapshot {
     }
 
     static func runIfRequested(model: AppModel, openSettings: OpenSettingsAction, openWindow: OpenWindowAction) {
-        let env = ProcessInfo.processInfo.environment
-        guard let dir = env["APP_SNAPSHOT"], !dir.isEmpty else { return }
-        // Snapshots never run against the real library.
-        guard Store.isOverridden else {
-            print("SNAPSHOT refused: set APP_STORE to a file in /tmp")
-            NSApp.terminate(nil)
-            return
-        }
-        let only = env["APP_SNAPSHOT_PAGES"].map { Set($0.split(separator: ",").map(String.init)) }
+        // Refuses ("SNAPSHOT refused: …") and quits unless APP_STORE is a file in /tmp.
+        guard let run = SnapshotRun.requested(layout: { GridProbes.shared.write(to: $0.path, window: $1) }) else { return }
+        /// A state or sheet is shot when it is named, or its group ("states", "sheets") is.
+        func wanted(_ name: String, in group: String) -> Bool { run.wants(name) || run.request.pages?.contains(group) == true }
         Task {
-            // A sleeping display gives screencapture nothing. Declaring user
-            // activity wakes it; the assertion keeps it on until the run quits.
-            var activity: IOPMAssertionID = 0
-            IOPMAssertionDeclareUserActivity("Snapshots" as CFString, kIOPMUserActiveLocal, &activity)
-            var awake: IOPMAssertionID = 0
-            IOPMAssertionCreateWithName(kIOPMAssertionTypePreventUserIdleDisplaySleep as CFString,
-                                        IOPMAssertionLevel(kIOPMAssertionLevelOn), "Snapshots" as CFString, &awake)
-            try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
-            try? await Task.sleep(for: .seconds(1.5))
+            // Wakes the display, waits for the window, and applies APP_SNAPSHOT_MIN or APP_SNAPSHOT_SIZE.
+            await run.start()
             await decodePhotos(model)
-            if env["APP_SNAPSHOT_MIN"] != nil, let main = NSApp.windows.first(where: { $0.canBecomeMain && !$0.isSheet }) {
-                // The window clamps to its content's minimum size.
-                main.setContentSize(NSSize(width: 1, height: 1))
-                try? await Task.sleep(for: .seconds(0.5))
-            }
-            // APP_SNAPSHOT_SIZE=1600x1000 shoots the window at that size (a wide window, full screen).
-            if let size = env["APP_SNAPSHOT_SIZE"]?.split(separator: "x").compactMap({ Double($0) }), size.count == 2,
-               let main = NSApp.windows.first(where: { $0.canBecomeMain && !$0.isSheet }) {
-                main.setContentSize(NSSize(width: size[0], height: size[1]))
-                main.center()
-                try? await Task.sleep(for: .seconds(0.5))
-            }
-            for mode in ["light", "dark"] {
-                NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
-                for page in SidebarItem.allCases where only?.contains(page.rawValue) ?? true {
-                    model.sidebar = page
-                    try? await Task.sleep(for: .seconds(0.8))
-                    capture(to: "\(dir)/\(page.rawValue)-\(mode).png")
-                }
-            }
+            await run.shootPages(SidebarItem.allCases.map(\.rawValue)) { model.sidebar = SidebarItem(rawValue: $0)! }
             // Page states: each Parts tab, and a repair with parts on it.
             let firstPart = model.read(nil) { try $0.parts(matching: "GBA SP speaker").first?.id }
             let waiting = model.read(nil) { library in
@@ -103,27 +72,26 @@ enum Snapshot {
                 ("devices-shop-sold", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = soldDevice }),
                 ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
             ]
-            for (name, setUp) in states where only == nil || only?.contains(name) == true || only?.contains("states") == true {
+            for (name, setUp) in states where wanted(name, in: "states") {
                 model.searching = false
                 model.deviceScope = .all
                 setUp()
-                for mode in ["light", "dark"] {
-                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
-                    try? await Task.sleep(for: .seconds(0.8))
+                await run.forEachAppearance { look in
+                    await run.pause()
                     if name == "repair-parts" { scrollDetail(toShow: 0.45) }
                     if name == "repair-guides" { scrollDetail(toShow: 0.42) }
                     if name == "repair-billing" { scrollDetail(toShow: 0.44) }
                     if name.hasPrefix("guide-") { try? await Task.sleep(for: .seconds(1)) }
                     try? await Task.sleep(for: .seconds(0.3))
-                    capture(to: "\(dir)/\(name)-\(mode).png")
+                    await run.capture(name, look)
                 }
             }
             model.partsTab = .inventory
             model.searching = false
             model.deviceScope = .all
             // The printed documents, page 1 of each as a PNG.
-            if only == nil || only?.contains("docs") == true {
-                await snapshotDocuments(model: model, dir: dir)
+            if run.wants("docs") {
+                await snapshotDocuments(model: model, dir: run.request.folder.path)
             }
             // The sheets, each over the page it opens from.
             let customer = model.selectedCustomer
@@ -146,77 +114,62 @@ enum Snapshot {
                 ("guide-edit-sheet", .guides, markdownGuide.map { .editGuide($0) } ?? .newPart),
                 ("guides-import-sheet", .guides, .importGuides(Self.sampleVault())),
             ]
-            for (name, page, sheet) in sheets where only == nil || only?.contains(name) == true || only?.contains("sheets") == true {
+            for (name, page, sheet) in sheets where wanted(name, in: "sheets") {
                 model.sidebar = page
-                for mode in ["light", "dark"] {
-                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                await run.forEachAppearance { look in
                     model.sheet = sheet
-                    try? await Task.sleep(for: .seconds(1))
-                    let main = NSApp.windows.first { $0.canBecomeMain && !$0.isSheet }
-                    capture(to: "\(dir)/\(name)-\(mode).png", window: main?.attachedSheet)
+                    await run.pause(.seconds(1))
+                    await run.capture(name, look, window: WindowShot.mainWindow()?.attachedSheet)
                     model.sheet = nil
-                    try? await Task.sleep(for: .seconds(0.6))
+                    await run.pause(.seconds(0.6))
                 }
             }
-            if only == nil || only?.contains("settings") == true {
-                let main = NSApp.windows.first { $0.canBecomeMain && !$0.isSheet }
-                openSettings()
-                try? await Task.sleep(for: .seconds(1))
-                for mode in ["light", "dark"] {
-                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
-                    for tab in SettingsTab.allCases {
-                        model.settingsTab = tab
-                        try? await Task.sleep(for: .seconds(0.8))
-                        let settings = NSApp.windows.first { $0.isVisible && $0 !== main && !$0.isSheet }
-                        capture(to: "\(dir)/settings-\(tab.rawValue)-\(mode).png", window: settings)
-                    }
-                }
+            if run.wants("settings") {
+                await run.shootSettings(tabs: SettingsTab.allCases.map(\.rawValue), open: { openSettings() },
+                                        select: { model.settingsTab = SettingsTab(rawValue: $0)! })
                 // Sync once connected: the server, its status, and the sidebar footer.
                 SyncController.shared.showConnectedForSnapshot(model)
                 model.settingsTab = .sync
-                for mode in ["light", "dark"] {
-                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
-                    try? await Task.sleep(for: .seconds(0.8))
-                    let settings = NSApp.windows.first { $0.isVisible && $0 !== main && !$0.isSheet }
-                    capture(to: "\(dir)/settings-sync-connected-\(mode).png", window: settings)
-                    capture(to: "\(dir)/sync-status-\(mode).png", window: main)
+                await run.forEachAppearance { look in
+                    await run.pause()
+                    await run.capture("settings-sync-connected", look, window: WindowShot.otherWindow())
+                    await run.capture("sync-status", look)
                 }
                 // This Mac as the server (the built-in server, in this process), and Stop's question.
                 SyncController.shared.disconnect(model)
                 await ServerHost.shared.start(model)
-                for mode in ["light", "dark"] {
-                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
-                    try? await Task.sleep(for: .seconds(0.8))
-                    let settings = NSApp.windows.first { $0.isVisible && $0 !== main && !$0.isSheet }
-                    capture(to: "\(dir)/settings-sync-server-\(mode).png", window: settings)
+                await run.forEachAppearance { look in
+                    await run.pause()
+                    await run.capture("settings-sync-server", look, window: WindowShot.otherWindow())
                 }
                 ServerHost.shared.confirmingStop = true
-                try? await Task.sleep(for: .seconds(0.8))
-                capture(to: "\(dir)/settings-sync-server-stop.png", window: NSApp.windows.first { $0.isVisible && $0 !== main && !$0.isSheet })
+                await run.pause()
+                if let window = WindowShot.otherWindow() ?? WindowShot.mainWindow() {
+                    await WindowShot.capture(window, to: run.request.folder.appending(path: "settings-sync-server-stop.png"), layout: run.layout)
+                }
                 ServerHost.shared.confirmingStop = false
                 try? await Task.sleep(for: .seconds(0.4))
                 ServerHost.shared.stop(model)
             }
             // BenchLog Help: help-<topic>-<mode>.png for the first topic and the server topic.
-            if only == nil || only?.contains("help") == true {
+            if run.wants("help") {
                 let before = Set(NSApp.windows.map(ObjectIdentifier.init))
                 HelpCenter.shared.topic = .gettingStarted
                 openWindow(id: "help")
                 try? await Task.sleep(for: .seconds(1.5))
                 let window = NSApp.windows.first { $0.isVisible && !before.contains(ObjectIdentifier($0)) }
-                for mode in ["light", "dark"] {
-                    NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                await run.forEachAppearance { look in
                     for topic in [HelpTopic.gettingStarted, .sync] {
                         HelpCenter.shared.topic = topic
-                        try? await Task.sleep(for: .seconds(1))
-                        capture(to: "\(dir)/help-\(topic.rawValue)-\(mode).png", window: window)
+                        await run.pause(.seconds(1))
+                        await run.capture("help-\(topic.rawValue)", look, window: window)
                     }
                 }
                 window?.close()
             }
             // The Board window: the sample board on the Switch repair (or APP_SNAPSHOT_BOARD=<.brd>),
             // whole and alone, then with a part selected and found in the schematic, then Full Board.
-            if only == nil || only?.contains("board") == true {
+            if run.wants("board") {
                 let env = ProcessInfo.processInfo.environment
                 let boardFile = model.read(nil) { library in
                     try library.repairRows().first { $0.device.model == "Switch" }
@@ -229,16 +182,15 @@ enum Snapshot {
                     try? await Task.sleep(for: .seconds(2))
                     let window = NSApp.windows.first { $0.isVisible && !before.contains(ObjectIdentifier($0)) }
                     let part = env["APP_SNAPSHOT_BOARD_PART"] ?? "U2"
-                    for mode in ["light", "dark"] {
-                        NSApp.appearance = NSAppearance(named: mode == "light" ? .aqua : .darkAqua)
+                    await run.forEachAppearance { look in
                         BoardViewer.latest?.reset()
                         try? await Task.sleep(for: .seconds(1))
-                        capture(to: "\(dir)/board-\(mode).png", window: window)
+                        await run.capture("board", look, window: window)
                         if let viewer = BoardViewer.latest, let index = viewer.board?.part(named: part) {
                             viewer.select(.part(index), from: .search)
                         }
                         try? await Task.sleep(for: .seconds(1.2))
-                        capture(to: "\(dir)/board-part-\(mode).png", window: window)
+                        await run.capture("board-part", look, window: window)
                         // Part Info, for a chip and for a capacitor: the popover is a window of its own.
                         if let viewer = BoardViewer.latest, let board = viewer.board {
                             // A sample answer for the chip, as Explain This Part keeps it (the /tmp store only).
@@ -254,7 +206,7 @@ enum Snapshot {
                                 viewer.showsPartInfo = true
                                 try? await Task.sleep(for: .seconds(2.5))
                                 let popover = NSApp.windows.first { $0.isVisible && String(describing: type(of: $0)).contains("Popover") }
-                                capture(to: "\(dir)/board-info-\(shot)-\(mode).png", window: popover ?? window)
+                                await run.capture("board-info-\(shot)", look, window: popover ?? window)
                                 viewer.showsPartInfo = false
                                 try? await Task.sleep(for: .seconds(0.4))
                             }
@@ -262,24 +214,24 @@ enum Snapshot {
                         }
                         BoardViewer.latest?.toggleFullBoard()
                         try? await Task.sleep(for: .seconds(1))
-                        capture(to: "\(dir)/board-full-\(mode).png", window: window)
+                        await run.capture("board-full", look, window: window)
                         BoardViewer.latest?.toggleFullBoard()
                         // A net with a test point on it, lit.
                         if let viewer = BoardViewer.latest, let board = viewer.board,
                            let net = env["APP_SNAPSHOT_BOARD_NET"] ?? board.testPoints.first(where: { !$0.net.isEmpty })?.net {
                             viewer.select(.net(net), from: .search)
                             try? await Task.sleep(for: .seconds(1))
-                            capture(to: "\(dir)/board-net-\(mode).png", window: window)
+                            await run.capture("board-net", look, window: window)
                             // The page with the net, large.
                             viewer.enlargePage()
                             try? await Task.sleep(for: .seconds(1.2))
-                            capture(to: "\(dir)/board-page-\(mode).png", window: window)
+                            await run.capture("board-page", look, window: window)
                             // Find on every page, from the panel.
                             viewer.pageQuery = net
                             viewer.submitPageSearch()
                             viewer.submitPageSearch()
                             try? await Task.sleep(for: .seconds(1))
-                            capture(to: "\(dir)/board-page-find-\(mode).png", window: window)
+                            await run.capture("board-page-find", look, window: window)
                             viewer.enlargedPage = nil
                             try? await Task.sleep(for: .seconds(0.6))
                         }
@@ -297,11 +249,11 @@ enum Snapshot {
                             viewer.select(.pin(board.parts[index].pins.lowerBound), from: .search)
                             viewer.zoom(0)
                             try? await Task.sleep(for: .seconds(1))
-                            capture(to: "\(dir)/board-readings-\(mode).png", window: window)
+                            await run.capture("board-readings", look, window: window)
                             viewer.showsReadings = true
                             try? await Task.sleep(for: .seconds(1.5))
                             let popover = NSApp.windows.first { $0.isVisible && String(describing: type(of: $0)).contains("Popover") }
-                            capture(to: "\(dir)/board-readings-popover-\(mode).png", window: popover ?? window)
+                            await run.capture("board-readings-popover", look, window: popover ?? window)
                             viewer.showsReadings = false
                             try? await Task.sleep(for: .seconds(0.4))
                         }
@@ -309,18 +261,10 @@ enum Snapshot {
                     window?.close()
                 }
             }
-            print("SNAPSHOT done \(dir)")
-            // An open sheet refuses terminate, and the run would wait forever.
-            for window in NSApp.windows { if let sheet = window.attachedSheet { window.endSheet(sheet) } }
-            NSApp.terminate(nil)
+            run.finish()
         }
     }
 
-    /// Captures the real window with screencapture, so glass, sidebars, and
-    /// materials look exactly as on screen. That needs Screen Recording
-    /// permission for the app that started this one (your terminal, or Claude).
-    /// Without it, falls back to drawing the view hierarchy, which leaves
-    /// sidebars and glass blank.
     /// doc-intake-slip, doc-estimate, doc-invoice, doc-invoice-paid, and doc-invoice-french or -english.
     private static func snapshotDocuments(model: AppModel, dir: String) async {
         guard let library = model.library, let rows = try? library.repairRows() else { return }
@@ -407,41 +351,5 @@ enum Snapshot {
               let document = detail.documentView else { return }
         let y = document.bounds.height * fraction
         document.scroll(NSPoint(x: 0, y: document.isFlipped ? y : document.bounds.height - y - detail.contentSize.height))
-    }
-
-    private static func capture(to path: String, window: NSWindow? = nil) {
-        // Another app can hide this one while snapshots run (computer use hides
-        // apps it does not control). Hidden windows cannot be captured.
-        if NSApp.isHidden { NSApp.unhideWithoutActivation() }
-        guard let window = window ?? NSApp.windows.first(where: { $0.canBecomeMain && !$0.isSheet }) else {
-            print("SNAPSHOT no window")
-            return
-        }
-        // Active, like a window someone is using: real accent colors and focus rings.
-        NSApp.activate()
-        window.makeKeyAndOrderFront(nil)
-        let size = window.contentView?.bounds.size ?? .zero
-        GridProbes.shared.write(to: path.replacingOccurrences(of: ".png", with: "-layout.json"), window: size)
-        try? FileManager.default.removeItem(atPath: path)
-        // The first capture of a run sometimes misses the window. Try three times.
-        for _ in 1...3 {
-            let shot = Process()
-            shot.executableURL = URL(fileURLWithPath: "/usr/sbin/screencapture")
-            shot.arguments = ["-x", "-o", "-l", String(window.windowNumber), path]
-            try? shot.run()
-            shot.waitUntilExit()
-            if FileManager.default.fileExists(atPath: path) {
-                print("SNAPSHOT \(path)")
-                return
-            }
-            Thread.sleep(forTimeInterval: 0.5)
-        }
-        guard let view = window.contentView?.superview ?? window.contentView,
-              let rep = view.bitmapImageRepForCachingDisplay(in: view.bounds) else { return }
-        view.cacheDisplay(in: view.bounds, to: rep)
-        if let data = rep.representation(using: .png, properties: [:]) {
-            try? data.write(to: URL(fileURLWithPath: path))
-            print("SNAPSHOT \(path) (fallback: no Screen Recording permission, sidebars and glass are blank)")
-        }
     }
 }

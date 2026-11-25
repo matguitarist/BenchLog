@@ -1,3 +1,4 @@
+import AppTestKit
 import BenchLogKit
 import CoreSpotlight
 import LogKitUI

@@ -1,4 +1,5 @@
 import AppKit
+import AppTestKit
 import BenchLogKit
 import LogKitUI
 import SwiftUI
@@ -176,7 +177,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     /// The self-test's result becomes the exit code, after a normal quit.
     func applicationWillTerminate(_ notification: Notification) {
-        if SelfTest.requested { exit(SelfTest.exitCode) }
+        SelfTest.exitIfRequested()
     }
 }
 
@@ -184,20 +185,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 /// With APP_STORE set (tests, snapshots, self-test), a library at that path in /tmp instead.
 enum Store {
     /// True when APP_STORE points somewhere else (tests, snapshots, self-test).
-    static var isOverridden: Bool {
-        !(ProcessInfo.processInfo.environment["APP_STORE"] ?? "").isEmpty
-    }
+    static var isOverridden: Bool { TestRun.isTestRun() }
 
     static var folder: URL {
         URL.applicationSupportDirectory.appending(path: "BenchLog", directoryHint: .isDirectory)
     }
 
-    static var url: URL {
-        if let path = ProcessInfo.processInfo.environment["APP_STORE"], !path.isEmpty {
-            return URL(fileURLWithPath: path)
-        }
-        return folder.appending(path: "benchlog.sqlite")
-    }
+    /// APP_STORE in /tmp, or the real library. Exits with 1 when APP_STORE points anywhere else.
+    static var url: URL { TestRun.store() ?? folder.appending(path: "benchlog.sqlite") }
 
     /// ~/Library/Logs/BenchLog/BenchLog.log, or next to APP_STORE in a test run.
     static var logURL: URL {

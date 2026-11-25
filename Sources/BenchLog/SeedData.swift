@@ -1,4 +1,5 @@
 import AppKit
+import AppTestKit
 import BenchLogKit
 import BoardViewKit
 import Foundation
@@ -7,7 +8,7 @@ import Foundation
 /// empty library. Every field it sets is one people can set in the app.
 enum SeedData {
     static func fillIfRequested(model: AppModel) {
-        guard ProcessInfo.processInfo.environment["APP_SEED"] == "1", Store.isOverridden else { return }
+        guard TestRun.isSeeded() else { return }
         load(into: model)
     }
 

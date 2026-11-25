@@ -14,6 +14,8 @@ let package = Package(
         .package(url: "https://github.com/matguitarist/PictureKit", from: "0.2.0"),
         // Secrets in the Keychain (in memory for test runs) and small JSON files, shared by my apps.
         .package(url: "https://github.com/matguitarist/FileKit", from: "0.1.0"),
+        // The self-test's and snapshots' plumbing (APP_STORE guard, PASS/FAIL lines, captures), shared by my Mac apps.
+        .package(url: "https://github.com/matguitarist/AppTestKit", from: "0.1.0"),
     ],
     targets: [
         // Data and rules with no SwiftUI or AppKit, so tests run without the app
@@ -32,7 +34,8 @@ let package = Package(
             dependencies: ["BenchLogKit", "BoardViewKit", "BenchLogServerKit", .product(name: "Sparkle", package: "Sparkle"),
                            .product(name: "LogKitUI", package: "LogKit"),
                            .product(name: "PictureKitUI", package: "PictureKit"),
-                           .product(name: "FileKit", package: "FileKit")],
+                           .product(name: "FileKit", package: "FileKit"),
+                           .product(name: "AppTestKit", package: "AppTestKit")],
             // BenchLog Help: Help/<language>/<topic>.md, read through Bundle.module.
             resources: [.copy("Help/en"), .copy("Help/fr")],
             // App code runs on the main thread unless you say otherwise.

@@ -1,4 +1,5 @@
 import AppKit
+import AppTestKit
 import BenchLogKit
 import BoardViewKit
 import PDFKit
@@ -8,24 +9,10 @@ import PictureKitUI
 /// prints PASS or FAIL per check, and quits with exit code 0 or 1.
 ///   APP_STORE=/tmp/BenchLog-self.sqlite ~/Applications/BenchLog.app/Contents/MacOS/BenchLog --selftest
 /// (tools/selftest.sh does this.) Add a check for every story with logic.
-@MainActor
-enum SelfTest {
-    static var requested: Bool { CommandLine.arguments.contains("--selftest") }
-    /// Read by AppDelegate.applicationWillTerminate.
-    static var exitCode: Int32 = 0
-    private static var failures = 0
-    private static var count = 0
-
+/// AppTestKit prints the summary and quits with the result.
+extension SelfTest {
     static func runIfRequested(model: AppModel) {
-        guard requested else { return }
-        // Print each line at once, so a crash keeps the lines before it.
-        setvbuf(stdout, nil, _IOLBF, 0)
-        guard Store.isOverridden, Store.url.path.hasPrefix("/tmp/") || Store.url.path.hasPrefix("/private/tmp/") else {
-            print("SELFTEST refused: set APP_STORE to a file in /tmp so the test never touches your library")
-            finish(code: 1)
-            return
-        }
-        Task {
+        run(refusal: "set APP_STORE to a file in /tmp so the test never touches your library") {
             check("the library opens", model.library != nil, model.libraryError ?? "")
             if let library = model.library {
                 check("the library runs its migrations", (try? library.appliedMigrations())?.isEmpty == false)
@@ -497,9 +484,6 @@ enum SelfTest {
                 model.sidebar = page
                 check("the sidebar opens \(page.rawValue)", model.sidebar == page)
             }
-
-            print(failures == 0 ? "SELFTEST PASS \(count) checks" : "SELFTEST FAIL \(failures) of \(count) checks")
-            finish(code: failures == 0 ? 0 : 1)
         }
     }
 
@@ -510,14 +494,6 @@ enum SelfTest {
         return menu.items.filter { !$0.isSeparatorItem }
     }
 
-    private static func check(_ name: String, _ ok: Bool, _ detail: String = "") {
-        count += 1
-        if !ok { failures += 1 }
-        print(ok ? "PASS \(name)" : "FAIL \(name)\(detail.isEmpty ? "" : ": \(detail)")")
-    }
-
-    /// Quits through NSApp.terminate, never exit(), and closes sheets first:
-    /// an open sheet refuses terminate, and the run would wait forever.
     /// Starts `server/` on a free port, connects the library through SyncController, opens a
     /// repair and issues an invoice with the server's numbers, then disconnects.
     @MainActor
@@ -572,7 +548,7 @@ enum SelfTest {
                 .appending(path: "server/src/main.js")
             guard let node = ["/opt/homebrew/bin/node", "/usr/local/bin/node"].first(where: { FileManager.default.isExecutableFile(atPath: $0) }),
                   FileManager.default.fileExists(atPath: source.path) else {
-                print("SKIP sync end to end: no Node or no server source")
+                skip("sync end to end: no Node or no server source")
                 return
             }
             let data = Store.url.deletingLastPathComponent().appending(path: "server-\(UUID().uuidString)")
@@ -937,9 +913,4 @@ enum SelfTest {
         }
     }
 
-    static func finish(code: Int32) {
-        exitCode = code
-        for window in NSApp.windows { if let sheet = window.attachedSheet { window.endSheet(sheet) } }
-        NSApp.terminate(nil)
-    }
 }
