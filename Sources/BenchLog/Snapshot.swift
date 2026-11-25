@@ -21,9 +21,8 @@ enum Snapshot {
         guard let files = model.library?.filesURL,
               let urls = FileManager.default.enumerator(at: files, includingPropertiesForKeys: nil)?.allObjects as? [URL] else { return }
         let pixels = Int(104 * (NSScreen.main?.backingScaleFactor ?? 2))
-        for url in urls where PictureFile.imageExtensions.contains(url.pathExtension.lowercased()) {
-            _ = await PictureCache.shared.image(.file(url), maxPixels: pixels)
-        }
+        let photos = urls.filter { PictureFile.imageExtensions.contains($0.pathExtension.lowercased()) }.map(PictureSource.file)
+        await PictureCache.shared.prefetch(photos, .filling(width: pixels, height: pixels))
     }
 
     static func runIfRequested(model: AppModel, openSettings: OpenSettingsAction, openWindow: OpenWindowAction) {

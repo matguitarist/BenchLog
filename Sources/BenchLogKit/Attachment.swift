@@ -1,4 +1,3 @@
-import CoreGraphics
 import Foundation
 import GRDB
 import PictureKit
@@ -81,7 +80,8 @@ extension Library {
         try FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
         try data.write(to: destination, options: .atomic)
         var size = Int64(data.count)
-        if type.conforms(to: .pdf), Self.isLighterAsPictures(destination), ScannedPDF.shrink(destination, original: .delete) {
+        // A PDF with text (an invoice, a schematic BenchLog searches for part names) is never redrawn as pictures.
+        if type.conforms(to: .pdf), ScannedPDF.isWorthShrinking(destination), ScannedPDF.shrink(destination, original: .delete) {
             // Not URL.resourceValues: it keeps the size it read before the file was replaced.
             size = (try? FileManager.default.attributesOfItem(atPath: destination.path)[.size] as? Int64) ?? size
         }
@@ -103,37 +103,12 @@ extension Library {
         return attachment
     }
 
-    /// A photo as BenchLog keeps it: HEIC at 60%, at most 1600 px, upright. Nil keeps the bytes as they are: not a
-    /// picture ImageIO reads, a GIF (which may move), or a picture filed as a document (a guide's illustrations and
-    /// diagrams, whose text the compression would blur).
+    /// A photo as BenchLog keeps it: HEIC at 60%, at most 1600 px, upright (an animated picture comes back as it
+    /// was). Nil keeps the bytes as they are: not a picture ImageIO reads, or a picture filed as a document (a guide's
+    /// illustrations and diagrams, whose text the compression would blur).
     static func storedPhoto(_ data: Data, type: UTType, kind: AttachmentKind?) -> ConvertedPicture? {
-        guard kind != .document, type.conforms(to: .image), !type.conforms(to: .gif) else { return nil }
+        guard kind != .document, type.conforms(to: .image) else { return nil }
         return try? Pictures.convert(data, to: .photo)
-    }
-
-    /// A heavy scan whose pages have no text: redrawing them as pictures loses nothing. A PDF with fonts (an invoice,
-    /// a schematic BenchLog searches for part names, a scan with a text layer) is never redrawn.
-    static func isLighterAsPictures(_ url: URL) -> Bool {
-        ScannedPDF.isWorthShrinking(url) && !pdfHasText(url)
-    }
-
-    /// Whether any page of a PDF uses a font, in its own resources or those it inherits.
-    static func pdfHasText(_ url: URL) -> Bool {
-        guard let document = CGPDFDocument(url as CFURL), document.numberOfPages > 0 else { return true }
-        for number in 1...document.numberOfPages {
-            var node = document.page(at: number)?.dictionary
-            while let dictionary = node {
-                var resources: CGPDFDictionaryRef?
-                var fonts: CGPDFDictionaryRef?
-                if CGPDFDictionaryGetDictionary(dictionary, "Resources", &resources), let resources,
-                   CGPDFDictionaryGetDictionary(resources, "Font", &fonts), let fonts, CGPDFDictionaryGetCount(fonts) > 0 {
-                    return true
-                }
-                var parent: CGPDFDictionaryRef?
-                node = CGPDFDictionaryGetDictionary(dictionary, "Parent", &parent) ? parent : nil
-            }
-        }
-        return false
     }
 
     /// Photos and files on one record: intake photos first, then the rest, each oldest first.

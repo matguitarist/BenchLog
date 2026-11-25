@@ -126,7 +126,11 @@ private struct PhotoCell: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.xs) {
-            AsyncPicture(.file(url), contentMode: .fill) { Rectangle().fill(.quaternary) }
+            AsyncPicture(.file(url), contentMode: .fill) {
+                Rectangle().fill(.quaternary)
+            } missing: {
+                Rectangle().fill(.quaternary).overlay { Image(systemName: "photo").foregroundStyle(.secondary) }
+            }
                 .frame(width: 104, height: 104)
                 .clipShape(RoundedRectangle(cornerRadius: Radius.control, style: .continuous))
                 .overlay {

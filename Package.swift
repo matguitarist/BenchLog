@@ -11,7 +11,7 @@ let package = Package(
         // SQLite: a plain, documented schema that a future iOS app, Android app, or sync server can share.
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.12.0"),
         // Photos stored as small upright HEIC, heavy scans shrunk, thumbnails decoded off the main thread.
-        .package(url: "https://github.com/matguitarist/PictureKit", from: "0.1.0"),
+        .package(url: "https://github.com/matguitarist/PictureKit", from: "0.2.0"),
     ],
     targets: [
         // Data and rules with no SwiftUI or AppKit, so tests run without the app

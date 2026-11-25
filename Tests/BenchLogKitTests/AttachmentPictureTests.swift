@@ -38,6 +38,16 @@ import Testing
         return context.makeImage()!
     }
 
+    /// Two frames, as a spinner or a short clip.
+    static func animatedGIF() -> Data {
+        let output = NSMutableData()
+        let destination = CGImageDestinationCreateWithData(output, "com.compuserve.gif" as CFString, 2, nil)!
+        CGImageDestinationAddImage(destination, photo(width: 40, height: 40), nil)
+        CGImageDestinationAddImage(destination, photo(width: 40, height: 40).cropping(to: CGRect(x: 0, y: 0, width: 40, height: 40))!, nil)
+        CGImageDestinationFinalize(destination)
+        return output as Data
+    }
+
     static func jpeg(width: Int, height: Int) -> Data {
         Pictures.encode(photo(width: width, height: height), as: .jpeg, quality: 0.95)!
     }
@@ -73,15 +83,16 @@ import Testing
         #expect(attachment.size == Int64(try Data(contentsOf: url).count))
     }
 
-    @Test func aGuidesPicturesAndGIFsAreKeptAsTheyAre() throws {
+    @Test func aGuidesPicturesAndAnimatedGIFsAreKeptAsTheyAre() throws {
         let png = Pictures.encode(Self.photo(width: 2000, height: 1000), as: .png)!
         let diagram = try library.addAttachment(data: png, originalName: "pinout.png", to: .repair, id: repair.id, kind: .document)
         #expect(diagram.contentType == "public.png")
         #expect(try Data(contentsOf: library.fileURL(for: diagram)) == png)
 
-        let gif = Pictures.encode(Self.photo(width: 40, height: 40), as: .png)!
+        let gif = Self.animatedGIF()
         let moving = try library.addAttachment(data: gif, originalName: "spinner.gif", to: .repair, id: repair.id)
         #expect(moving.contentType == "com.compuserve.gif")
+        #expect(try Data(contentsOf: library.fileURL(for: moving)) == gif)
     }
 
     @Test func aHeavyScanIsShrunkButAPDFWithTextIsNot() throws {

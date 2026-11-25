@@ -551,8 +551,8 @@ enum SelfTest {
               info.map { "\($0.width)×\($0.height), orientation \($0.orientation)" } ?? "unreadable")
         check("its size is the stored file's", url.flatMap { try? $0.resourceValues(forKeys: [.fileSizeKey]).fileSize }.map(Int64.init) == photo?.size)
         check("the original photo is left as it was", (try? Data(contentsOf: source)) == output as Data)
-        let thumbnail = if let url { await PictureCache.shared.image(.file(url), maxPixels: 208) } else { CGImage?.none }
-        check("its thumbnail shows", thumbnail.map { max($0.width, $0.height) == PictureCache.step(208) && $0.height > $0.width } ?? false)
+        let thumbnail = if let url { await PictureCache.shared.image(.file(url), .filling(width: 208, height: 208)) } else { CGImage?.none }
+        check("its thumbnail shows", thumbnail.map { $0.width == PictureCache.step(208) && $0.height > $0.width } ?? false)
         try? FileManager.default.removeItem(at: source)
     }
 
