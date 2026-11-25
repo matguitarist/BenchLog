@@ -115,53 +115,24 @@ private struct HelpPage: View {
     }
 }
 
-/// The Help menu.
-struct HelpCommands: Commands {
+/// BenchLog's own Help items, under BenchLog Help. The rest of the Help menu is the shared
+/// StandardCommands (UI/AppCommands.swift).
+struct HelpTopicItems: View {
     let model: AppModel
     @Environment(\.openWindow) private var openWindow
 
-    var body: some Commands {
-        CommandGroup(replacing: .help) {
-            Button("BenchLog Help") { open(.gettingStarted) }
-                .keyboardShortcut("?", modifiers: .command)
-            Divider()
-            Button("Keyboard Shortcuts") { open(.shortcuts) }
-            Button("Set Up the Shop Server") { open(.sync) }
-            Divider()
-            Button("What’s New in BenchLog") { NSWorkspace.shared.open(HelpLinks.releaseNotes) }
-            Button("Report a Problem") { NSWorkspace.shared.open(HelpLinks.newIssue) }
-            #if DEBUG
-            Divider()
-            Button("Load Sample Data") { SeedData.load(into: model) }
-                .disabled(model.library == nil || !SeedData.isEmpty(model))
-            #endif
-        }
+    var body: some View {
+        Button("Keyboard Shortcuts") { open(.shortcuts) }
+        Button("Set Up the Shop Server") { open(.sync) }
+        #if DEBUG
+        Divider()
+        Button("Load Sample Data") { SeedData.load(into: model) }
+            .disabled(model.library == nil || !SeedData.isEmpty(model))
+        #endif
     }
 
     private func open(_ topic: HelpTopic) {
         HelpCenter.shared.topic = topic
         openWindow(id: "help")
-    }
-}
-
-/// Where the Help menu's web links go.
-enum HelpLinks {
-    static let repository = URL(string: "https://github.com/matguitarist/BenchLog")!
-
-    static var version: String {
-        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0"
-    }
-
-    /// This version's release page, with its notes.
-    static var releaseNotes: URL {
-        repository.appending(path: "releases/tag/v\(version)")
-    }
-
-    /// A new GitHub issue with the version and macOS filled in.
-    static var newIssue: URL {
-        let system = ProcessInfo.processInfo.operatingSystemVersionString
-        var components = URLComponents(url: repository.appending(path: "issues/new"), resolvingAgainstBaseURL: false)!
-        components.queryItems = [URLQueryItem(name: "body", value: "\n\n---\nBenchLog \(version), macOS \(system)")]
-        return components.url!
     }
 }

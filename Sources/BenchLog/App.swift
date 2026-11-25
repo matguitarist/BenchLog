@@ -79,19 +79,15 @@ struct BenchLogApp: App {
                     .keyboardShortcut(.delete, modifiers: .command)
                     .disabled(model.focusedTrashItem == nil || model.sheet != nil)
             }
-            // Help: BenchLog Help (⌘?), its topics, the release notes, and Report a Problem.
-            HelpCommands(model: model)
-            CommandGroup(after: .appInfo) {
-                Button("Check for Updates…") { Updater.shared.checkForUpdates() }
-                    .disabled(!Updater.shared.isAvailable)
+            // Help: BenchLog Help (⌘?), its topics, What's New, Report a Problem, Show Log.
+            StandardCommands(app: "BenchLog", repository: "matguitarist/BenchLog",
+                             updates: AppUpdates(isAvailable: Updater.shared.isAvailable) { Updater.shared.checkForUpdates() },
+                             help: .window("help", prepare: { HelpCenter.shared.topic = .gettingStarted }),
+                             log: .page { model.sidebar = .log }) {
+                HelpTopicItems(model: model)
             }
-            CommandGroup(after: .sidebar) {
-                Divider()
-                ForEach(Array(SidebarItem.allCases.enumerated()), id: \.element) { index, item in
-                    Button(item.title) { model.sidebar = item }
-                        .keyboardShortcut(KeyEquivalent(Character(String(index + 1))), modifiers: [.command, .option])
-                }
-            }
+            // ⌥⌘: ⌘1, ⌘2 and ⌘0 are the board viewer's sides and zoom.
+            PageCommands(pages: SidebarItem.allCases, title: \.title, modifiers: [.command, .option]) { model.sidebar = $0 }
             CommandMenu("Repair") {
                 Menu("Status") {
                     StatusButtons(model: model, repairID: model.focusedRepairID, current: model.focusedRepairStatus)

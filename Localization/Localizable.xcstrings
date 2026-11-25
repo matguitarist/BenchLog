@@ -21,12 +21,32 @@
         }
       }
     },
+    "%@ Help": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aide %@"
+          }
+        }
+      }
+    },
     "%@ h": {
       "localizations": {
         "fr": {
           "stringUnit": {
             "state": "translated",
             "value": "%@ h"
+          }
+        }
+      }
+    },
+    "%@ on GitHub": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ sur GitHub"
           }
         }
       }
@@ -157,6 +177,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Une pièce absente de votre inventaire ; elle commence comme Requise"
+          }
+        }
+      }
+    },
+    "About %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "À propos de %@"
           }
         }
       }
@@ -1417,6 +1447,36 @@
           "stringUnit": {
             "state": "translated",
             "value": "État"
+          }
+        }
+      }
+    },
+    "Report a Problem…": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Signaler un problème…"
+          }
+        }
+      }
+    },
+    "Show Log": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Afficher le journal"
+          }
+        }
+      }
+    },
+    "What’s New in %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveautés de %@"
           }
         }
       }
@@ -7802,26 +7862,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Installer le serveur d’atelier"
-          }
-        }
-      }
-    },
-    "What’s New in BenchLog": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nouveautés de BenchLog"
-          }
-        }
-      }
-    },
-    "Report a Problem": {
-      "localizations": {
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Signaler un problème"
           }
         }
       }

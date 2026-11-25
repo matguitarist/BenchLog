@@ -476,10 +476,13 @@ extension SelfTest {
                 check("Help has the \(topic.rawValue) topic in English and French", languages.count == 2 && topic.text.hasPrefix("# ") && topic.text.count > 300)
             }
             let helpMenu = NSApp.mainMenu?.items.last?.submenu?.items.map(\.title) ?? []
-            check("the Help menu has BenchLog Help and Report a Problem",
-                  helpMenu.contains(String(localized: "BenchLog Help")) && helpMenu.contains(String(localized: "Report a Problem")), "\(helpMenu)")
-            check("Report a Problem fills in the version", HelpLinks.newIssue.absoluteString.contains("BenchLog%20\(HelpLinks.version)")
-                  || HelpLinks.newIssue.absoluteString.contains("BenchLog \(HelpLinks.version)"), HelpLinks.newIssue.absoluteString)
+            let app = "BenchLog"
+            check("the Help menu has BenchLog Help, Report a Problem and Show Log",
+                  helpMenu.contains(String(localized: "\(app) Help")) && helpMenu.contains(String(localized: "Report a Problem…"))
+                  && helpMenu.contains(String(localized: "Show Log")), "\(helpMenu)")
+            let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "?"
+            let issue = RepositoryLinks(repository: "matguitarist/BenchLog").newIssue(app: app).absoluteString
+            check("Report a Problem fills in the version", issue.contains("BenchLog%20\(version)") || issue.contains("BenchLog \(version)"), issue)
             for page in SidebarItem.allCases {
                 model.sidebar = page
                 check("the sidebar opens \(page.rawValue)", model.sidebar == page)
