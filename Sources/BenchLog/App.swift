@@ -22,6 +22,7 @@ struct BenchLogApp: App {
         Window("BenchLog", id: "main") {
             ContentView()
                 .environment(model)
+                .whatsNew(app: "BenchLog", repository: "matguitarist/BenchLog")
                 .themed()
                 .overlay { if GridOverlay.enabled { GridOverlay() } }
                 // Wide enough for the sidebar, a list, and a detail at their smallest.

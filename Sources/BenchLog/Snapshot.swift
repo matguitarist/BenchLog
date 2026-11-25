@@ -112,6 +112,8 @@ enum Snapshot {
                 await run.shoot(name, in: "sheets", window: { WindowShot.mainWindow()?.attachedSheet },
                                 show: { model.sidebar = page; model.sheet = sheet }, hide: { model.sheet = nil })
             }
+            await run.shoot("whats-new", window: { WindowShot.mainWindow()?.attachedSheet },
+                           show: { WhatsNewState.shared.shown = .sample }, hide: { WhatsNewState.shared.shown = nil })
             if run.wants("settings") {
                 await run.shootSettings(tabs: SettingsTab.allCases.map(\.rawValue), open: { openSettings() },
                                         select: { model.settingsTab = SettingsTab(rawValue: $0)! })

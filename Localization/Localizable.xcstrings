@@ -10125,6 +10125,36 @@
           }
         }
       }
+    },
+    "What’s New in %@ %@": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nouveautés de %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "All Releases": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Toutes les versions"
+          }
+        }
+      }
+    },
+    "Continue": {
+      "localizations": {
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continuer"
+          }
+        }
+      }
     }
   },
   "version": "1.0"
