@@ -28,8 +28,6 @@ enum Snapshot {
     static func runIfRequested(model: AppModel, openSettings: OpenSettingsAction, openWindow: OpenWindowAction) {
         // Refuses ("SNAPSHOT refused: …") and quits unless APP_STORE is a file in /tmp.
         guard let run = SnapshotRun.requested(layout: { GridProbes.shared.write(to: $0.path, window: $1) }) else { return }
-        /// A state or sheet is shot when it is named, or its group ("states", "sheets") is.
-        func wanted(_ name: String, in group: String) -> Bool { run.wants(name) || run.request.pages?.contains(group) == true }
         Task {
             // Wakes the display, waits for the window, and applies APP_SNAPSHOT_MIN or APP_SNAPSHOT_SIZE.
             await run.start()
@@ -72,19 +70,15 @@ enum Snapshot {
                 ("devices-shop-sold", { model.sidebar = .devices; model.deviceScope = .shop; model.selectedDevice = soldDevice }),
                 ("repair-billing", { model.sidebar = .repairs; model.repairFilter = .ready; model.selectedRepair = billedRepair }),
             ]
-            for (name, setUp) in states where wanted(name, in: "states") {
+            // Each state shoots by its name, and all of them with APP_SNAPSHOT_PAGES=states.
+            let scrolls: [String: CGFloat] = ["repair-parts": 0.45, "repair-guides": 0.42, "repair-billing": 0.44]
+            await run.shootPages(states.map(\.0), in: "states",
+                                 settle: { $0.hasPrefix("guide-") ? .seconds(1.3) : .seconds(0.3) }) { name in
                 model.searching = false
                 model.deviceScope = .all
-                setUp()
-                await run.forEachAppearance { look in
-                    await run.pause()
-                    if name == "repair-parts" { scrollDetail(toShow: 0.45) }
-                    if name == "repair-guides" { scrollDetail(toShow: 0.42) }
-                    if name == "repair-billing" { scrollDetail(toShow: 0.44) }
-                    if name.hasPrefix("guide-") { try? await Task.sleep(for: .seconds(1)) }
-                    try? await Task.sleep(for: .seconds(0.3))
-                    await run.capture(name, look)
-                }
+                states.first { $0.0 == name }?.1()
+                await run.pause()
+                if let fraction = scrolls[name] { scrollDetail(toShow: fraction) }
             }
             model.partsTab = .inventory
             model.searching = false
@@ -114,15 +108,9 @@ enum Snapshot {
                 ("guide-edit-sheet", .guides, markdownGuide.map { .editGuide($0) } ?? .newPart),
                 ("guides-import-sheet", .guides, .importGuides(Self.sampleVault())),
             ]
-            for (name, page, sheet) in sheets where wanted(name, in: "sheets") {
-                model.sidebar = page
-                await run.forEachAppearance { look in
-                    model.sheet = sheet
-                    await run.pause(.seconds(1))
-                    await run.capture(name, look, window: WindowShot.mainWindow()?.attachedSheet)
-                    model.sheet = nil
-                    await run.pause(.seconds(0.6))
-                }
+            for (name, page, sheet) in sheets {
+                await run.shoot(name, in: "sheets", window: { WindowShot.mainWindow()?.attachedSheet },
+                                show: { model.sidebar = page; model.sheet = sheet }, hide: { model.sheet = nil })
             }
             if run.wants("settings") {
                 await run.shootSettings(tabs: SettingsTab.allCases.map(\.rawValue), open: { openSettings() },
@@ -144,9 +132,7 @@ enum Snapshot {
                 }
                 ServerHost.shared.confirmingStop = true
                 await run.pause()
-                if let window = WindowShot.otherWindow() ?? WindowShot.mainWindow() {
-                    await WindowShot.capture(window, to: run.request.folder.appending(path: "settings-sync-server-stop.png"), layout: run.layout)
-                }
+                await run.capture("settings-sync-server-stop", window: WindowShot.otherWindow())
                 ServerHost.shared.confirmingStop = false
                 try? await Task.sleep(for: .seconds(0.4))
                 ServerHost.shared.stop(model)

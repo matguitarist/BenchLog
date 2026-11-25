@@ -1,13 +1,13 @@
 {
-  "originHash" : "bd70c73d729f7dcdc47cc25e0d18d2fc79d442799c4269718ba3ee855834e571",
+  "originHash" : "5c5f3e7835662fca46a78e9eabae51782353441c87ed628f989aa5e062c9c584",
   "pins" : [
     {
       "identity" : "apptestkit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/matguitarist/AppTestKit",
       "state" : {
-        "revision" : "bf79df61ff605278d72ea59cfd5bf40b4decbc06",
-        "version" : "0.1.0"
+        "revision" : "7038ef7cef0fdd95650f76be2d1db2185b317ac7",
+        "version" : "0.2.0"
       }
     },
     {
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/matguitarist/FileKit",
       "state" : {
-        "revision" : "ca394fee2bd07f14e05924340e9bddf2f3ebfe30",
-        "version" : "0.1.0"
+        "revision" : "ee1373e2d4c541ef5d556cff817a3aed4dd9ad3c",
+        "version" : "0.2.0"
       }
     },
     {
@@ -42,8 +42,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/matguitarist/PictureKit",
       "state" : {
-        "revision" : "f5af9a213fc60f2559afcfe7ee9467527a538130",
-        "version" : "0.2.0"
+        "revision" : "03e4b15de2f939df5e5216ab252a374c076539df",
+        "version" : "0.2.1"
+      }
+    },
+    {
+      "identity" : "processkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/matguitarist/ProcessKit",
+      "state" : {
+        "revision" : "4664cb8f16dab9f2ccad228dccfad67b729b5d46",
+        "version" : "0.2.1"
       }
     },
     {
