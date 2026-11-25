@@ -1,5 +1,7 @@
+import CoreGraphics
 import Foundation
 import GRDB
+import PictureKit
 import UniformTypeIdentifiers
 
 /// What a photo or file records.
@@ -47,7 +49,8 @@ public struct Attachment: BenchRecord {
 }
 
 extension Library {
-    /// Copies a file into the library and attaches it. The original is left where it was.
+    /// Copies a file into the library and attaches it. The original is left where it was: only the copy is
+    /// converted or shrunk.
     @discardableResult
     public func addAttachment(copying source: URL, to owner: NoteOwner, id ownerID: UUID,
                               kind: AttachmentKind? = nil, now: Date = .now) throws -> Attachment {
@@ -58,17 +61,30 @@ extension Library {
     /// Stores bytes (a pasted image, a photo from Continuity Camera) as a file and attaches it.
     /// Without a kind: images on a repair still in Intake are intake photos, other images are
     /// progress photos, and everything else is a document.
+    /// Photos are stored as upright HEIC at most 1600 px (`originalName` keeps the person's name), and a heavy
+    /// scanned PDF is redrawn lighter. Slow for a big photo or scan: call it off the main thread.
     @discardableResult
     public func addAttachment(data: Data, originalName: String, to owner: NoteOwner, id ownerID: UUID,
                               kind: AttachmentKind? = nil, now: Date = .now) throws -> Attachment {
-        let ext = (originalName as NSString).pathExtension.lowercased()
-        let type = UTType(filenameExtension: ext) ?? .data
+        var ext = (originalName as NSString).pathExtension.lowercased()
+        var type = UTType(filenameExtension: ext) ?? .data
+        var data = data
+        if let photo = Self.storedPhoto(data, type: type, kind: kind) {
+            data = photo.data
+            ext = photo.fileExtension
+            type = photo.type
+        }
         let id = UUID()
         let year = Calendar(identifier: .gregorian).component(.year, from: now)
         let relative = "\(year)/\(id.stored)" + (ext.isEmpty ? "" : ".\(ext)")
         let destination = filesURL.appending(path: relative)
         try FileManager.default.createDirectory(at: destination.deletingLastPathComponent(), withIntermediateDirectories: true)
         try data.write(to: destination, options: .atomic)
+        var size = Int64(data.count)
+        if type.conforms(to: .pdf), Self.isLighterAsPictures(destination), ScannedPDF.shrink(destination, original: .delete) {
+            // Not URL.resourceValues: it keeps the size it read before the file was replaced.
+            size = (try? FileManager.default.attributesOfItem(atPath: destination.path)[.size] as? Int64) ?? size
+        }
 
         var chosen = kind ?? .document
         if kind == nil, type.conforms(to: .image) {
@@ -76,7 +92,7 @@ extension Library {
             chosen = inIntake ? .intake : .progress
         }
         let attachment = Attachment(id: id, ownerType: owner, ownerId: ownerID, kind: chosen, path: relative,
-                                    originalName: originalName, contentType: type.identifier, size: Int64(data.count),
+                                    originalName: originalName, contentType: type.identifier, size: size,
                                     caption: "", createdAt: now, updatedAt: now, deletedAt: nil)
         do {
             try db.write { try attachment.insert($0) }
@@ -85,6 +101,39 @@ extension Library {
             throw error
         }
         return attachment
+    }
+
+    /// A photo as BenchLog keeps it: HEIC at 60%, at most 1600 px, upright. Nil keeps the bytes as they are: not a
+    /// picture ImageIO reads, a GIF (which may move), or a picture filed as a document (a guide's illustrations and
+    /// diagrams, whose text the compression would blur).
+    static func storedPhoto(_ data: Data, type: UTType, kind: AttachmentKind?) -> ConvertedPicture? {
+        guard kind != .document, type.conforms(to: .image), !type.conforms(to: .gif) else { return nil }
+        return try? Pictures.convert(data, to: .photo)
+    }
+
+    /// A heavy scan whose pages have no text: redrawing them as pictures loses nothing. A PDF with fonts (an invoice,
+    /// a schematic BenchLog searches for part names, a scan with a text layer) is never redrawn.
+    static func isLighterAsPictures(_ url: URL) -> Bool {
+        ScannedPDF.isWorthShrinking(url) && !pdfHasText(url)
+    }
+
+    /// Whether any page of a PDF uses a font, in its own resources or those it inherits.
+    static func pdfHasText(_ url: URL) -> Bool {
+        guard let document = CGPDFDocument(url as CFURL), document.numberOfPages > 0 else { return true }
+        for number in 1...document.numberOfPages {
+            var node = document.page(at: number)?.dictionary
+            while let dictionary = node {
+                var resources: CGPDFDictionaryRef?
+                var fonts: CGPDFDictionaryRef?
+                if CGPDFDictionaryGetDictionary(dictionary, "Resources", &resources), let resources,
+                   CGPDFDictionaryGetDictionary(resources, "Font", &fonts), let fonts, CGPDFDictionaryGetCount(fonts) > 0 {
+                    return true
+                }
+                var parent: CGPDFDictionaryRef?
+                node = CGPDFDictionaryGetDictionary(dictionary, "Parent", &parent) ? parent : nil
+            }
+        }
+        return false
     }
 
     /// Photos and files on one record: intake photos first, then the rest, each oldest first.

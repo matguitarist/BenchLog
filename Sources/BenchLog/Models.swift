@@ -121,6 +121,20 @@ final class AppModel {
         }
     }
 
+    /// `write` with the work off the main thread, for changes that take a while: photos converted, scans shrunk.
+    func writeInBackground(_ what: String, _ body: @escaping @Sendable (Library) throws -> Void) async {
+        guard let library else { return }
+        do {
+            try await Task.detached(priority: .userInitiated) { try body(library) }.value
+            log.post(.info, what, source: "Library")
+            reload()
+            SyncController.shared.changed(self)
+        } catch {
+            log.post(.error, "\(what) failed: \(error.localizedDescription)", source: "Library")
+            problem = error.localizedDescription
+        }
+    }
+
     /// Swaps the open library (restore), and forgets what was selected in the old one.
     func replaceLibrary(_ library: Library?) {
         self.library = library

@@ -2,6 +2,7 @@ import AppKit
 import BenchLogKit
 import BoardViewKit
 import PDFKit
+import PictureKitUI
 
 /// Self-test for agents: drives the app model on a library in /tmp,
 /// prints PASS or FAIL per check, and quits with exit code 0 or 1.
@@ -113,7 +114,7 @@ enum SelfTest {
                     try? Data([0x89, 0x50, 0x4E, 0x47]).write(to: source)
                     let board = URL(fileURLWithPath: "/tmp/BenchLog-self-board.brd")
                     try? Data([0]).write(to: board)
-                    model.addFiles([source, board], to: .repair, id: repair.id)
+                    await model.addFiles([source, board], to: .repair, id: repair.id)
                     let added = model.read([]) { try $0.attachments(for: .repair, id: repair.id) }
                     check("dropped files are copied into the library", added.count == 2
                           && added.allSatisfy { FileManager.default.fileExists(atPath: library.fileURL(for: $0).path) })
@@ -133,6 +134,9 @@ enum SelfTest {
                         model.undoManager = nil
                     }
                 }
+
+                // S-010 A photo comes in as a small upright HEIC and shows.
+                if let device { await checkIncomingPhoto(model: model, library: library, device: device.id) }
 
                 // S-013 to S-015 Parts
                 if let device, let repair = model.read(nil, { try $0.repairs(of: device.id).last }) {
@@ -517,6 +521,41 @@ enum SelfTest {
     /// Starts `server/` on a free port, connects the library through SyncController, opens a
     /// repair and issues an invoice with the server's numbers, then disconnects.
     @MainActor
+    /// A camera-sized JPEG lying on its side, dropped on a device: stored as an upright HEIC of 1600 px under the
+    /// person's file name, and decoded for its thumbnail.
+    private static func checkIncomingPhoto(model: AppModel, library: Library, device: UUID) async {
+        let (width, height) = (3000, 2000)
+        guard let context = CGContext(data: nil, width: width, height: height, bitsPerComponent: 8, bytesPerRow: 0,
+                                      space: CGColorSpace(name: CGColorSpace.sRGB)!, bitmapInfo: CGImageAlphaInfo.noneSkipLast.rawValue) else { return }
+        context.drawLinearGradient(CGGradient(colorsSpace: nil, colors: [CGColor(red: 0.9, green: 0.3, blue: 0.4, alpha: 1),
+                                                                          CGColor(red: 0.2, green: 0.5, blue: 0.9, alpha: 1)] as CFArray,
+                                              locations: nil)!,
+                                   start: .zero, end: CGPoint(x: width, y: height), options: [])
+        let output = NSMutableData()
+        guard let image = context.makeImage(),
+              let destination = CGImageDestinationCreateWithData(output, "public.jpeg" as CFString, 1, nil) else { return }
+        // EXIF 6: the camera was turned, so the picture is shown a quarter turn clockwise, 2000 wide by 3000 high.
+        let options: [CFString: Any] = [kCGImagePropertyOrientation: 6, kCGImageDestinationLossyCompressionQuality: 0.95]
+        CGImageDestinationAddImage(destination, image, options as CFDictionary)
+        CGImageDestinationFinalize(destination)
+        let source = URL(fileURLWithPath: "/tmp/BenchLog-self-camera.JPG")
+        try? (output as Data).write(to: source)
+        await model.addFiles([source], to: .device, id: device)
+        let photo = model.read(nil) { try $0.attachments(for: .device, id: device).first { $0.originalName == "BenchLog-self-camera.JPG" } }
+        let url = photo.map(library.fileURL)
+        let info = url.flatMap { Pictures.info(at: $0) }
+        check("an incoming photo is stored as HEIC under the person's name",
+              photo?.contentType == "public.heic" && photo?.path.hasSuffix(".heic") == true && photo?.isImage == true,
+              "\(photo?.contentType ?? "none") \(photo?.path ?? "")")
+        check("it is turned upright and at most 1600 px", (1066...1067).contains(info?.width ?? 0) && info?.height == 1600 && info?.isUpright == true,
+              info.map { "\($0.width)×\($0.height), orientation \($0.orientation)" } ?? "unreadable")
+        check("its size is the stored file's", url.flatMap { try? $0.resourceValues(forKeys: [.fileSizeKey]).fileSize }.map(Int64.init) == photo?.size)
+        check("the original photo is left as it was", (try? Data(contentsOf: source)) == output as Data)
+        let thumbnail = if let url { await PictureCache.shared.image(.file(url), maxPixels: 208) } else { CGImage?.none }
+        check("its thumbnail shows", thumbnail.map { max($0.width, $0.height) == PictureCache.step(208) && $0.height > $0.width } ?? false)
+        try? FileManager.default.removeItem(at: source)
+    }
+
     private static func syncEndToEnd(_ model: AppModel) async {
         // SELFTEST_SERVER=<url> (with SELFTEST_TOKEN) syncs with a server already running, such as
         // the Docker image; it must hold no library yet. Otherwise the self-test starts server/ with Node.

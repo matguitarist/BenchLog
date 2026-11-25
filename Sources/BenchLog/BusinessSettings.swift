@@ -1,4 +1,5 @@
 import BenchLogKit
+import PictureKitUI
 import SwiftUI
 import UniformTypeIdentifiers
 
@@ -27,8 +28,10 @@ struct BusinessSettings: View {
                 field("Website", "Site web", text: $profile.website)
                 LabeledContent {
                     HStack {
-                        if let image = logo {
-                            Image(nsImage: image).resizable().scaledToFit().frame(maxWidth: 120, maxHeight: 40)
+                        if let logo {
+                            AsyncPicture(.file(logo)) { Color.clear }
+                                .frame(width: 120, height: 40)
+                                .accessibilityHidden(true)
                             Button("Remove") { model.removeLogo() }
                         }
                         Button(logo == nil ? "Choose…" : "Change…") { choosingLogo = true }
@@ -92,9 +95,10 @@ struct BusinessSettings: View {
         .onDisappear(perform: save)
     }
 
-    private var logo: NSImage? {
+    private var logo: URL? {
         guard let library = model.library, !profile.logoPath.isEmpty else { return nil }
-        return NSImage(contentsOf: library.filesURL.appending(path: profile.logoPath))
+        let url = library.filesURL.appending(path: profile.logoPath)
+        return FileManager.default.fileExists(atPath: url.path) ? url : nil
     }
 
     private func save() {

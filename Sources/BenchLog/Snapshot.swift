@@ -3,6 +3,7 @@ import BenchLogKit
 import BoardViewKit
 import PDFKit
 import IOKit.pwr_mgt
+import PictureKitUI
 import SwiftUI
 
 /// Screenshot mode for agents.
@@ -15,6 +16,16 @@ import SwiftUI
 /// Add APP_SNAPSHOT_MIN=1 to shrink the main window to its smallest size first,
 /// or APP_SNAPSHOT_SIZE=1600x1000 for a wide window.
 enum Snapshot {
+    /// Decodes every photo at its thumbnail's size first, so the first shot shows them and not their placeholders.
+    private static func decodePhotos(_ model: AppModel) async {
+        guard let files = model.library?.filesURL,
+              let urls = FileManager.default.enumerator(at: files, includingPropertiesForKeys: nil)?.allObjects as? [URL] else { return }
+        let pixels = Int(104 * (NSScreen.main?.backingScaleFactor ?? 2))
+        for url in urls where PictureFile.imageExtensions.contains(url.pathExtension.lowercased()) {
+            _ = await PictureCache.shared.image(.file(url), maxPixels: pixels)
+        }
+    }
+
     static func runIfRequested(model: AppModel, openSettings: OpenSettingsAction, openWindow: OpenWindowAction) {
         let env = ProcessInfo.processInfo.environment
         guard let dir = env["APP_SNAPSHOT"], !dir.isEmpty else { return }
@@ -35,6 +46,7 @@ enum Snapshot {
                                         IOPMAssertionLevel(kIOPMAssertionLevelOn), "Snapshots" as CFString, &awake)
             try? FileManager.default.createDirectory(atPath: dir, withIntermediateDirectories: true)
             try? await Task.sleep(for: .seconds(1.5))
+            await decodePhotos(model)
             if env["APP_SNAPSHOT_MIN"] != nil, let main = NSApp.windows.first(where: { $0.canBecomeMain && !$0.isSheet }) {
                 // The window clamps to its content's minimum size.
                 main.setContentSize(NSSize(width: 1, height: 1))

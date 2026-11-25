@@ -10,11 +10,14 @@ let package = Package(
         .package(url: "https://github.com/matguitarist/LogKit", from: "0.6.0"),
         // SQLite: a plain, documented schema that a future iOS app, Android app, or sync server can share.
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.12.0"),
+        // Photos stored as small upright HEIC, heavy scans shrunk, thumbnails decoded off the main thread.
+        .package(url: "https://github.com/matguitarist/PictureKit", from: "0.1.0"),
     ],
     targets: [
         // Data and rules with no SwiftUI or AppKit, so tests run without the app
         // and a future iPhone/iPad app can use the same code.
-        .target(name: "BenchLogKit", dependencies: [.product(name: "GRDB", package: "GRDB.swift")]),
+        .target(name: "BenchLogKit", dependencies: [.product(name: "GRDB", package: "GRDB.swift"),
+                                                    .product(name: "PictureKit", package: "PictureKit")]),
         // Boardview files (.brd, BRD2, .bdv) and the rules that link a board to its schematic. Foundation only,
         // so a standalone viewer or the iPhone/iPad app can use it as is.
         .target(name: "BoardViewKit"),
@@ -25,7 +28,8 @@ let package = Package(
         .executableTarget(
             name: "BenchLog",
             dependencies: ["BenchLogKit", "BoardViewKit", "BenchLogServerKit", .product(name: "Sparkle", package: "Sparkle"),
-                           .product(name: "LogKitUI", package: "LogKit")],
+                           .product(name: "LogKitUI", package: "LogKit"),
+                           .product(name: "PictureKitUI", package: "PictureKit")],
             // BenchLog Help: Help/<language>/<topic>.md, read through Bundle.module.
             resources: [.copy("Help/en"), .copy("Help/fr")],
             // App code runs on the main thread unless you say otherwise.
@@ -33,6 +37,7 @@ let package = Package(
             // Sparkle.framework sits in Contents/Frameworks (build.sh copies it).
             linkerSettings: [.unsafeFlags(["-Xlinker", "-rpath", "-Xlinker", "@executable_path/../Frameworks"])]
         ),
-        .testTarget(name: "BenchLogKitTests", dependencies: ["BenchLogKit", "BoardViewKit", "BenchLogServerKit", .product(name: "GRDB", package: "GRDB.swift")]),
+        .testTarget(name: "BenchLogKitTests", dependencies: ["BenchLogKit", "BoardViewKit", "BenchLogServerKit", .product(name: "GRDB", package: "GRDB.swift"),
+                                                           .product(name: "PictureKit", package: "PictureKit")]),
     ]
 )

@@ -127,10 +127,11 @@ extension AppModel {
 
     // MARK: Photos and files
 
-    /// Copies files from the Mac into the library and attaches them.
-    func addFiles(_ urls: [URL], to owner: NoteOwner, id: UUID) {
+    /// Copies files from the Mac into the library and attaches them, off the main thread: photos are stored as
+    /// HEIC and heavy scans shrunk on the way in.
+    func addFiles(_ urls: [URL], to owner: NoteOwner, id: UUID) async {
         guard !urls.isEmpty else { return }
-        write("Added \(urls.count) file(s) to \(owner.rawValue) \(id.stored)") { library in
+        await writeInBackground("Added \(urls.count) file(s) to \(owner.rawValue) \(id.stored)") { library in
             for url in urls { try library.addAttachment(copying: url, to: owner, id: id) }
         }
     }
@@ -152,9 +153,9 @@ extension AppModel {
                 items.append((data, "\(provider.suggestedName ?? "Photo \(stamp)").\(type.preferredFilenameExtension ?? "jpg")"))
             }
         }
-        addFiles(files, to: owner, id: id)
+        await addFiles(files, to: owner, id: id)
         guard !items.isEmpty else { return }
-        write("Added \(items.count) imported item(s) to \(owner.rawValue) \(id.stored)") { library in
+        await writeInBackground("Added \(items.count) imported item(s) to \(owner.rawValue) \(id.stored)") { [items] library in
             for (data, name) in items { try library.addAttachment(data: data, originalName: name, to: owner, id: id) }
         }
     }

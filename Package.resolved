@@ -1,5 +1,5 @@
 {
-  "originHash" : "24c5f2e499541639827b70e318bbb2d562f9621f5adc6c83cec2fea1081458ca",
+  "originHash" : "2e5ea741dd3a97d005c1ca3aea131903d7e2e56fe37d7d081d002e28eae2aa09",
   "pins" : [
     {
       "identity" : "grdb.swift",
@@ -17,6 +17,15 @@
       "state" : {
         "revision" : "0f7ee59ae05dc81eed6bef56b4d910fd8b83e97f",
         "version" : "0.6.0"
+      }
+    },
+    {
+      "identity" : "picturekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/matguitarist/PictureKit",
+      "state" : {
+        "revision" : "4f99ecb29a267c7bd5edb18252d6d5d7af394cfc",
+        "version" : "0.1.0"
       }
     },
     {

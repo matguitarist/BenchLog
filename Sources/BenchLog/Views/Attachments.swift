@@ -1,6 +1,7 @@
 import AppKit
 import BenchLogKit
 import BoardViewKit
+import PictureKitUI
 import QuickLook
 import QuickLookThumbnailing
 import SwiftUI
@@ -64,7 +65,7 @@ struct AttachmentsSection: View {
             model.choosingFilesFor = nil
         }
         .fileImporter(isPresented: $choosing, allowedContentTypes: [.item], allowsMultipleSelection: true) { result in
-            if case .success(let urls) = result { model.addFiles(urls, to: owner, id: ownerID) }
+            if case .success(let urls) = result { Task { await model.addFiles(urls, to: owner, id: ownerID) } }
         }
         .alert("Caption", isPresented: Binding(get: { captioning != nil }, set: { if !$0 { captioning = nil } })) {
             TextField("Caption", text: $caption)
@@ -125,7 +126,7 @@ private struct PhotoCell: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: Space.xs) {
-            Thumbnail(url: url, side: 104)
+            AsyncPicture(.file(url), contentMode: .fill) { Rectangle().fill(.quaternary) }
                 .frame(width: 104, height: 104)
                 .clipShape(RoundedRectangle(cornerRadius: Radius.control, style: .continuous))
                 .overlay {
@@ -186,7 +187,8 @@ private struct FileRow: View {
     }
 }
 
-/// A Quick Look thumbnail of any file, made off the main thread and cached by the system.
+/// A Quick Look thumbnail of any file (a guide's PDF or note), made off the main thread and cached by the system.
+/// Photos show with `AsyncPicture` instead.
 struct Thumbnail: View {
     let url: URL
     let side: CGFloat
@@ -219,7 +221,7 @@ extension View {
         self
             .dropDestination(for: URL.self) { urls, _ in
                 let files = urls.filter(\.isFileURL)
-                model.addFiles(files, to: owner, id: id)
+                Task { await model.addFiles(files, to: owner, id: id) }
                 return !files.isEmpty
             }
             .onPasteCommand(of: [.fileURL, .image]) { providers in
