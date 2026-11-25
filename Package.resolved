@@ -1,6 +1,15 @@
 {
-  "originHash" : "732cccdc79ae5c93cc08342ebba66e6dcf7b347f4fc3fab17f19f8b699bc6973",
+  "originHash" : "446e5f8d72352f6e2f74657acc974faba15fbdef1e7de15ef5df17156aec4429",
   "pins" : [
+    {
+      "identity" : "filekit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/matguitarist/FileKit",
+      "state" : {
+        "revision" : "ca394fee2bd07f14e05924340e9bddf2f3ebfe30",
+        "version" : "0.1.0"
+      }
+    },
     {
       "identity" : "grdb.swift",
       "kind" : "remoteSourceControl",

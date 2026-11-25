@@ -12,6 +12,8 @@ let package = Package(
         .package(url: "https://github.com/groue/GRDB.swift", from: "7.12.0"),
         // Photos stored as small upright HEIC, heavy scans shrunk, thumbnails decoded off the main thread.
         .package(url: "https://github.com/matguitarist/PictureKit", from: "0.2.0"),
+        // Secrets in the Keychain (in memory for test runs) and small JSON files, shared by my apps.
+        .package(url: "https://github.com/matguitarist/FileKit", from: "0.1.0"),
     ],
     targets: [
         // Data and rules with no SwiftUI or AppKit, so tests run without the app
@@ -29,7 +31,8 @@ let package = Package(
             name: "BenchLog",
             dependencies: ["BenchLogKit", "BoardViewKit", "BenchLogServerKit", .product(name: "Sparkle", package: "Sparkle"),
                            .product(name: "LogKitUI", package: "LogKit"),
-                           .product(name: "PictureKitUI", package: "PictureKit")],
+                           .product(name: "PictureKitUI", package: "PictureKit"),
+                           .product(name: "FileKit", package: "FileKit")],
             // BenchLog Help: Help/<language>/<topic>.md, read through Bundle.module.
             resources: [.copy("Help/en"), .copy("Help/fr")],
             // App code runs on the main thread unless you say otherwise.

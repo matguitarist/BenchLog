@@ -841,6 +841,10 @@ enum SelfTest {
             check("an answer kept with the schematic isn't asked again", viewer.explanations["U2"] == "U2 makes PP3V3_S0." && viewer.explaining.isEmpty)
             viewer.forgetExplanation(part: u2)
             check("Ask Again forgets the kept answer", PartExplainer.cached(for: url)["U2"] == nil)
+            PartExplainer.saveKey("  sk-ant-test\n")
+            let trimmed = PartExplainer.apiKey == "sk-ant-test"
+            PartExplainer.saveKey(" ")
+            check("the Claude key is kept trimmed, and a blank one removes it", trimmed && PartExplainer.apiKey == nil)
             PartExplainer.saveKey(nil)
             await viewer.factsTask?.value
         }

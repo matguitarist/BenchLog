@@ -1,7 +1,7 @@
 import BenchLogKit
 import Foundation
+import FileKit
 import Observation
-import Security
 
 /// Keeps the library in step with the BenchLog server: at launch, a few seconds after each
 /// change, and every minute. The token is in the Keychain (in memory for test runs).
@@ -182,34 +182,22 @@ final class SyncController {
 
     // MARK: Secrets: the token and the library key, in the Keychain under the library's id
 
-    private static var memorySecrets: [String: String] = [:]
-    private static let service = "com.mathieuares.benchlog.sync"
+    /// One item per account ("token-<id>", "key-<id>"), readable after the first unlock so a sync runs while locked.
+    private static let keychain = Store.isOverridden
+        ? Keychain.inMemory(service: "com.mathieuares.benchlog.sync")
+        : Keychain(service: "com.mathieuares.benchlog.sync", accessible: .afterFirstUnlock)
 
     static func secret(_ kind: String, _ libraryID: String) -> String? {
-        let account = "\(kind)-\(libraryID)"
-        if Store.isOverridden { return memorySecrets[account] }
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
-                                    kSecAttrAccount as String: account, kSecReturnData as String: true]
-        var result: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess, let data = result as? Data else { return nil }
-        return String(decoding: data, as: UTF8.self)
+        keychain.string(for: "\(kind)-\(libraryID)")
     }
 
     static func saveSecret(_ value: String, _ kind: String, _ libraryID: String) {
-        let account = "\(kind)-\(libraryID)"
-        if Store.isOverridden { memorySecrets[account] = value; return }
-        deleteSecret(kind, libraryID)
-        let item: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
-                                   kSecAttrAccount as String: account, kSecValueData as String: Data(value.utf8),
-                                   kSecAttrAccessible as String: kSecAttrAccessibleAfterFirstUnlock]
-        SecItemAdd(item as CFDictionary, nil)
+        do { try keychain.set(value, for: "\(kind)-\(libraryID)") } catch {
+            Store.log.post(.error, "Couldn't save the sync \(kind) in the Keychain: \(error.localizedDescription)", source: "Sync")
+        }
     }
 
     static func deleteSecret(_ kind: String, _ libraryID: String) {
-        let account = "\(kind)-\(libraryID)"
-        if Store.isOverridden { memorySecrets[account] = nil; return }
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
-                                    kSecAttrAccount as String: account]
-        SecItemDelete(query as CFDictionary)
+        try? keychain.remove("\(kind)-\(libraryID)")
     }
 }

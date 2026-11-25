@@ -1,7 +1,7 @@
 import BoardViewKit
+import FileKit
 import Foundation
 import PDFKit
-import Security
 
 /// Explain This Part: asks Claude what a part does, from its schematic page. Only when people ask,
 /// and only the page, the part's name, value, and pin nets are sent: never a customer or a repair.
@@ -134,31 +134,20 @@ enum PartExplainer {
 
     // MARK: The key, in the Keychain (in memory in test runs)
 
-    private static let service = "com.mathieuares.benchlog.claude"
     private static let account = "api-key"
-    private static var memoryKey: String?
+    private static let keychain = Store.isOverridden
+        ? Keychain.inMemory(service: "com.mathieuares.benchlog.claude")
+        : Keychain(service: "com.mathieuares.benchlog.claude", accessible: .afterFirstUnlock)
 
     static var apiKey: String? {
-        if Store.isOverridden { return memoryKey }
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
-                                    kSecAttrAccount as String: account, kSecReturnData as String: true]
-        var result: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &result) == errSecSuccess, let data = result as? Data else { return nil }
-        let key = String(decoding: data, as: UTF8.self)
-        return key.isEmpty ? nil : key
+        keychain.string(for: account).flatMap { $0.isEmpty ? nil : $0 }
     }
 
+    /// Saves the key; nil or blank removes it.
     static func saveKey(_ key: String?) {
-        let key = key?.trimmingCharacters(in: .whitespacesAndNewlines)
-        if Store.isOverridden { memoryKey = key?.isEmpty == false ? key : nil; return }
-        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword, kSecAttrService as String: service,
-                                    kSecAttrAccount as String: account]
-        SecItemDelete(query as CFDictionary)
-        guard let key, !key.isEmpty else { return }
-        var item = query
-        item[kSecValueData as String] = Data(key.utf8)
-        item[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlock
-        SecItemAdd(item as CFDictionary, nil)
+        do { try keychain.set(key?.trimmingCharacters(in: .whitespacesAndNewlines), for: account) } catch {
+            Store.log.post(.error, "Couldn't save the Claude API key in the Keychain: \(error.localizedDescription)", source: "Board")
+        }
     }
 
     // MARK: Answers kept with the schematic
@@ -174,14 +163,15 @@ enum PartExplainer {
     }
 
     static func cached(for schematic: URL) -> [String: String] {
-        guard let data = try? Data(contentsOf: cacheURL(for: schematic)),
-              let answers = try? JSONDecoder().decode([String: String].self, from: data) else { return [:] }
-        return answers
+        ((try? answersFile(for: schematic).load()) ?? nil) ?? [:]
     }
 
     static func keep(_ answers: [String: String], for schematic: URL) {
-        let url = cacheURL(for: schematic)
-        try? FileManager.default.createDirectory(at: url.deletingLastPathComponent(), withIntermediateDirectories: true)
-        try? JSONEncoder().encode(answers).write(to: url, options: .atomic)
+        try? answersFile(for: schematic).save(answers)
+    }
+
+    /// One compact line, as before.
+    private static func answersFile(for schematic: URL) -> JSONFile<[String: String]> {
+        JSONFile(cacheURL(for: schematic), dates: .foundation, pretty: false)
     }
 }
